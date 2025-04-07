@@ -1,0 +1,23 @@
+{
+  "name": "lightouch",
+  "version": "0.0.1",
+  "description": "Software used to control the LightTouch system",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LighTouchOrg/Software.git"
+  },
+  "author": "Jérémy Calosso⁠-⁠Merlino, Benjamin Cottone, Fabien Gelorse, Nathan Tranchant, Arnaud Vitale",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/LighTouchOrg/Software/issues"
+  },
+  "homepage": "https://github.com/LighTouchOrg/Software#readme",
+  "devDependencies": {
+    "electron": "^35.1.4"
+  }
+}
