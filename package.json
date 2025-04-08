@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/LighTouchOrg/Software#readme",
   "devDependencies": {
-    "electron": "^35.1.4"
+    "electron": "^35.1.4",
+    "electron-builder": "^26.0.12"
   }
 }
