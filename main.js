@@ -1,11 +1,15 @@
 const { app, BrowserWindow, ipcMain } = require('electron/main')
 const path = require('node:path')
 
+app.commandLine.appendSwitch('enable-experimental-web-platform-features');
+
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false, // required for direct DOM/Web API access
       preload: path.join(__dirname, 'preload.js')
     }
   })
