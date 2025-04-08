@@ -1,21 +1,29 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
-    />
-    <meta
-      http-equiv="X-Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
-    />
-    <title>LighTouch®</title>
-  </head>
-  <body>
-    <h1>Hello from Electron renderer!</h1>
-    <p>👋</p>
-    <p id="info"></p>
-  </body>
-  <script src="./renderer.js"></script>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Lightouch</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="renderer.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="logo-container">
+      <img src="./img/lightouch-logo.png" alt="Logo Lightouch" class="logo">
+    </div>
+
+    <h1>Lightouch</h1>
+
+    <p class="description">Sélectionnez un appareil Bluetooth disponible à proximité.</p>
+
+    <button id="scan-button" class="scan-button">Rechercher des appareils</button>
+
+    <ul id="device-list" class="device-list hidden"></ul>
+
+    <div id="selected-device" class="device-info hidden">
+      <p><strong>Appareil sélectionné :</strong></p>
+      <p><span id="device-name">-</span></p>
+    </div>
+  </div>
+</body>
 </html>
