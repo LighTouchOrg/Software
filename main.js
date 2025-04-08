@@ -6,10 +6,10 @@ app.commandLine.appendSwitch('enable-experimental-web-platform-features');
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
-    height: 600,
+    height: 700,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false, // required for direct DOM/Web API access
+      contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     }
   })
