@@ -119,6 +119,19 @@ body {
     display: none;
 }
 
+/* message d'erreur */
+.error-message {
+    color: #e63946;
+    text-align: center;
+    font-size: 0.9rem;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.hidden {
+    display: none;
+}
+
 /* Responsive design */
 @media screen and (max-width: 600px) {
     .container {
