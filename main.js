@@ -37,12 +37,12 @@ app.whenReady().then(() => {
   port.on('open', () => {
     console.log('Serial port opened');
   });
-  
+
   port.on('data', (data) => {
     const decoded = data.toString().trim();
     console.log('Received:', decoded);
   });
-  
+
   port.on('error', (err) => {
     console.error('Serial port error:', err.message);
   });
