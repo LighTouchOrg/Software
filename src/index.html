@@ -7,24 +7,25 @@
   <script defer src="renderer.js"></script>
 </head>
 <body>
-  <div class="container">
-    <div class="logo-container">
-      <img src="./img/lightouch-logo.png" alt="Logo Lightouch" class="logo">
-    </div>
+  <div class="logo-container">
+    <img src="./img/lightouch-logo.png" alt="Logo Lightouch" class="logo">
+  </div>
 
-    <h1>Lightouch</h1>
+  <h1>Lightouch</h1>
 
-    <p class="description">Sélectionnez un appareil Bluetooth disponible à proximité.</p>
+  <p class="description">Sélectionnez un appareil Bluetooth disponible à proximité.</p>
 
-    <button id="scan-button" class="scan-button">Rechercher des appareils</button>
+  <button id="scan-button" class="scan-button">Rechercher des appareils</button>
 
-    <ul id="device-list" class="device-list hidden"></ul>
+  <ul id="device-list" class="device-list hidden"></ul>
 
-    <div id="selected-device" class="device-info hidden">
-      <p><strong>Appareil sélectionné :</strong></p>
-      <p><span id="device-name">-</span></p>
-    </div>
-    <div id="error-message" class="error-message hidden">Erreur dans la recherche de connexion</div>
+  <div id="selected-device" class="device-info hidden">
+    <p><strong>Appareil sélectionné :</strong></p>
+    <p><span id="device-name">-</span></p>
+  </div>
+
+  <div id="error-message" class="error-message hidden">
+    Erreur dans la recherche de connexion
   </div>
 </body>
 </html>
