@@ -1,7 +1,17 @@
+:root {
+    --primary-color: #1d1136;
+    --primary-color-light: #301d55;
+    --secondary-color: #ffb920;
+    --background-color: #fff7eb;
+    --font-color: #1e1e1e;
+    --font-family: 'Tahoma', sans-serif;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: var(--font-family);
 }
 
 html,
@@ -11,9 +21,8 @@ body {
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f7fa;
-    color: #1e1e1e;
+    background-color: var(--background-color);
+    color: var(--font-color);
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -36,10 +45,14 @@ body {
 
 /* Titre */
 .container h1 {
-    font-size: 28px;
+    font-size: 60px;
     text-align: center;
     margin-bottom: 12px;
-    color: #1e3a8a;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--primary-color);
+    text-shadow: none;
 }
 
 /* Image Logo */
@@ -58,14 +71,14 @@ body {
 /* Description */
 .description {
     font-size: 0.95rem;
-    color: #555;
+    color: #444;
     margin-bottom: 24px;
     text-align: center;
 }
 
 /* Bouton recherche */
 .scan-button {
-    background-color: #1e3a8a;
+    background-color: var(--primary-color-light);
     color: white;
     border: none;
     padding: 0.75em 1em;
@@ -77,46 +90,51 @@ body {
 }
 
 .scan-button:hover {
-    background-color: #294eb5;
+    background-color: var(--primary-color);
 }
 
 /* Liste des appareils */
 .device-list {
-    list-style: none;
     margin-top: 24px;
     padding: 0;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .device-list li {
-    background-color: #f0f2f5;
-    padding: 0.75em;
-    border-radius: 6px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-left: 6px solid var(--secondary-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    padding: 16px 20px;
+    border-radius: 10px;
+    color: var(--primary-color);
     font-size: 1rem;
-    text-align: center;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
 }
 
 .device-list li:hover {
-    background-color: #dbeafe;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    background-color: #f5f0ff;
+    border-left-color: var(--primary-color-light);
 }
 
 /* Infos sélectionnées */
 .device-info {
     margin-top: 20px;
     padding: 12px;
-    background-color: #e8f0fe;
+    background-color: var(--background-color);
     border-radius: 8px;
     font-size: 0.9rem;
-    color: #1e3a8a;
+    color: #9a3412;
     width: 100%;
     text-align: center;
-}
-
-.hidden {
-    display: none;
 }
 
 /* message d'erreur */
@@ -158,7 +176,7 @@ body {
     }
 
     .container h1 {
-        font-size: 22px;
+        font-size: 40px;
     }
 
     .description {
