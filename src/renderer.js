@@ -3,23 +3,32 @@ const deviceList = document.getElementById('device-list');
 const selectedDevice = document.getElementById('selected-device');
 const deviceName = document.getElementById('device-name');
 const errorMessage = document.getElementById('error-message');
+const loading = document.getElementById('loading');
 
-const fakeDevices = ['Lightouch Sensor 01', 'Projector Board', 'TouchCam-X'];
-
-window.electronAPI.sendToPython('Hello from the renderer process!');
+let devices = [];
 
 window.electronAPI.onPythonData((event, data) => {
-  console.log('Received from Python:', data);
+  if (data.startsWith('DEVICES:')) {
+    loading.classList.add('hidden');
+    devices = JSON.parse(data.slice(8).replace(/'([^']*)'/g, (_, val) => `"${val.replace(/"/g, '\\"')}"`));
+    devices = devices.filter(device => device !== '');
+    if (devices.length === 0) {
+     devices.push(None); 
+    }
+    updateDeviceList();
+  }
 });
 
-scanButton.addEventListener('click', () => {
+function updateDeviceList() {
   deviceList.innerHTML = '';
   errorMessage.classList.add('hidden');
 
-  if (fakeDevices.length === 0) {
+  if (devices.length === 0) {
+    loading.classList.remove('hidden');
+  } else if (devices.length === 1 && devices[0] === 'None') {
     errorMessage.classList.remove('hidden');
   } else {
-    fakeDevices.forEach(name => {
+    devices.forEach(name => {
       const li = document.createElement('li');
       li.textContent = name;
       li.addEventListener('click', () => {
@@ -31,4 +40,9 @@ scanButton.addEventListener('click', () => {
   }
 
   deviceList.classList.remove('hidden');
+}
+
+scanButton.addEventListener('click', () => {
+  loading.classList.remove('hidden');
+  window.electronAPI.sendToPython('GET_DEVICES');
 });

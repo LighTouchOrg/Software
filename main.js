@@ -17,7 +17,7 @@ pythonServer.stdout.on('data', (data) => {
   console.log('Attempting to connect to Python server...');
   client.connect(9000, '127.0.0.1', () => {
     console.log('Successfully connected to Python Bluetooth backend');
-    client.write('Hello world');
+    client.write('GET_DEVICES');
   });
 });
 

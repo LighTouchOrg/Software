@@ -1,9 +1,10 @@
 """
 Bluetooth server for Raspberry Pi to communicate with Electron.
 """
-import socket
 import os
 import sys
+import socket
+import bluetooth
 
 # Connect to Electron
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -13,20 +14,20 @@ print("Python server is ready and listening on port 9000") # Do NOT remove: need
 sys.stdout.flush()
 conn, addr = server.accept()
 
+def get_devices():
+    devices = bluetooth.discover_devices(duration = 2, lookup_names = True)
+    if len(devices) == 0:
+        conn.sendall("DEVICES:Bluetooth device not found".encode())
+    else:
+        conn.sendall(f"DEVICES:{list(map(lambda x: x[1], devices))}".encode())
+
 # listen for incoming data from Electron
 while True:
     try:
         data = conn.recv(1024).decode()
         if data:
-            # Send back the received data
-            conn.sendall(data.encode())
-            # Send data to Bluetooth (via serial)
-            if os.name == 'nt':
-                # Windows-specific code for Bluetooth
-                pass  # Placeholder for Windows Bluetooth code
-            else:
-                # Linux-specific code for Bluetooth
-                pass  # Placeholder for Linux Bluetooth code
+            if data == "GET_DEVICES":
+                get_devices()
     except (socket.error, OSError) as e:
         print("Socket error:", e)
         break

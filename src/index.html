@@ -17,15 +17,19 @@
 
   <button id="scan-button" class="scan-button">Rechercher des appareils</button>
 
-  <ul id="device-list" class="device-list hidden"></ul>
+  <div id="loading" class="error-message hidden">
+    Chargement...
+  </div>
 
+  <ul id="device-list" class="device-list hidden"></ul>
+  
   <div id="selected-device" class="device-info hidden">
     <p><strong>Appareil sélectionné :</strong></p>
     <p><span id="device-name">-</span></p>
   </div>
 
   <div id="error-message" class="error-message hidden">
-    Erreur dans la recherche de connexion
+    Pas d'appareil Bluetooth trouvé à proximité. Veuillez vérifier que votre appareil LighTouch est bien allumé.
   </div>
 </body>
 </html>
