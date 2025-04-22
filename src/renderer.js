@@ -6,6 +6,12 @@ const errorMessage = document.getElementById('error-message');
 
 const fakeDevices = ['Lightouch Sensor 01', 'Projector Board', 'TouchCam-X'];
 
+window.electronAPI.sendToPython('Hello from the renderer process!');
+
+window.electronAPI.onPythonData((event, data) => {
+  console.log('Received from Python:', data);
+});
+
 scanButton.addEventListener('click', () => {
   deviceList.innerHTML = '';
   errorMessage.classList.add('hidden');

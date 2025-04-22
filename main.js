@@ -14,7 +14,6 @@ const pythonServer = spawn('python', [path.join(__dirname, 'server.py')], {
 });
 
 pythonServer.stdout.on('data', (data) => {
-  const output = data.toString();
   console.log('Attempting to connect to Python server...');
   client.connect(9000, '127.0.0.1', () => {
     console.log('Successfully connected to Python Bluetooth backend');
@@ -31,7 +30,11 @@ pythonServer.on('close', (code) => {
 });
 
 client.on('data', (data) => {
-  console.log('Received from Python:', data.toString());
+  const receivedData = data.toString();
+  console.log('Received from Python:', receivedData);
+  if (win) {
+    win.webContents.send('python-data', receivedData);
+  }
 });
 
 client.on('error', (err) => {
@@ -42,8 +45,10 @@ client.on('close', () => {
   console.log('Connection to Python server closed');
 });
 
+let win;
+
 const createWindow = () => {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 700,
     webPreferences: {
@@ -58,6 +63,13 @@ const createWindow = () => {
 
 app.whenReady().then(async () => {
   ipcMain.handle('ping', () => 'pong');
+  
+  ipcMain.on('send-to-python', (event, data) => {
+    if (client && client.writable) {
+      client.write(data);
+    }
+  });
+  
   createWindow();
 });
 
