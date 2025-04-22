@@ -3,6 +3,7 @@ Bluetooth server for Raspberry Pi to communicate with Electron.
 """
 import os
 import sys
+import json
 import socket
 import bluetooth
 
@@ -17,9 +18,10 @@ conn, addr = server.accept()
 def get_devices():
     devices = bluetooth.discover_devices(duration = 2, lookup_names = True)
     if len(devices) == 0:
-        conn.sendall("DEVICES:Bluetooth device not found".encode())
+        conn.sendall("DEVICES:[]".encode())
     else:
-        conn.sendall(f"DEVICES:{list(map(lambda x: x[1], devices))}".encode())
+        device_names = list(map(lambda x: x[1], devices))
+        conn.sendall(f"DEVICES:{json.dumps(device_names)}".encode())
 
 # listen for incoming data from Electron
 while True:
