@@ -6,6 +6,7 @@ const errorMessage = document.getElementById('error-message');
 const loading = document.getElementById('loading');
 
 let devices = [];
+let selectedDeviceName = null;
 
 window.electronAPI.onPythonData((event, data) => {
   if (data.startsWith('DEVICES:')) {
@@ -31,14 +32,28 @@ function updateDeviceList() {
     devices.forEach(name => {
       const li = document.createElement('li');
       li.textContent = name;
+      if (name === selectedDeviceName) {
+        li.classList.add('selected');
+        deviceName.textContent = name;
+        selectedDevice.classList.remove('hidden');
+      }
       li.addEventListener('click', () => {
         deviceName.textContent = name;
+        selectedDeviceName = name;
+        const selectedLi = deviceList.querySelector('.selected');
+        if (selectedLi) selectedLi.classList.remove('selected');
+        li.classList.add('selected');
         selectedDevice.classList.remove('hidden');
       });
       deviceList.appendChild(li);
     });
   }
 
+  const selectedLi = deviceList.querySelector('.selected');
+  if (!selectedLi) {
+    selectedDevice.classList.add('hidden');
+    deviceName.textContent = '-';
+  }
   deviceList.classList.remove('hidden');
 }
 
