@@ -63,13 +63,13 @@ const createWindow = () => {
 
 app.whenReady().then(async () => {
   ipcMain.handle('ping', () => 'pong');
-  
+
   ipcMain.on('send-to-python', (event, data) => {
     if (client && client.writable) {
       client.write(data);
     }
   });
-  
+
   createWindow();
 });
 

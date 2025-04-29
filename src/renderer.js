@@ -4,6 +4,8 @@ const selectedDevice = document.getElementById('selected-device');
 const deviceName = document.getElementById('device-name');
 const errorMessage = document.getElementById('error-message');
 const loading = document.getElementById('loading');
+const loadingDots = document.getElementById('loading-dots');
+let dotCount = 0;
 
 let devices = [];
 let selectedDeviceName = null;
@@ -14,7 +16,7 @@ window.electronAPI.onPythonData((event, data) => {
     devices = JSON.parse(data.slice(8));
     devices = devices.filter(device => device !== '');
     if (devices.length === 0) {
-     devices.push(null); 
+     devices.push(null);
     }
     updateDeviceList();
   }
@@ -61,3 +63,9 @@ scanButton.addEventListener('click', () => {
   loading.classList.remove('hidden');
   window.electronAPI.sendToPython('GET_DEVICES');
 });
+
+// Animation des points de chargement
+setInterval(() => {
+  dotCount = (dotCount + 1) % 4;
+  loadingDots.textContent = '.'.repeat(dotCount);
+}, 500);
