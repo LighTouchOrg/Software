@@ -13,26 +13,16 @@
 
   <h1>Lightouch</h1>
 
-  <p class="description">Sélectionnez un appareil Bluetooth disponible à proximité.</p>
-
-  <button id="scan-button" class="scan-button">Rechercher des appareils</button>
+  <button id="calibrate-button" class="scan-button">Calibrer la caméra</button>
+  <button id="stop-button" class="scan-button hidden">Arrêter le calibrage</button>
 
   <div id="loading" class="hidden">
     Chargement<span id="loading-dots"></span>
   </div>
 
-  <ul id="device-list" class="device-list hidden"></ul>
-
-  <div id="selected-device" class="device-info hidden">
-    <p>
-      <strong>Appareil sélectionné :</strong>
-      <span id="device-name">-</span>
-    </p>
-    <button id="connect-button" class="connect-button small">Se connecter</button>
-  </div>
-
-  <div id="error-message" class="error-message hidden">
-    Pas d'appareil Bluetooth trouvé à proximité. Veuillez vérifier que votre appareil LighTouch est bien allumé.
+  <div id="connection-status" class="device-info">
+    <strong>Status :</strong>
+    <span id="device-status">Aucun appareil Bluetooth connecté</span>
   </div>
 </body>
 </html>
