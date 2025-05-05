@@ -24,6 +24,7 @@
     "electron-builder": "^26.0.12"
   },
   "dependencies": {
+    "@nut-tree-fork/nut-js": "^4.2.6",
     "serialport": "^13.0.0"
   }
 }

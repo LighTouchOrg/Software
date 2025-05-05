@@ -7,6 +7,12 @@ const deviceStatus = document.getElementById('device-status');
 let dotCount = 0;
 let calibrationWindow = null;
 
+document.onkeydown = async (event) => {
+  if (event.key === 'ArrowUp') {
+    await window.electronAPI?.moveMouse(0, -10);
+  }
+}
+
 // Animation des points de chargement
 setInterval(() => {
   dotCount = (dotCount + 1) % 4;
