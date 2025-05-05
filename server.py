@@ -17,6 +17,20 @@ is_windows = platform.system() == "Windows"
 bt_client_sock = None
 serial_connection = None
 
+# Build message with good protocol
+# example: message = build_message("category", "method", {"param1": "value1", "param2": "value2"})
+def build_message(category, method, params):
+    try:
+        message = {
+            "category": category,
+            "method": method,
+            "params": params
+        }
+        return json.dumps(message)
+    except Exception as e:
+        print(f"Error building message: {e}")
+        return None
+
 # Log function to replace print and send to Electron
 def ConsolePrint(message, conn):
     try:
