@@ -31,21 +31,15 @@ def build_message(category, method, params):
         print(f"Error building message: {e}")
         return None
 
-# Log function to replace print and send to Electron
-def ConsolePrint(message, conn):
-    try:
-        conn.sendall(f"LOG:{message}".encode())
-    except Exception:
-        pass
-
 def start_electron_connection():
     try:
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.bind(('localhost', 9000))
         server.listen(1)
+        print("Python server is ready and listening on port 9000")  # Do NOT remove
+        sys.stdout.flush()
         conn, _ = server.accept()
-        conn.settimeout(1.0)
-        ConsolePrint("Python server is ready and listening on port 9000", conn)
+        conn.settimeout(1.0)  # Important: make recv() non-blocking
         return conn, server
     except Exception as e:
         print("Failed to start TCP server:", e)
@@ -58,13 +52,13 @@ def receive_data_raspi(client_sock, conn):
             try:
                 data = client_sock.recv(1024).decode()
                 if data:
-                    ConsolePrint(f"Received (Bluetooth): {data}", conn)
+                    print("Received (Bluetooth):", data)
                     conn.sendall(f"BT:{data}".encode())
             except Exception as e:
-                ConsolePrint(f"Bluetooth read error: {e}", conn)
+                print("Bluetooth read error:", e)
                 break
     except Exception as e:
-        ConsolePrint(f"Bluetooth connection error: {e}", conn)
+        print("Bluetooth connection error:", e)
 
 def handle_bluetooth_raspi(conn):
     try:
@@ -72,29 +66,27 @@ def handle_bluetooth_raspi(conn):
         bluetooth_client = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
         bluetooth_client.bind(("", bluetooth.PORT_ANY))
         bluetooth_client.listen(1)
-        ConsolePrint("Bluetooth server is ready and listening", conn)
+        print("Bluetooth server is ready and listening")  # Do NOT remove
+        sys.stdout.flush()
 
         client_sock, client_info = bluetooth_client.accept()
-        ConsolePrint(f"Accepted connection from {client_info}", conn)
-
-        global bt_client_sock
-        bt_client_sock = client_sock
+        print(f"Accepted connection from {client_info}")
 
         thread = Thread(target=receive_data_raspi, args=(client_sock, conn), daemon=True)
         thread.start()
 
     except Exception as e:
-        ConsolePrint(f"Failed to start Bluetooth on Raspberry Pi: {e}", conn)
+        print("Failed to start Bluetooth on Raspberry Pi:", e)
 
 # ------- Windows: Serial COM Bluetooth -------
-def find_active_bluetooth_port(conn):
+def find_active_bluetooth_port():
     import serial.tools.list_ports
     ports = serial.tools.list_ports.comports()
     for port in ports:
         desc = port.description.lower()
         hwid = port.hwid.lower()
         if 'bthenum' in hwid and '000000000000' not in hwid:
-            ConsolePrint(f"Found active Bluetooth port: {port.device} ({desc})", conn)
+            print(f"Found active Bluetooth port: {port.device} ({desc})")
             return port.device
     return None
 
@@ -104,7 +96,7 @@ def receive_data_windows(port, conn):
     try:
         ser = serial.Serial(port, 9600, timeout=1)
         serial_connection = ser
-        ConsolePrint(f"Connected to {port}", conn)
+        print(f"Connected to {port}")
         ser.write(b"Connected to the raspberry\n")
         while True:
             try:
@@ -113,57 +105,56 @@ def receive_data_windows(port, conn):
                     continue
                 data = line.decode('utf-8', errors='ignore').strip()
                 if data:
-                    ConsolePrint(f"Received (Serial): {data}", conn)
+                    print("Received (Serial):", data)
                     conn.sendall(f"BT:{data}".encode())
             except serial.SerialException as e:
-                ConsolePrint(f"Serial read error: {e}", conn)
+                print("Serial read error:", e)
                 break
             except KeyboardInterrupt:
-                ConsolePrint("Serial read interrupted by user.", conn)
+                print("Serial read interrupted by user.")
                 break
     except serial.SerialException as e:
-        ConsolePrint(f"Failed to open serial port {port}: {e}", conn)
+        print(f"Failed to open serial port {port}:", e)
     except OSError as e:
-        ConsolePrint(f"OS error opening serial port {port}: {e}", conn)
+        print(f"OS error opening serial port {port}:", e)
 
 def handle_bluetooth_windows(conn):
     try:
         import serial
-        port = find_active_bluetooth_port(conn)
+        port = find_active_bluetooth_port()
         if port is None:
-            ConsolePrint("Could not find an active Bluetooth serial port.", conn)
+            print("Could not find an active Bluetooth serial port.")
             return
 
         thread = Thread(target=receive_data_windows, args=(port, conn), daemon=True)
         thread.start()
 
     except ImportError:
-        ConsolePrint("pyserial is not installed. Run: pip install pyserial", conn)
+        print("pyserial is not installed. Run: pip install pyserial")
     except Exception as e:
-        ConsolePrint(f"Unexpected error in Windows Bluetooth setup: {e}", conn)
+        print("Unexpected error in Windows Bluetooth setup:", e)
 
 def send_bluetooth_message(message, conn):
     global bt_client_sock, serial_connection
     try:
         if is_linux and bt_client_sock:
             bt_client_sock.send(message.encode())
-            ConsolePrint(f"Message envoyé via Bluetooth (Linux): {message}", conn)
+            print(f"Message envoyé via Bluetooth (Linux): {message}")
         elif is_windows and serial_connection:
             serial_connection.write((message + "\n").encode())
-            ConsolePrint(f"Message envoyé via Bluetooth (Windows COM): {message}", conn)
             conn.sendall(f"BT:{message}".encode())
         else:
-            ConsolePrint("Aucune connexion Bluetooth active pour envoyer le message.", conn)
+            print("Aucune connexion Bluetooth active pour envoyer le message.")
     except Exception as e:
-        ConsolePrint(f"Erreur lors de l'envoi Bluetooth : {e}", conn)
+        print("Erreur lors de l'envoi Bluetooth :", e)
         conn.sendall(f"BT:Erreur lors de l'envoi Bluetooth : {e}".encode())
 
 def start_calibration(conn):
-    send_bluetooth_message("CALIBRATE", conn)
+    send_bluetooth_message("CALIBRATE", conn)  # Envoi à l'appareil BT
     try:
         conn.sendall("CALIBRATION_STARTED".encode())
     except Exception as e:
-        ConsolePrint(f"Failed to notify Electron: {e}", conn)
+        print("Failed to notify Electron:", e)
 
 # ------- Electron Listener -------
 def listen_to_electron(conn):
@@ -172,16 +163,16 @@ def listen_to_electron(conn):
             try:
                 data = conn.recv(1024).decode()
                 if data:
-                    ConsolePrint(f"Received from Electron: {data}", conn)
+                    print("Received from Electron:", data)
                     if data == "START_CALIBRATION":
                         start_calibration(conn)
             except socket.timeout:
-                continue
+                continue  # socket is alive, just no data yet
             except (socket.error, OSError) as e:
-                ConsolePrint(f"Socket error: {e}", conn)
+                print("Socket error:", e)
                 break
     except KeyboardInterrupt:
-        ConsolePrint("Server interrupted by user. Closing.", conn)
+        print("Server interrupted by user. Closing.")
     finally:
         conn.close()
 
@@ -194,7 +185,7 @@ def main():
     elif is_windows:
         handle_bluetooth_windows(conn)
     else:
-        ConsolePrint("Unsupported OS for Bluetooth.", conn)
+        print("Unsupported OS for Bluetooth.")
 
     listen_to_electron(conn)
     server_socket.close()
