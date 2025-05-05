@@ -17,8 +17,7 @@ calibrateButton.addEventListener('click', () => {
   loading.classList.remove('hidden');
   calibrateButton.disabled = true;
 
-  // Tu peux envoyer un message à Python ici si besoin :
-  // window.electronAPI.sendToPython("START_CALIBRATION");
+  window.electronAPI.sendToPython("START_CALIBRATION");
 });
 
 stopButton.addEventListener('click', () => {

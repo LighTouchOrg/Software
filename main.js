@@ -65,6 +65,7 @@ app.whenReady().then(async () => {
 
   ipcMain.on('send-to-python', (event, data) => {
     if (client && client.writable) {
+      console.log('Sending to Python:', data);
       client.write(data);
     }
   });

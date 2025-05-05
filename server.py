@@ -114,6 +114,10 @@ def handle_bluetooth_windows(conn):
     except Exception as e:
         print("Unexpected error in Windows Bluetooth setup:", e)
 
+def start_calibration(conn):
+    print("Starting calibration...")
+    conn.sendall("START_CALIBRATION".encode())
+
 # ------- Electron Listener -------
 def listen_to_electron(conn):
     try:
@@ -122,6 +126,8 @@ def listen_to_electron(conn):
                 data = conn.recv(1024).decode()
                 if data:
                     print("Received from Electron:", data)
+                    if data == "START_CALIBRATION":
+                        start_calibration(conn)
             except socket.timeout:
                 continue  # socket is alive, just no data yet
             except (socket.error, OSError) as e:
