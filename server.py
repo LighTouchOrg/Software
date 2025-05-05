@@ -150,7 +150,8 @@ def send_bluetooth_message(message, conn):
         conn.sendall(f"BT:Erreur lors de l'envoi Bluetooth : {e}".encode())
 
 def start_calibration(conn):
-    send_bluetooth_message("CALIBRATE", conn)  # Envoi à l'appareil BT
+    msg = build_message("hand_tracking", "calibrate", {"value": True})
+    send_bluetooth_message(msg, conn)
     try:
         conn.sendall("CALIBRATION_STARTED".encode())
     except Exception as e:
