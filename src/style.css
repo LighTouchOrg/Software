@@ -110,10 +110,10 @@ button:hover {
 }
 
 .calibration-window {
-    border-top: 50px solid greenyellow;
-    border-bottom: 50px solid greenyellow;
-    border-right: 50px solid fuchsia;
-    border-left: 50px solid fuchsia;
+    border-top: 50px solid #adff2f;
+    border-bottom: 50px solid #adff2f;
+    border-right: 50px solid #adff2f;
+    border-left: 50px solid #adff2f;
     cursor: none; /* Hide cursor */
 }
 
