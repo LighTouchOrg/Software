@@ -109,6 +109,14 @@ button:hover {
     display: none;
 }
 
+.calibration-window {
+    border-top: 50px solid greenyellow;
+    border-bottom: 50px solid greenyellow;
+    border-right: 50px solid fuchsia;
+    border-left: 50px solid fuchsia;
+    cursor: none; /* Hide cursor */
+}
+
 /* Responsive */
 @media screen and (max-width: 600px) {
     .logo {

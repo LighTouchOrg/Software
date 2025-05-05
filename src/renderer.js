@@ -5,6 +5,7 @@ const loadingDots = document.getElementById('loading-dots');
 const deviceStatus = document.getElementById('device-status');
 
 let dotCount = 0;
+let calibrationWindow = null;
 
 // Animation des points de chargement
 setInterval(() => {
@@ -16,6 +17,16 @@ calibrateButton.addEventListener('click', () => {
   console.log("Calibrage demandé.");
   loading.classList.remove('hidden');
   calibrateButton.disabled = true;
+
+  // open temporary full-screen window
+  calibrationWindow = window.open('calibration.html', '_blank', 'width=800,height=600,fullscreen=yes');
+
+  // Add event listener to close the window with Escape key
+  calibrationWindow.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      calibrationWindow.close();
+    }
+  });
 
   window.electronAPI.sendToPython("START_CALIBRATION");
 });
