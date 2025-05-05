@@ -20,7 +20,7 @@ def start_electron_connection():
         server.listen(1)
         print("Python server is ready and listening on port 9000")  # Do NOT remove
         sys.stdout.flush()
-        conn, addr = server.accept()
+        conn, _ = server.accept()
         conn.settimeout(1.0)  # Important: make recv() non-blocking
         return conn, server
     except Exception as e:
@@ -114,23 +114,6 @@ def handle_bluetooth_windows(conn):
     except Exception as e:
         print("Unexpected error in Windows Bluetooth setup:", e)
 
-# ------- GET_DEVICES -------
-def get_devices(conn):
-    device_names = []
-    if is_linux:
-        try:
-            import bluetooth
-            devices = bluetooth.discover_devices(duration=2, lookup_names=True)
-            device_names = [name for _, name in devices]
-        except Exception as e:
-            print("Error discovering devices:", e)
-    else:
-        print("GET_DEVICES not supported on this platform.")
-    try:
-        conn.sendall(f"DEVICES:{json.dumps(device_names)}".encode())
-    except Exception as e:
-        print("Error sending devices list to Electron:", e)
-
 # ------- Electron Listener -------
 def listen_to_electron(conn):
     try:
@@ -139,8 +122,6 @@ def listen_to_electron(conn):
                 data = conn.recv(1024).decode()
                 if data:
                     print("Received from Electron:", data)
-                    if data == "GET_DEVICES":
-                        get_devices(conn)
             except socket.timeout:
                 continue  # socket is alive, just no data yet
             except (socket.error, OSError) as e:
