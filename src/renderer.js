@@ -63,7 +63,6 @@ function readMessage(msg) {
 
     const ApiClass = window.electronAPI.getApiClass(category);
     const apiInstance = new ApiClass();
-
     const response = apiInstance[method](params);
 
   } catch (e) {
