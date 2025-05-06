@@ -39,8 +39,9 @@ async function swipe(params) {
 }
 
 function hand_tracking(method, params) {
+  method = method.trim().toLowerCase();
   switch (method) {
-    case "Swipe":
+    case "swipe":
       swipe(params);
       break;
     default:
@@ -77,11 +78,11 @@ function readMessage(msg) {
 }
 
 // Pour tester sans Raspberry
-document.onkeydown = async (event) => {
-  if (event.key === 'ArrowRight') {
-    readMessage('{"category":"Actions","method":"swipe","params":{"direction":"right"}}');
-  }
-}
+// document.onkeydown = async (event) => {
+//   if (event.key === 'ArrowRight') {
+//     readMessage('{"category":"actions","method":"swipe","params":{"direction":"right"}}');
+//   }
+// }
 
 window.electronAPI?.onPythonData((event, data) => {
   if (!data.startsWith("BT:")) return;
