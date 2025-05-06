@@ -31,11 +31,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     await keyboard.releaseKey(nutKey);
   },
   getApiClass: (category) => {
-    const module = require(`./src/interactions/${category.charAt(0).toUpperCase() + category.slice(1)}`);
-    if (typeof module === 'function') {
-      return module; // Retourne la classe si elle est valide
-    } else {
-      throw new Error(`Le module pour la catégorie ${category} n'est pas une classe valide.`);
-    }
+    const ApiClass = require(`./src/interactions/${category.charAt(0).toUpperCase() + category.slice(1)}`);
+    const apiInstance = new ApiClass();
+    return apiInstance;
   },
 });

@@ -59,10 +59,13 @@ function readMessage(msg) {
   // Format: {"category": "category", "method": "method", "params": {"p1": 1, "p2": "p2"}}
   try {
     const parsed = JSON.parse(msg);
-    const { category, method, params } = parsed;
+    let { category, method, params } = parsed;
+    console.log("Catégorie:", category);
+    console.log("Méthode:", method);
+    console.log("Paramètres:", params);
+    method = method.trim();
 
-    const ApiClass = window.electronAPI.getApiClass(category);
-    const apiInstance = new ApiClass();
+    const apiInstance = window.electronAPI.getApiClass(category);
     const response = apiInstance[method](params);
 
   } catch (e) {
