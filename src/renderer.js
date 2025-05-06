@@ -59,11 +59,11 @@ function readMessage(msg) {
     method = method.trim().toLowerCase();
 
     switch (category) {
-      case "Actions":
+      case "actions":
         const action = new Actions();
         action[method](params);
         break;
-      case "Settings":
+      case "settings":
         const settings = new Settings();
         settings[method](params);
         break;
@@ -96,9 +96,6 @@ window.electronAPI?.onPythonData((event, data) => {
   }
 
   readMessage(raw);
-
-  // Affichage debug
-  console.log("Message reçu :", parsed);
 
   // Calibration terminée
   if (
