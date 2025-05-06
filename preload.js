@@ -30,4 +30,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     await keyboard.pressKey(nutKey);
     await keyboard.releaseKey(nutKey);
   },
+  getApiClass: (category) => {
+    return require(`./interactions/${category.charAt(0).toUpperCase() + category.slice(1)}`);
+  },
 });

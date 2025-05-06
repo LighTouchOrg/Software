@@ -61,7 +61,7 @@ function readMessage(msg) {
     const parsed = JSON.parse(msg);
     const { category, method, params } = parsed;
 
-    const ApiClass = require(`./interactions/${category.charAt(0).toUpperCase() + category.slice(1)}`);
+    const ApiClass = window.electronAPI.getApiClass(category);
     const apiInstance = new ApiClass();
 
     const response = apiInstance[method](params);
