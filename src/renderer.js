@@ -60,14 +60,13 @@ function readMessage(msg) {
   // Format: {"category": "category", "method": "method", "params": {"p1": 1, "p2": "p2"}}
   try {
     const parsed = JSON.parse(msg);
-    switch (parsed.category) {
-      case "hand_tracking":
-        hand_tracking(parsed.method, parsed.params);
-        break;
-      default:
-        console.error("Catégorie non reconnue:", parsed.category);
-        break;
-    }
+    const { category, method, params } = parsed;
+
+    const ApiClass = require(`./interactions/${category.charAt(0).toUpperCase() + category.slice(1)}`);
+    const apiInstance = new ApiClass();
+
+    const response = apiInstance[method](params);
+
   } catch (e) {
     console.error("Erreur de parsing du message:", e);
   }
