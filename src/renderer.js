@@ -86,6 +86,7 @@ function readMessage(msg) {
 window.electronAPI?.onPythonData((event, data) => {
   if (data.startsWith("BT:")) {
     const message = data.slice(3).trim();
+    readMessage(message);
     deviceStatus.textContent = `Appareil connecté : ${message}`;
   }
 });
