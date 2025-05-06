@@ -47,6 +47,42 @@ stopButton.addEventListener('click', () => {
   // window.electronAPI.sendToPython("STOP_CALIBRATION");
 });
 
+async function swipe(params) {
+  if (params.direction === "left") {
+    await window.electronAPI?.pressKey("ArrowLeft");
+  } else if (params.direction === "right") {
+    await window.electronAPI?.pressKey("ArrowRight");
+  }
+}
+
+function hand_tracking(method, params) {
+  switch (method === "swipe") {
+    case "swipe":
+      swipe(params);
+      break;
+    default:
+      console.error("Méthode non reconnue:", method);
+      break;
+  }
+}
+
+function readMessage(msg) {
+  // Format: {"category": "category", "method": "method", "params": {"p1": 1, "p2": "p2"}}
+  try {
+    const parsed = JSON.parse(msg);
+    switch (parsed.category) {
+      case "hand_tracking":
+        hand_tracking(parsed.method, parsed.params);
+        break;
+      default:
+        console.error("Catégorie non reconnue:", parsed.category);
+        break;
+    }
+  } catch (e) {
+    console.error("Erreur de parsing du message:", e);
+  }
+}
+
 window.electronAPI?.onPythonData((event, data) => {
   if (data.startsWith("BT:")) {
     const message = data.slice(3).trim();
