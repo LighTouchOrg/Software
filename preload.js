@@ -1,7 +1,10 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer } = require("electron");
 const { mouse, straightTo, Point, keyboard, Key } = require("@nut-tree-fork/nut-js");
+const Actions = require("./src/interactions/Actions");
 
-contextBridge.exposeInMainWorld('electronAPI', {
+const actionsInstance = new Actions();
+
+contextBridge.exposeInMainWorld("electronAPI", {
   onPythonData: (callback) => ipcRenderer.on('python-data', callback),
   sendToPython: (data) => ipcRenderer.send('send-to-python', data),
   moveMouse: async (x, y) => {
@@ -30,9 +33,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     await keyboard.pressKey(nutKey);
     await keyboard.releaseKey(nutKey);
   },
-  getApiClass: (category) => {
-    const ApiClass = require(`./src/interactions/${category.charAt(0).toUpperCase() + category.slice(1)}`);
-    const apiInstance = new ApiClass();
-    return apiInstance;
-  },
+
+  // expose directement
+  swipe: (params) => actionsInstance.swipe(params),
 });

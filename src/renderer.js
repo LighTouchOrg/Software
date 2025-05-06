@@ -56,18 +56,19 @@ function hand_tracking(method, params) {
 }
 
 function readMessage(msg) {
-  // Format: {"category": "category", "method": "method", "params": {"p1": 1, "p2": "p2"}}
   try {
     const parsed = JSON.parse(msg);
     let { category, method, params } = parsed;
     console.log("Catégorie:", category);
     console.log("Méthode:", method);
     console.log("Paramètres:", params);
-    method = method.trim();
+    method = method.trim().toLowerCase();
 
-    const apiInstance = window.electronAPI.getApiClass(category);
-    const response = apiInstance[method](params);
-
+    if (typeof window.electronAPI[method] === "function") {
+      window.electronAPI[method](params);
+    } else {
+      console.error(`Méthode '${method}' non exposée dans electronAPI`);
+    }
   } catch (e) {
     console.error("Erreur de parsing du message:", e);
   }
