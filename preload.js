@@ -8,24 +8,26 @@ contextBridge.exposeInMainWorld('electronAPI', {
     await mouse.move(straightTo(new Point(x, y)));
   },
   pressKey: async (key) => {
+    let nutKey;
     switch (key) {
       case 'ArrowUp':
-        key = Key.ArrowUp;
+        nutKey = Key.Up;
         break;
       case 'ArrowDown':
-        key = Key.ArrowDown;
+        nutKey = Key.Down;
         break;
       case 'ArrowLeft':
-        key = Key.ArrowLeft;
+        nutKey = Key.Left;
         break;
       case 'ArrowRight':
-        key = Key.ArrowRight;
+        nutKey = Key.Right;
         break;
       default:
         console.error(`Key ${key} not recognized`);
         return;
     }
-    // Press the key using nut.js
-    await keyboard.pressKey(key);
+
+    await keyboard.pressKey(nutKey);
+    await keyboard.releaseKey(nutKey);
   },
 });
