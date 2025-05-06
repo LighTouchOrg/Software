@@ -37,16 +37,6 @@ calibrateButton.addEventListener('click', () => {
   window.electronAPI.sendToPython("START_CALIBRATION");
 });
 
-stopButton.addEventListener('click', () => {
-  console.log("Calibration terminée.");
-  stopButton.classList.add('hidden');
-  loading.classList.add('hidden');
-  calibrateButton.disabled = false;
-
-  // Tu peux envoyer un message à Python ici si besoin :
-  // window.electronAPI.sendToPython("STOP_CALIBRATION");
-});
-
 async function swipe(params) {
   if (params.direction === "left") {
     await window.electronAPI?.pressKey("ArrowLeft");
@@ -84,8 +74,35 @@ function readMessage(msg) {
 }
 
 window.electronAPI?.onPythonData((event, data) => {
-  if (data.startsWith("BT:")) {
-    const message = data.slice(3).trim();
-    deviceStatus.textContent = `Appareil connecté : ${message}`;
+  if (!data.startsWith("BT:")) return;
+
+  const raw = data.slice(3).trim();
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (e) {
+    console.error("Erreur de parsing JSON :", e);
+    return;
+  }
+
+  // Affichage debug
+  console.log("Message reçu :", parsed);
+
+  // Calibration terminée
+  if (
+    parsed.category === "hand_tracking" &&
+    parsed.method === "calibrate" &&
+    parsed.params?.value === false
+  ) {
+    loading.classList.add("hidden");
+    stopButton.classList.add("hidden");
+    calibrateButton.disabled = false;
+    deviceStatus.textContent = "Caméra calibrée";
+
+    if (calibrationWindow && !calibrationWindow.closed) {
+      calibrationWindow.close();
+    }
+  } else {
+    deviceStatus.textContent = `Appareil connecté : ${raw}`;
   }
 });
