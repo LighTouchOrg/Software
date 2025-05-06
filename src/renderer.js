@@ -46,7 +46,7 @@ async function swipe(params) {
 }
 
 function hand_tracking(method, params) {
-  switch (method === "swipe") {
+  switch (method) {
     case "swipe":
       swipe(params);
       break;
