@@ -1,5 +1,3 @@
-const { mouse, straightTo, Point, keyboard, Key } = require("@nut-tree-fork/nut-js");
-
 class Actions {
     constructor() {
         this.actions = [];
@@ -22,5 +20,3 @@ class Actions {
     };
 
 }
-
-module.exports = Actions;

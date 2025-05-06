@@ -31,5 +31,3 @@ class Settings {
     startCalibration() {};
     stopCalibration() {};
 }
-
-module.exports = Settings;

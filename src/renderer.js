@@ -7,12 +7,6 @@ const deviceStatus = document.getElementById('device-status');
 let dotCount = 0;
 let calibrationWindow = null;
 
-document.onkeydown = async (event) => {
-  if (event.key === 'ArrowUp') {
-    await window.electronAPI?.moveMouse(0, -10);
-  }
-}
-
 // Animation des points de chargement
 setInterval(() => {
   dotCount = (dotCount + 1) % 4;
@@ -64,13 +58,28 @@ function readMessage(msg) {
     console.log("Paramètres:", params);
     method = method.trim().toLowerCase();
 
-    if (typeof window.electronAPI[method] === "function") {
-      window.electronAPI[method](params);
-    } else {
-      console.error(`Méthode '${method}' non exposée dans electronAPI`);
+    switch (category) {
+      case "Actions":
+        const action = new Actions();
+        action[method](params);
+        break;
+      case "Settings":
+        const settings = new Settings();
+        settings[method](params);
+        break;
+      default:
+        console.error("Catégorie non reconnue:", category);
+        break;
     }
   } catch (e) {
     console.error("Erreur de parsing du message:", e);
+  }
+}
+
+// Pour tester sans Raspberry
+document.onkeydown = async (event) => {
+  if (event.key === 'ArrowRight') {
+    readMessage('{"category":"Actions","method":"swipe","params":{"direction":"right"}}');
   }
 }
 
