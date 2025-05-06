@@ -20,7 +20,6 @@ setInterval(() => {
 }, 500);
 
 calibrateButton.addEventListener('click', () => {
-  console.log("Calibrage demandé.");
   loading.classList.remove('hidden');
   calibrateButton.disabled = true;
 
@@ -39,15 +38,15 @@ calibrateButton.addEventListener('click', () => {
 
 async function swipe(params) {
   if (params.direction === "left") {
-    await window.electronAPI?.pressKey("ArrowLeft");
+    window.electronAPI?.pressKey("ArrowLeft");
   } else if (params.direction === "right") {
-    await window.electronAPI?.pressKey("ArrowRight");
+    window.electronAPI.pressKey("ArrowRight");
   }
 }
 
 function hand_tracking(method, params) {
   switch (method) {
-    case "swipe":
+    case "Swipe":
       swipe(params);
       break;
     default:
