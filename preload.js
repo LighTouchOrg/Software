@@ -31,6 +31,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     await keyboard.releaseKey(nutKey);
   },
   getApiClass: (category) => {
-    return require(`./interactions/${category.charAt(0).toUpperCase() + category.slice(1)}`);
+    return require(`./src/interactions/${category.charAt(0).toUpperCase() + category.slice(1)}`);
   },
 });
