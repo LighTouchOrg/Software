@@ -79,8 +79,11 @@ function readMessage(msg) {
 
 // Pour tester sans Raspberry
 // document.onkeydown = async (event) => {
-//   if (event.key === 'ArrowRight') {
+//   if (event.key === 's') {
 //     readMessage('{"category":"actions","method":"swipe","params":{"direction":"right"}}');
+//   }
+//   if (event.key === 'm') {
+//     readMessage('{"category":"actions","method":"move","params":{"x":400,"y":400}}');
 //   }
 // }
 

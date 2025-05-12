@@ -35,4 +35,16 @@ class Actions {
         return 0;
     };
 
+    move(params) {
+        if (!params || !params.x || !params.y) {
+            console.error("Invalid parameters for move action:", params);
+            return -1;
+        }
+        const { x, y } = params;
+        window.electronAPI?.moveMouse(x, y);
+        console.log("Move action executed with params:", params);
+
+        return 0;
+    }
+
 }
