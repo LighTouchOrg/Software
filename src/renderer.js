@@ -85,6 +85,9 @@ function readMessage(msg) {
 //   if (event.key === 'm') {
 //     readMessage('{"category":"actions","method":"move","params":{"x":400,"y":400}}');
 //   }
+//   if (event.key === 'c') {
+//     readMessage('{"category":"actions","method":"click","params":{"x":450,"y":400}}');
+//   }
 // }
 
 window.electronAPI?.onPythonData((event, data) => {

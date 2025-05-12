@@ -45,6 +45,19 @@ class Actions {
         console.log("Move action executed with params:", params);
 
         return 0;
-    }
+    };
+
+    click(params) {
+        if (!params || !params.x || !params.y) {
+            console.error("Invalid parameters for click action:", params);
+            return -1;
+        }
+        const { x, y } = params;
+        window.electronAPI?.pressMouse(x, y);
+        window.electronAPI?.releaseMouse(x, y);
+        console.log("Click action executed with params:", params);
+
+        return 0;
+    };
 
 }
