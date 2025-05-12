@@ -45,11 +45,13 @@ client.on('close', () => {
 });
 
 let win;
+const iconPath = path.join(__dirname, "src", "img/lightouch-logo.png");
 
 const createWindow = () => {
   win = new BrowserWindow({
     width: 1000,
     height: 800,
+    icon: iconPath,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
