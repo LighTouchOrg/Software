@@ -2,10 +2,29 @@
 <html lang="fr">
 <head>
   <title>Lightouch</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self';">
   <link rel="stylesheet" href="style.css">
-  <script defer src="renderer.js"></script>
 </head>
 <body class="calibration-window">
+  <div class="loading-center">
+    Calibration en cours<span id="loading-dots">...</span>
+  </div>
+
+  <script>
+    let dotCount = 0;
+    const loadingDots = document.getElementById('loading-dots');
+
+    // Animation des points
+    setInterval(() => {
+      dotCount = (dotCount + 1) % 4;
+      if (loadingDots) loadingDots.textContent = '.'.repeat(dotCount);
+    }, 500);
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        window.close();
+      }
+    });
+  </script>
 </body>
 </html>

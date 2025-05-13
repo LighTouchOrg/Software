@@ -160,13 +160,21 @@ def start_calibration(conn):
 # ------- Electron Listener -------
 def listen_to_electron(conn):
     try:
+        calibration_active = False  # état de la calibration
         while True:
             try:
                 data = conn.recv(1024).decode()
                 if data:
                     print("Received from Electron:", data)
                     if data == "START_CALIBRATION":
-                        start_calibration(conn)
+                        if not calibration_active:
+                            start_calibration(conn)
+                            calibration_active = True
+                    elif data == '{"category": "screen", "method": "calibrate", "params": {"value": true}}':
+                        if calibration_active:
+                            print("Calibration déjà active, fermeture de la fenêtre.")
+                            conn.sendall("CLOSE_CALIBRATION_WINDOW".encode())
+                            calibration_active = False
             except socket.timeout:
                 continue  # socket is alive, just no data yet
             except (socket.error, OSError) as e:

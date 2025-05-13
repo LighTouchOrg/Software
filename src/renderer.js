@@ -1,35 +1,30 @@
 const calibrateButton = document.getElementById('calibrate-button');
-const stopButton = document.getElementById('stop-button');
-const loading = document.getElementById('loading');
-const loadingDots = document.getElementById('loading-dots');
 const deviceStatus = document.getElementById('device-status');
 
-let dotCount = 0;
 let calibrationWindow = null;
+let jsonBuffer = "";
 
-// Animation des points de chargement
-setInterval(() => {
-  dotCount = (dotCount + 1) % 4;
-  loadingDots.textContent = '.'.repeat(dotCount);
-}, 500);
+// Lancer la calibration
+if (calibrateButton) {
+  calibrateButton.addEventListener('click', () => {
+    if (!calibrationWindow || calibrationWindow.closed) {
+      calibrateButton.disabled = true;
 
-calibrateButton.addEventListener('click', () => {
-  loading.classList.remove('hidden');
-  calibrateButton.disabled = true;
+      calibrationWindow = window.open('calibration.html', '_blank', 'width=800,height=600,fullscreen=yes');
 
-  // open temporary full-screen window
-  calibrationWindow = window.open('calibration.html', '_blank', 'width=800,height=600,fullscreen=yes');
+      const checker = setInterval(() => {
+        if (!calibrationWindow || calibrationWindow.closed) {
+          calibrationWindow = null;
+          clearInterval(checker);
+        }
+      }, 500);
 
-  // Add event listener to close the window with Escape key
-  calibrationWindow.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-      calibrationWindow.close();
+      window.electronAPI.sendToPython("START_CALIBRATION");
     }
   });
+}
 
-  window.electronAPI.sendToPython("START_CALIBRATION");
-});
-
+// Action swipe simple
 async function swipe(params) {
   if (params.direction === "left") {
     window.electronAPI?.pressKey("ArrowLeft");
@@ -38,6 +33,7 @@ async function swipe(params) {
   }
 }
 
+// Traitement de méthodes spécifiques
 function hand_tracking(method, params) {
   method = method.trim().toLowerCase();
   switch (method) {
@@ -50,13 +46,11 @@ function hand_tracking(method, params) {
   }
 }
 
+// Lecture du message JSON valide
 function readMessage(msg) {
   try {
     const parsed = JSON.parse(msg);
     let { category, method, params } = parsed;
-    console.log("Catégorie:", category);
-    console.log("Méthode:", method);
-    console.log("Paramètres:", params);
     method = method.trim().toLowerCase();
 
     switch (category) {
@@ -91,34 +85,56 @@ function readMessage(msg) {
 // }
 
 window.electronAPI?.onPythonData((event, data) => {
-  if (!data.startsWith("BT:")) return;
+  console.log("Donnée reçue de Python :", data);
 
-  const raw = data.slice(3).trim();
-  let parsed;
-  try {
-    parsed = JSON.parse(raw);
-  } catch (e) {
-    console.error("Erreur de parsing JSON :", e);
+  if (!data.startsWith("BT:")) {
     return;
   }
 
-  readMessage(raw);
+  const raw = data.slice(3).trim();
+  jsonBuffer += raw;
 
-  // Calibration terminée
-  if (
-    parsed.category === "hand_tracking" &&
-    parsed.method === "calibrate" &&
-    parsed.params?.value === false
-  ) {
-    loading.classList.add("hidden");
-    stopButton.classList.add("hidden");
-    calibrateButton.disabled = false;
-    deviceStatus.textContent = "Caméra calibrée";
+  const first = jsonBuffer.indexOf("{");
+  const last = jsonBuffer.lastIndexOf("}");
 
+  if (first !== -1 && last !== -1 && last > first) {
+    const possibleJson = jsonBuffer.slice(first, last + 1);
+
+    try {
+      const parsed = JSON.parse(possibleJson);
+      readMessage(possibleJson);
+
+      if (
+        parsed?.category === "screen" &&
+        parsed?.method === "calibrate"
+      ) {
+        const value = parsed.params?.value;
+
+        if (value === false) {
+          if (deviceStatus) deviceStatus.textContent = "Calibration terminée.";
+        } else if (value === true) {
+          if (deviceStatus) deviceStatus.textContent = "Calibration échouée. Veuillez réessayer.";
+        }
+
+        if (calibrateButton) calibrateButton.disabled = false;
+        if (calibrationWindow && !calibrationWindow.closed) {
+          calibrationWindow.close();
+        }
+      }
+
+      jsonBuffer = ""; // reset buffer
+
+    } catch (e) {
+      console.error("Erreur de parsing JSON :", e, possibleJson);
+    }
+  }
+
+  // Cas spécial : fermeture manuelle
+  if (data === "CLOSE_CALIBRATION_WINDOW") {
     if (calibrationWindow && !calibrationWindow.closed) {
       calibrationWindow.close();
     }
-  } else {
-    deviceStatus.textContent = `Appareil connecté : ${raw}`;
+    if (calibrateButton) calibrateButton.disabled = false;
+    if (deviceStatus) deviceStatus.textContent = "Calibration terminée. Vous pouvez recalibrer.";
   }
 });
