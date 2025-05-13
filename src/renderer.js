@@ -20,6 +20,14 @@ if (calibrateButton) {
       }, 500);
 
       window.electronAPI.sendToPython("START_CALIBRATION");
+
+      calibrationWindow.addEventListener('keydown', (event) => {
+         if (event.key === 'Escape') {
+           calibrationWindow.close();
+           calibrationWindow = null;
+           calibrateButton.disabled = false;
+         }
+      });
     }
   });
 }
@@ -119,6 +127,7 @@ window.electronAPI?.onPythonData((event, data) => {
         if (calibrateButton) calibrateButton.disabled = false;
         if (calibrationWindow && !calibrationWindow.closed) {
           calibrationWindow.close();
+          calibrationWindow = null;
         }
       }
 
@@ -133,6 +142,8 @@ window.electronAPI?.onPythonData((event, data) => {
   if (data === "CLOSE_CALIBRATION_WINDOW") {
     if (calibrationWindow && !calibrationWindow.closed) {
       calibrationWindow.close();
+      calibrationWindow = null;
+      jsonBuffer = ""; // reset buffer
     }
     if (calibrateButton) calibrateButton.disabled = false;
     if (deviceStatus) deviceStatus.textContent = "Calibration terminée. Vous pouvez recalibrer.";

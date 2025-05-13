@@ -19,12 +19,6 @@
       dotCount = (dotCount + 1) % 4;
       if (loadingDots) loadingDots.textContent = '.'.repeat(dotCount);
     }, 500);
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        window.close();
-      }
-    });
   </script>
 </body>
 </html>
