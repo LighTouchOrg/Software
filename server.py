@@ -150,7 +150,7 @@ def send_bluetooth_message(message, conn):
         conn.sendall(f"BT:Erreur lors de l'envoi Bluetooth : {e}".encode())
 
 def start_calibration(conn):
-    msg = build_message("screen", "calibrate", {"value": True})
+    msg = build_message("screen", "calibrate", "")
     send_bluetooth_message(msg, conn)
     try:
         conn.sendall("CALIBRATION_STARTED".encode())
