@@ -120,7 +120,7 @@ window.electronAPI?.onPythonData((event, data) => {
 
         if (value === false) {
           if (deviceStatus) deviceStatus.textContent = "Calibration terminée.";
-        } else if (value === true) {
+        } else if (value === "failed") {
           if (deviceStatus) deviceStatus.textContent = "Calibration échouée. Veuillez réessayer.";
         }
 
