@@ -102,43 +102,47 @@ window.electronAPI?.onPythonData((event, data) => {
   const raw = data.slice(3).trim();
   jsonBuffer += raw;
 
-  const first = jsonBuffer.indexOf("{");
-  const last = jsonBuffer.lastIndexOf("}");
+// Trouver tous les objets JSON complets (commençant par { et finissant par })
+const regex = /{[^{}]*(?:{[^{}]*}[^{}]*)*}/g;
+let match;
+let lastIndex = 0;
 
-  if (first !== -1 && last !== -1 && last > first) {
-    const possibleJson = jsonBuffer.slice(first, last + 1);
+while ((match = regex.exec(jsonBuffer)) !== null) {
+  const possibleJson = match[0];
+  try {
+    const parsed = JSON.parse(possibleJson);
+    console.log("Parsed JSON:", parsed);
+    readMessage(possibleJson);
 
-    try {
-      const parsed = JSON.parse(possibleJson);
-      readMessage(possibleJson);
+    if (
+      parsed?.category === "screen" &&
+      parsed?.method === "calibrate"
+    ) {
+      const value = parsed.params?.value;
 
-      if (
-        parsed?.category === "screen" &&
-        parsed?.method === "calibrate"
-      ) {
-        const value = parsed.params?.value;
-
-        if (value === false) {
-          if (deviceStatus) deviceStatus.textContent = "Calibration terminée.";
-        } else if (value === true) {
-          if (deviceStatus) deviceStatus.textContent = "Calibration échouée. Veuillez réessayer.";
-        }
-
-        if (calibrateButton) calibrateButton.disabled = false;
-        if (calibrationWindow && !calibrationWindow.closed) {
-          calibrationWindow.close();
-          calibrationWindow = null;
-        }
+      if (value === false) {
+        if (deviceStatus) deviceStatus.textContent = "Calibration terminée.";
+      } else if (value === true) {
+        if (deviceStatus) deviceStatus.textContent = "Calibration échouée. Veuillez réessayer.";
       }
 
-      jsonBuffer = ""; // reset buffer
-
-    } catch (e) {
-      console.error("Erreur de parsing JSON :", e, possibleJson);
+      if (calibrateButton) calibrateButton.disabled = false;
+      if (calibrationWindow && !calibrationWindow.closed) {
+        calibrationWindow.close();
+        calibrationWindow = null;
+      }
     }
+    lastIndex = regex.lastIndex;
+  } catch (e) {
+    console.error("Erreur de parsing JSON :", e, possibleJson);
+    break; // On arrête si on tombe sur un JSON incomplet
   }
+}
 
-  // Cas spécial : fermeture manuelle
+// Garder dans le buffer ce qui n'a pas pu être parsé (JSON incomplet)
+jsonBuffer = jsonBuffer.slice(lastIndex);
+
+// Cas spécial : fermeture manuelle
   if (data === "CLOSE_CALIBRATION_WINDOW") {
     if (calibrationWindow && !calibrationWindow.closed) {
       calibrationWindow.close();

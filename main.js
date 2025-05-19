@@ -13,11 +13,19 @@ const pythonServer = spawn('python', [path.join(__dirname, 'server.py')], {
   console.error('Failed to start Python process:', err);
 });
 
+let connectedOnce = false;
+
 pythonServer.stdout.on('data', (data) => {
-  console.log('Attempting to connect to Python server...');
-  client.connect(9000, '127.0.0.1', () => {
-    console.log('Successfully connected to Python Bluetooth backend');
-  });
+  const output = data.toString();
+  console.log(output);
+
+  if (!connectedOnce && output.includes("Python server is ready")) {
+    console.log('Attempting to connect to Python server...');
+    client.connect(9000, '127.0.0.1', () => {
+      console.log('Successfully connected to Python Bluetooth backend');
+      connectedOnce = true;
+    });
+  }
 });
 
 pythonServer.stderr.on('data', (data) => {

@@ -4,6 +4,7 @@ Windows uses serial COM port.
 """
 import os
 import sys
+import time
 import json
 import socket
 import platform
@@ -32,18 +33,25 @@ def build_message(category, method, params):
         return None
 
 def start_electron_connection():
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     try:
-        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.bind(('localhost', 9000))
         server.listen(1)
         print("Python server is ready and listening on port 9000")  # Do NOT remove
         sys.stdout.flush()
-        conn, _ = server.accept()
-        conn.settimeout(1.0)  # Important: make recv() non-blocking
-        return conn, server
     except Exception as e:
-        print("Failed to start TCP server:", e)
+        print("Failed to bind TCP server:", e)
         sys.exit(1)
+
+    while True:
+        try:
+            conn, _ = server.accept()
+            conn.settimeout(1.0)
+            return conn, server
+        except Exception as e:
+            print("Waiting for Electron to connect...")
+            time.sleep(1)
 
 # ------- Linux: RFCOMM Bluetooth -------
 def receive_data_raspi(client_sock, conn):
@@ -178,8 +186,8 @@ def listen_to_electron(conn):
             except socket.timeout:
                 continue  # socket is alive, just no data yet
             except (socket.error, OSError) as e:
-                print("Socket error:", e)
-                break
+                print("Socket error (probable déconnexion Electron):", e)
+                return
     except KeyboardInterrupt:
         print("Server interrupted by user. Closing.")
     finally:
@@ -187,17 +195,19 @@ def listen_to_electron(conn):
 
 # ------- Main -------
 def main():
-    conn, server_socket = start_electron_connection()
+    while True:
+        conn, server_socket = start_electron_connection()
 
-    if is_linux:
-        handle_bluetooth_raspi(conn)
-    elif is_windows:
-        handle_bluetooth_windows(conn)
-    else:
-        print("Unsupported OS for Bluetooth.")
+        if is_linux:
+            handle_bluetooth_raspi(conn)
+        elif is_windows:
+            handle_bluetooth_windows(conn)
+        else:
+            print("Unsupported OS for Bluetooth.")
 
-    listen_to_electron(conn)
-    server_socket.close()
+        listen_to_electron(conn)
+        server_socket.close()
+        print("Connexion Electron terminée. En attente d'une nouvelle connexion...")
 
 if __name__ == "__main__":
     main()
