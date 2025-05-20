@@ -56,12 +56,14 @@ def start_electron_connection():
 # ------- Linux: RFCOMM Bluetooth -------
 def receive_data_raspi(client_sock, conn):
     try:
+        sock_file = client_sock.makefile('r')
         while True:
             try:
-                data = client_sock.recv(1024).decode()
-                if data:
-                    print("Received (Bluetooth):", data)
-                    conn.sendall(f"BT:{data}".encode())
+                line = sock_file.readline()
+                if line:
+                    line = line.strip()
+                    print("Received (Bluetooth):", line)
+                    conn.sendall(f"BT:{line}".encode())
             except Exception as e:
                 print("Bluetooth read error:", e)
                 break
