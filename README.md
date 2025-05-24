@@ -8,6 +8,9 @@ Lightouch Software est une application Electron utilisée pour contrôler le sys
    ```bash
    npm install
    ```
+   ```bash
+   pip install -r requirements.txt
+   ```
 2. Lancez l'application :
    ```bash
    npm start
