@@ -5,9 +5,29 @@ contextBridge.exposeInMainWorld("electronAPI", {
   onPythonData: (callback) => ipcRenderer.on('python-data', callback),
   sendToPython: (data) => ipcRenderer.send('send-to-python', data),
   moveMouse: async (x, y) => {
+    if (typeof x === "string") x = parseFloat(x);
+    if (typeof y === "string") y = parseFloat(y);
+
+    if (typeof x !== "number" || isNaN(x)) {
+      throw new Error(`Invalid x coordinate: ${x}`);
+    }
+    if (typeof y !== "number" || isNaN(y)) {
+      throw new Error(`Invalid y coordinate: ${y}`);
+    }
+
     await mouse.move(straightTo(new Point(x, y)));
   },
   pressMouse: async (x, y, btn="LEFT") => {
+    if (typeof x === "string") x = parseFloat(x);
+    if (typeof y === "string") y = parseFloat(y);
+
+    if (typeof x !== "number" || isNaN(x)) {
+      throw new Error(`Invalid x coordinate: ${x}`);
+    }
+    if (typeof y !== "number" || isNaN(y)) {
+      throw new Error(`Invalid y coordinate: ${y}`);
+    }
+
     await mouse.move(straightTo(new Point(x, y)));
 
     switch (btn) {
@@ -27,6 +47,16 @@ contextBridge.exposeInMainWorld("electronAPI", {
     await mouse.pressButton(btn);
   },
   releaseMouse: async (x, y, btn="LEFT") => {
+    if (typeof x === "string") x = parseFloat(x);
+    if (typeof y === "string") y = parseFloat(y);
+
+    if (typeof x !== "number" || isNaN(x)) {
+      throw new Error(`Invalid x coordinate: ${x}`);
+    }
+    if (typeof y !== "number" || isNaN(y)) {
+      throw new Error(`Invalid y coordinate: ${y}`);
+    }
+
     await mouse.move(straightTo(new Point(x, y)));
 
     switch (btn) {
