@@ -6,6 +6,7 @@ import os
 import sys
 import time
 import json
+import select
 import socket
 import platform
 from threading import Thread
@@ -58,15 +59,15 @@ def receive_data_raspi(client_sock, conn):
     try:
         sock_file = client_sock.makefile('r')
         while True:
-            try:
+            ready, _, _ = select.select([sock_file], [], [], 0.05)  # timeout de 50ms
+            if ready:
                 line = sock_file.readline()
+                if not line:
+                    continue
+                line = line.strip()
                 if line:
-                    line = line.strip()
                     print("Received (Bluetooth):", line)
                     conn.sendall(f"BT:{line}".encode())
-            except Exception as e:
-                print("Bluetooth read error:", e)
-                break
     except Exception as e:
         print("Bluetooth connection error:", e)
 
@@ -92,12 +93,18 @@ def handle_bluetooth_raspi(conn):
 def find_active_bluetooth_port():
     import serial.tools.list_ports
     ports = serial.tools.list_ports.comports()
+
     for port in ports:
-        desc = port.description.lower()
         hwid = port.hwid.lower()
         if 'bthenum' in hwid and '000000000000' not in hwid:
-            print(f"Found active Bluetooth port: {port.device} ({desc})")
+            print(f"Port trouvé via bthenum : {port.device}")
             return port.device
+
+    if ports:
+        print(f"Aucun bthenum trouvé, fallback sur : {ports[0].device}")
+        return ports[0].device
+
+    print("Aucun port COM trouvé.")
     return None
 
 def receive_data_windows(port, conn):
