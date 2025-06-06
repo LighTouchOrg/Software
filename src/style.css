@@ -55,6 +55,12 @@ h1 {
     text-shadow: none;
 }
 
+body.dark-mode h1 {
+    color: white;
+    -webkit-text-stroke: none;
+    text-shadow: none;
+}
+
 /* Bouton recherche */
 button {
     background-color: var(--primary-color-light);
@@ -259,3 +265,27 @@ body.dark-mode {
         color: red;
     }
 }
+
+/* Conteneur commun pour chaque réglage */
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 350px;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  /* Texte à gauche */
+  .setting_name {
+    font-weight: 600;
+    font-size: 1rem;
+    /* pour assurer que les labels ont la même largeur */
+    width: 150px;
+  }
+
+  /* Pour le slider, qu'il prenne la place restante */
+  #text-size-slider {
+    flex-grow: 1;
+    margin-left: 15px;
+  }
