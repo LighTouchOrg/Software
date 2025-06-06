@@ -48,15 +48,18 @@ class Actions {
     };
 
     click(params) {
-        if (!params || !params.x || !params.y) {
-            console.error("Invalid parameters for click action:", params);
-            return -1;
+        // Click at the coordinates provided in params
+        if (params && params.x && params.y) {
+            const { x, y } = params;
+            window.electronAPI?.pressMouse(x, y);
+            window.electronAPI?.releaseMouse(x, y);
+            console.log("Click action executed with params:", params);
+        } else {
+            // Click at the current mouse position
+            window.electronAPI?.pressMouse();
+            window.electronAPI?.releaseMouse();
+            console.log("Click action executed at current mouse position");
         }
-        const { x, y } = params;
-        window.electronAPI?.pressMouse(x, y);
-        window.electronAPI?.releaseMouse(x, y);
-        console.log("Click action executed with params:", params);
-
         return 0;
     };
 

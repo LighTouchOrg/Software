@@ -18,17 +18,20 @@ contextBridge.exposeInMainWorld("electronAPI", {
     await mouse.move(straightTo(new Point(x, y)));
   },
   pressMouse: async (x, y, btn="LEFT") => {
-    if (typeof x === "string") x = parseFloat(x);
-    if (typeof y === "string") y = parseFloat(y);
+    // If x or y are not provided, press at the current position
+    if (typeof x !== "undefined" && typeof y !== "undefined") {
+      if (typeof x === "string") x = parseFloat(x);
+      if (typeof y === "string") y = parseFloat(y);
 
-    if (typeof x !== "number" || isNaN(x)) {
-      throw new Error(`Invalid x coordinate: ${x}`);
-    }
-    if (typeof y !== "number" || isNaN(y)) {
-      throw new Error(`Invalid y coordinate: ${y}`);
-    }
+      if (typeof x !== "number" || isNaN(x)) {
+        throw new Error(`Invalid x coordinate: ${x}`);
+      }
+      if (typeof y !== "number" || isNaN(y)) {
+        throw new Error(`Invalid y coordinate: ${y}`);
+      }
 
-    await mouse.move(straightTo(new Point(x, y)));
+      await mouse.move(straightTo(new Point(x, y)));
+    }
 
     switch (btn) {
       case "LEFT":
@@ -47,17 +50,20 @@ contextBridge.exposeInMainWorld("electronAPI", {
     await mouse.pressButton(btn);
   },
   releaseMouse: async (x, y, btn="LEFT") => {
-    if (typeof x === "string") x = parseFloat(x);
-    if (typeof y === "string") y = parseFloat(y);
+    // If x or y are not provided, release at the current position
+    if (typeof x !== "undefined" && typeof y !== "undefined") {
+      if (typeof x === "string") x = parseFloat(x);
+      if (typeof y === "string") y = parseFloat(y);
 
-    if (typeof x !== "number" || isNaN(x)) {
-      throw new Error(`Invalid x coordinate: ${x}`);
-    }
-    if (typeof y !== "number" || isNaN(y)) {
-      throw new Error(`Invalid y coordinate: ${y}`);
-    }
+      if (typeof x !== "number" || isNaN(x)) {
+        throw new Error(`Invalid x coordinate: ${x}`);
+      }
+      if (typeof y !== "number" || isNaN(y)) {
+        throw new Error(`Invalid y coordinate: ${y}`);
+      }
 
-    await mouse.move(straightTo(new Point(x, y)));
+      await mouse.move(straightTo(new Point(x, y)));
+    }
 
     switch (btn) {
       case "LEFT":
