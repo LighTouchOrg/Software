@@ -69,6 +69,22 @@ button {
     transition: background-color 0.2s ease;
 }
 
+/* Bouton Settings */
+.button_setting {
+    background-color: var(--primary-color-light);
+    color: white;
+    border: none;
+    padding: 0.75em 1em;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 350px;
+    transition: background-color 0.2s ease;
+    text-align: center;
+    text-decoration: none;
+}
+
 .small {
     max-width: 50%;
 }
@@ -143,3 +159,37 @@ button:hover {
         padding: 14px;
     }
 }
+
+/* Reglage */
+.settings-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#settings-panel {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 1em;
+  border-radius: 8px;
+  display: none;
+  z-index: 1000;
+  width: 220px;
+}
+
+#settings-panel.hidden {
+  display: none;
+}
+
+body.dark-mode {
+  background-color: #222;
+  color: #eee;
+}
+
