@@ -1,18 +1,83 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <title>LighTouch®</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self';">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>LighTouch® – Réglages</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self';" />
+  <link rel="stylesheet" href="style.css" />
   <script defer src="renderer.js"></script>
+  <style>
+    /* Conteneur commun pour chaque réglage */
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 350px;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    /* Texte à gauche */
+    .setting_name {
+      font-weight: 600;
+      font-size: 1rem;
+      /* pour assurer que les labels ont la même largeur */
+      width: 150px;
+    }
+
+    /* Pour le slider, qu'il prenne la place restante */
+    #text-size-slider {
+      flex-grow: 1;
+      margin-left: 15px;
+    }
+  </style>
 </head>
 <body>
   <div class="logo-container">
-    <img src="./img/lightouch-logo.png" alt="Logo Lightouch" class="logo">
+    <img src="./img/lightouch-logo.png" alt="Logo Lightouch" class="logo" />
   </div>
 
   <h1>Settings</h1>
 
   <a class="button_setting" href="index.html">Go Back</a>
+
+  <!-- Liseuse vocale -->
+  <div class="setting-row">
+    <span class="setting_name">Liseuse numérique</span>
+    <label class="switch">
+      <input type="checkbox" id="reader-toggle" />
+      <span class="slider round"></span>
+    </label>
+  </div>
+
+  <!-- Taille de texte -->
+<div class="setting-row">
+    <label for="text-size-slider" class="setting_name">Taille du texte</label>
+    <div style="flex-grow:1; margin-left: 15px; display: flex; flex-direction: column; align-items: center;">
+      <input
+        type="range"
+        min="1"
+        max="3"
+        step="1"
+        value="2"
+        id="text-size-slider"
+        style="width: 100%;"
+      />
+      <div class="slider-labels" style="display: flex; justify-content: space-between; width: 100%; margin-top: 4px;">
+        <span style="font-size: 0.7rem;">T</span>
+        <span style="font-size: 1.1rem;">T</span>
+        <span style="font-size: 1.6rem;">T</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thème clair / sombre -->
+  <div class="setting-row">
+    <span class="setting_name">Thème sombre</span>
+    <label class="switch">
+      <input type="checkbox" id="theme-toggle" />
+      <span class="slider round"></span>
+    </label>
+  </div>
 </body>
 </html>
