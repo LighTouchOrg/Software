@@ -7,7 +7,7 @@ app.commandLine.appendSwitch('enable-experimental-web-platform-features');
 
 const client = new net.Socket();
 
-const pythonServer = spawn('python', [path.join(__dirname, 'server.py')], {
+const pythonServer = spawn('python', [path.join(__dirname, '/serveur/server.py')], {
   stdio: ['pipe', 'pipe', 'pipe']
 }).on('error', (err) => {
   console.error('Failed to start Python process:', err);
