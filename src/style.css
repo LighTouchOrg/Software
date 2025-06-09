@@ -5,6 +5,15 @@
     --background-color: #f3f3f3;
     --font-color: #1e1e1e;
     --font-family: 'Tahoma', sans-serif;
+
+    --primary-color-dark: #e0e0e0;
+    --primary-color-light-dark: #c0abe2;
+    --primary-color-light-dark-hover: #9b6ee2;
+    --secondary-color-dark: #e09900;
+    --background-color-dark: #0d0d0d;
+    --font-color-dark: #e0e0e0;
+
+    --check-true : #2a9d8f;
 }
 
 * {
@@ -44,7 +53,7 @@ body {
     object-fit: contain;
 }
 
-/* Titre */
+/* Title */
 h1 {
     font-size: 60px;
     text-align: center;
@@ -56,12 +65,10 @@ h1 {
 }
 
 body.dark-mode h1 {
-    color: white;
-    -webkit-text-stroke: none;
-    text-shadow: none;
+    color: var(--primary-color-dark);
 }
 
-/* Bouton recherche */
+/* Button Search  */
 button {
     background-color: var(--primary-color-light);
     color: white;
@@ -75,7 +82,13 @@ button {
     transition: background-color 0.2s ease;
 }
 
-/* Bouton Settings */
+body.dark-mode button, body.dark-mode .button_setting {
+    background-color: var(--primary-color-light-dark);
+    color: var(--background-color-dark);
+    /* color: var(--background-color); */
+}
+
+/* Button Settings */
 .button_setting {
     background-color: var(--primary-color-light);
     color: white;
@@ -95,11 +108,16 @@ button {
     max-width: 50%;
 }
 
-button:hover {
+button:hover, a:hover {
     background-color: var(--primary-color);
+
 }
 
-/* Infos sélectionnées */
+body.dark-mode a:hover, body.dark-mode button:hover {
+    background-color: var(--primary-color-light-dark-hover);
+}
+
+/* Device Info */
 .device-info {
     display: flex;
     flex-direction: column;
@@ -116,7 +134,11 @@ button:hover {
     text-align: center;
 }
 
-/* Message d'erreur */
+body.dark-mode .device-info {
+    background-color: var(--background-color);
+}
+
+/* Error Message */
 .error-message {
     color: #e63946;
     text-align: center;
@@ -126,7 +148,6 @@ button:hover {
     max-width: 480px;
 }
 
-/* Cacher */
 .hidden {
     display: none;
 }
@@ -166,7 +187,7 @@ button:hover {
     }
 }
 
-/* Reglage */
+/* Settings */
 .settings-icon {
   position: absolute;
   top: 10px;
@@ -240,11 +261,11 @@ body.dark-mode {
     }
 
     input:checked + .slider {
-        background-color: hsl(115, 100%, 50%);
+        background-color: var(--check-true);
     }
 
     input:focus + .slider {
-        box-shadow: 0 0 1px hsl(115, 100%, 50%);
+        box-shadow: 0 0 1px var(--check-true);
     }
 
     input:checked + .slider:before {
@@ -266,7 +287,7 @@ body.dark-mode {
     }
 }
 
-/* Conteneur commun pour chaque réglage */
+/* Common container for each setting */
 .setting-row {
     display: flex;
     justify-content: space-between;
@@ -276,15 +297,13 @@ body.dark-mode {
     margin-top: 20px;
   }
 
-  /* Texte à gauche */
+  /* Left Text */
   .setting_name {
     font-weight: 600;
-    font-size: 1rem;
-    /* pour assurer que les labels ont la même largeur */
     width: 150px;
   }
 
-  /* Pour le slider, qu'il prenne la place restante */
+  /* For the slider to fill the space left */
   #text-size-slider {
     flex-grow: 1;
     margin-left: 15px;
