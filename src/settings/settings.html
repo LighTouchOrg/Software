@@ -6,6 +6,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self';" />
   <link rel="stylesheet" href="../style.css" />
   <script defer src="../renderer.js"></script>
+  <script defer src="multi-lang.js"></script>
   <script defer src="settings.js"></script>
   <script src="User_Settings.js"></script>
 </head>
@@ -14,13 +15,13 @@
     <img src="../img/lightouch-logo.png" alt="Logo Lightouch" class="logo" />
   </div>
 
-  <h1>Settings</h1>
+  <h1 data-i18n="Setting"></h1>
 
-  <a class="button_setting" href="../index.html">Go Back</a>
+  <a class="button_setting" href="../index.html" data-i18n="Back"></a>
 
   <!-- Liseuse vocale -->
   <div class="setting-row">
-    <span class="setting_name">Liseuse numérique</span>
+    <span class="setting_name" data-i18n="Reader"></span>
     <label class="switch">
       <input type="checkbox" id="reader-toggle" />
       <span class="slider round"></span>
@@ -29,7 +30,7 @@
 
   <!-- Taille de texte -->
 <div class="setting-row">
-    <label for="text-size-slider" class="setting_name">Taille du texte</label>
+    <label for="text-size-slider" class="setting_name" data-i18n="SizeText"></label>
     <div style="flex-grow:1; margin-left: 15px; display: flex; flex-direction: column; align-items: center;">
       <input
         type="range"
@@ -50,7 +51,7 @@
 
   <!-- Thème clair / sombre -->
   <div class="setting-row">
-    <span class="setting_name">Thème sombre</span>
+    <span class="setting_name" data-i18n="Theme"></span>
     <label class="switch">
       <input type="checkbox" id="theme-toggle"/>
       <span class="slider round"></span>
@@ -60,7 +61,7 @@
   <!-- Toggle Mode - Naviguation and Presentation -->
 
   <div class="setting-row">
-    <span class="setting_name">Mode Presentation</span>
+    <span class="setting_name" data-i18n="PresMode"></span>
     <label class="switch">
       <input type="checkbox" id="presentation-toggle"/>
       <span class="slider round"></span>
@@ -68,13 +69,20 @@
   </div>
 
   <div class="setting-row">
-    <span class="setting_name">Mode Naviguation</span>
+    <span class="setting_name" data-i18n="NavMode"></span>
     <label class="switch">
       <input type="checkbox" id="nav-toggle"/>
       <span class="slider round"></span>
     </label>
   </div>
 
+  <div class="setting-row">
+    <span class="setting_name" data-i18n="Langage"></span>
+      <select id="lang-selector" name="Langage">
+        <option class="lang" value="fr">Français</option>
+        <option class="lang" value="en">English</option>
+      </select>
+  </div>
   <!-- <button id="liseuse" type="button">Test Liseuse</button> -->
 </body>
 </html>
