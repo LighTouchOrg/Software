@@ -23,7 +23,7 @@
   <div class="setting-row">
     <span class="setting_name" data-i18n="Reader"></span>
     <label class="switch">
-      <input type="checkbox" id="reader-toggle" />
+      <input data-i18n="Reader" type="checkbox" id="reader-toggle" />
       <span class="slider round"></span>
     </label>
   </div>
@@ -40,6 +40,7 @@
         value="2"
         id="text-size-slider"
         style="width: 100%;"
+        data-i18n="SizeText"
       />
       <div class="slider-labels" style="display: flex; justify-content: space-between; width: 100%; margin-top: 4px; margin-left: 25px;">
         <span style="font-size: 0.7rem;">T</span>
@@ -53,7 +54,7 @@
   <div class="setting-row">
     <span class="setting_name" data-i18n="Theme"></span>
     <label class="switch">
-      <input type="checkbox" id="theme-toggle"/>
+      <input data-i18n="Theme" type="checkbox" id="theme-toggle"/>
       <span class="slider round"></span>
     </label>
   </div>
@@ -63,7 +64,7 @@
   <div class="setting-row">
     <span class="setting_name" data-i18n="PresMode"></span>
     <label class="switch">
-      <input type="checkbox" id="presentation-toggle"/>
+      <input data-i18n="PresMode" type="checkbox" id="presentation-toggle"/>
       <span class="slider round"></span>
     </label>
   </div>
@@ -71,18 +72,21 @@
   <div class="setting-row">
     <span class="setting_name" data-i18n="NavMode"></span>
     <label class="switch">
-      <input type="checkbox" id="nav-toggle"/>
+      <input data-i18n="NavMode" type="checkbox" id="nav-toggle"/>
       <span class="slider round"></span>
     </label>
   </div>
 
+  <!-- Select Langage - french or english -->
+
   <div class="setting-row">
     <span class="setting_name" data-i18n="Langage"></span>
-      <select id="lang-selector" name="Langage">
-        <option class="lang" value="fr">Français</option>
-        <option class="lang" value="en">English</option>
-      </select>
+
+    <select id="lang-selector" name="Langage">
+      <option data-i18n="fr" class="lang" value="fr"></option>
+      <option data-i18n="en" class="lang" value="en"></option>
+    </select>
   </div>
-  <!-- <button id="liseuse" type="button">Test Liseuse</button> -->
+
 </body>
 </html>
