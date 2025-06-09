@@ -1,6 +1,7 @@
 const textSizeSelector = document.getElementById('text-size-slider');
 const themeToggle = document.getElementById('theme-toggle');
 const readerToggle = document.getElementById('reader-toggle');
+const langToggle = document.getElementById('lang-selector');
 
 let readerMode = false;
 
@@ -21,13 +22,19 @@ textSizeSelector.addEventListener('input', () => {
 // Dark / Light mode handler
 themeToggle.addEventListener('change', () => {
   document.body.classList.toggle('dark-mode', themeToggle.checked);
-  themeToggle.checked ? localStorage.setItem('preferedTheme', "Dark") : localStorage.setItem('preferedTheme', "Light"); // Ternary use for set the localstorage of the theme by either 'Light' or 'Dark'
+  themeToggle.checked ? localStorage.setItem('preferredTheme', "Dark") : localStorage.setItem('preferredTheme', "Light"); // Ternary use for set the localstorage of the theme by either 'Light' or 'Dark'
 });
 
 // Reader
 readerToggle.addEventListener('change', () => {
   readerMode = readerToggle.checked;
   console.log("Mode liseuse numérique :", readerMode);
+});
+
+langToggle.addEventListener('change', () => {
+  localStorage.setItem('preferredLang', langToggle.value);
+  window.location.reload();
+  console.log("Langage changed for : ", langToggle.value);
 });
 
 // Fonction pour lire du texte à haute voix si mode liseuse activé
