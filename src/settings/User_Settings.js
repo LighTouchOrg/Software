@@ -1,15 +1,17 @@
 window.addEventListener('DOMContentLoaded', () => {
     const savedFontSize = localStorage.getItem('preferredFontSize');
-    const savedTheme = localStorage.getItem('preferedTheme');
+    const savedTheme = localStorage.getItem('preferredTheme');
+    const savedLang = localStorage.getItem('preferredLang');
+
     if (savedFontSize) {
       document.body.style.fontSize = savedFontSize;
     }
 
     const textSizeSelector = document.getElementById('text-size-slider');
     const toggleThemeSelector = document.getElementById('theme-toggle');
+    const inputLang = document.getElementById('lang-selector');
 
-    console.log("Size text : ", savedFontSize);
-    console.log("Theme toggle : ", savedTheme);
+    applyTranslations(savedLang);
 
     if (savedTheme && toggleThemeSelector) {
         toggleThemeSelector.checked = savedTheme === 'Dark';
@@ -26,7 +28,10 @@ window.addEventListener('DOMContentLoaded', () => {
         '20px': '3'
       };
       textSizeSelector.value = reverseSizes[savedFontSize];
-      console.log("Text size : ", textSizeSelector.value);
+    }
+
+    if (inputLang && savedLang) {
+      inputLang.value = savedLang;
     }
 
 });
