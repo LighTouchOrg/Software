@@ -308,3 +308,23 @@ body.dark-mode {
     flex-grow: 1;
     margin-left: 15px;
   }
+
+  /* For select lang option */
+
+#lang-selector {
+    width: 120px;
+    height: 30px;
+    border: 1px solid #999;
+    color: var(--check-true);
+    background-color: #eee;
+    border-radius: 5px;
+}
+
+#lang-selector:hover {
+    cursor: pointer;
+}
+
+.lang {
+    text-align: center;
+    font-weight: bold;
+}
