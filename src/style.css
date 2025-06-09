@@ -274,6 +274,11 @@ body.dark-mode {
         transform: translateX(26px);
     }
 
+    .switch input:focus-visible + .slider {
+        outline: 2px solid var(--secondary-color);
+        outline-offset: 2px;
+    }
+
     /* Rounded sliders */
     .slider.round {
         border-radius: 34px;
@@ -282,9 +287,6 @@ body.dark-mode {
     .slider.round:before {
         border-radius: 50%;
 
-    .setting_name {
-        color: red;
-    }
 }
 
 /* Common container for each setting */
