@@ -4,23 +4,27 @@ const readerToggle = document.getElementById('reader-toggle');
 
 let readerMode = false;
 
-// Gestion de la taille du texte
+// Text size handler
 textSizeSelector.addEventListener('input', () => {
   const sizes = {
     1: '14px',
     2: '16px',
     3: '20px'
   };
-  document.body.style.fontSize = sizes[textSizeSelector.value];
+
+  const selectedSize = sizes[textSizeSelector.value];
+  document.body.style.fontSize = selectedSize;
+
+  localStorage.setItem('preferredFontSize', selectedSize); // Using localstorage to save the preference of the user
 });
 
-// Gestion du thème sombre / clair
+// Dark / Light mode handler
 themeToggle.addEventListener('change', () => {
   document.body.classList.toggle('dark-mode', themeToggle.checked);
-  console.log("Theme changed")
+  themeToggle.checked ? localStorage.setItem('preferedTheme', "Dark") : localStorage.setItem('preferedTheme', "Light"); // Ternary use for set the localstorage of the theme by either 'Light' or 'Dark'
 });
 
-// Gestion du mode liseuse numérique
+// Reader
 readerToggle.addEventListener('change', () => {
   readerMode = readerToggle.checked;
   console.log("Mode liseuse numérique :", readerMode);
