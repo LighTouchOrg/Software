@@ -28,26 +28,14 @@ themeToggle.addEventListener('change', () => {
 // Reader
 readerToggle.addEventListener('change', () => {
   readerMode = readerToggle.checked;
+  localStorage.setItem('Reader', readerToggle.checked);
   console.log("Mode liseuse numérique :", readerMode);
 });
 
+
+// Langage
 langToggle.addEventListener('change', () => {
   localStorage.setItem('preferredLang', langToggle.value);
   window.location.reload();
   console.log("Langage changed for : ", langToggle.value);
 });
-
-// Fonction pour lire du texte à haute voix si mode liseuse activé
-// liseuse.addEventListener('click', () => {
-//   console.log(window.speechSynthesis.getVoices());
-//   lireTexte("Quoicoubeh");
-// });
-
-// function lireTexte(texte) {
-//   if (!readerMode) return;
-//   console.log("Read");
-//   const synth = window.speechSynthesis;
-//   const utterance = new SpeechSynthesisUtterance(texte);
-//   utterance.lang = 'fr-FR';
-//   synth.speak(utterance);
-// }
