@@ -7,6 +7,7 @@
   <script defer src="renderer.js"></script>
   <script defer src="interactions/Actions.js"></script>
   <script defer src="interactions/Settings.js"></script>
+  <script defer src="settings/multi-lang.js"></script>
   <script src="settings/User_Settings.js"></script> <!--  Load this to load the user settings -->
 </head>
 <body>
@@ -16,13 +17,13 @@
 
   <h1>Lightouch</h1>
 
-  <button id="calibrate-button" class="scan-button">Calibrer la caméra</button>
+  <button id="calibrate-button" class="scan-button" data-i18n="Calibration"></button>
 
-  <a class="button_setting" href="settings/settings.html">Settings</a>
+  <a class="button_setting" href="settings/settings.html" data-i18n="Setting"></a>
 
   <div id="connection-status" class="device-info">
     <strong>Status :</strong>
-    <span id="device-status">Aucun appareil Bluetooth connecté</span>
+    <span id="device-status" data-i18n="Status"></span>
   </div>
 </body>
 </html>
