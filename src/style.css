@@ -331,3 +331,48 @@ body.dark-mode {
     text-align: center;
     font-weight: bold;
 }
+
+/* Size of the switch by default */
+.switch {
+    width: 48px;
+    height: 28px;
+}
+.slider:before {
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+}
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+/* Small switch */
+body.text-small .switch {
+    width: 32px;
+    height: 18px;
+}
+body.text-small .slider:before {
+    height: 10px;
+    width: 10px;
+    left: 4px;
+    bottom: 4px;
+}
+body.text-small input:checked + .slider:before {
+    transform: translateX(12px);
+}
+
+/* big switch */
+body.text-large .switch {
+    width: 60px;
+    height: 34px;
+}
+body.text-large .slider:before {
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+}
+body.text-large input:checked + .slider:before {
+    transform: translateX(26px);
+}

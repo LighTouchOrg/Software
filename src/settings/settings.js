@@ -17,6 +17,18 @@ textSizeSelector.addEventListener('input', () => {
 
   const selectedSize = sizes[textSizeSelector.value];
   document.body.style.fontSize = selectedSize;
+  document.body.classList.remove('text-small', 'text-medium', 'text-large');
+  switch(selectedSize) {
+    case '14px':
+      document.body.classList.add('text-small');
+      break;
+    case '16px':
+      document.body.classList.add('text-medium');
+      break;
+    case '20px':
+      document.body.classList.add('text-large');
+      break;
+  }
 
   localStorage.setItem('preferredFontSize', selectedSize); // Using localstorage to save the preference of the user
 });
