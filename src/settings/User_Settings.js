@@ -33,7 +33,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     if (reader && savedReader) {
-      reader.checked = savedReader;
+      reader.checked = savedReader === "true";
     }
 
     if (inputLang && savedLang) {
