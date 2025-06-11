@@ -2,6 +2,8 @@ const textSizeSelector = document.getElementById('text-size-slider');
 const themeToggle = document.getElementById('theme-toggle');
 const readerToggle = document.getElementById('reader-toggle');
 const langToggle = document.getElementById('lang-selector');
+const presToggle = document.getElementById('presentation-toggle');
+const navToggle = document.getElementById('nav-toggle');
 
 let readerMode = false;
 
@@ -29,7 +31,6 @@ themeToggle.addEventListener('change', () => {
 readerToggle.addEventListener('change', () => {
   readerMode = readerToggle.checked;
   localStorage.setItem('Reader', readerToggle.checked);
-  console.log("Mode liseuse numérique :", readerMode);
 });
 
 
@@ -37,5 +38,26 @@ readerToggle.addEventListener('change', () => {
 langToggle.addEventListener('change', () => {
   localStorage.setItem('preferredLang', langToggle.value);
   window.location.reload();
-  console.log("Langage changed for : ", langToggle.value);
 });
+
+// Presentation Mode
+if (presToggle) {
+  presToggle.addEventListener('change', () => {
+    if (presToggle.checked) {
+      navToggle.checked = false;
+      localStorage.setItem('NavigationMode', 'false');
+    }
+    localStorage.setItem('PresentationMode', presToggle.checked ? 'true' : 'false');
+  });
+}
+
+// Navigation Mode
+if (navToggle) {
+  navToggle.addEventListener('change', () => {
+    if (navToggle.checked) {
+      presToggle.checked = false;
+      localStorage.setItem('PresentationMode', 'false');
+    }
+    localStorage.setItem('NavigationMode', navToggle.checked ? 'true' : 'false');
+  });
+}

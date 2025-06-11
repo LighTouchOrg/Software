@@ -3,6 +3,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('preferredTheme');
     const savedLang = localStorage.getItem('preferredLang');
     const savedReader = localStorage.getItem('Reader');
+    const savedPres = localStorage.getItem('PresentationMode');
+    const savedNav = localStorage.getItem('NavigationMode');
 
     if (savedFontSize) {
       document.body.style.fontSize = savedFontSize;
@@ -12,6 +14,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const toggleThemeSelector = document.getElementById('theme-toggle');
     const inputLang = document.getElementById('lang-selector');
     const reader = document.getElementById('reader-toggle');
+    const presToggle = document.getElementById('presentation-toggle');
+    const navToggle = document.getElementById('nav-toggle');
 
     applyTranslations(savedLang);
 
@@ -40,4 +44,10 @@ window.addEventListener('DOMContentLoaded', () => {
       inputLang.value = savedLang;
     }
 
+    if (presToggle && savedPres !== null) {
+      presToggle.checked = savedPres === "true";
+    }
+    if (navToggle && savedNav !== null) {
+      navToggle.checked = savedNav === "true";
+    }
 });
