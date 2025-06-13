@@ -1,6 +1,12 @@
 class Actions {
     constructor() {
         this.actions = [];
+
+    }
+
+    getSettings() {
+        this.pres_mode = localStorage.getItem('PresentationMode');
+        this.nav_mode = localStorage.getItem('NavigationMode');
     }
 
     addAction(action) {
@@ -19,18 +25,22 @@ class Actions {
             return -1;
         }
         const direction = params.direction.toLowerCase();
-        switch (direction) {
-            case "left":
-                window.electronAPI?.pressKey("ArrowLeft");
-                break;
-            case "right":
-                window.electronAPI?.pressKey("ArrowRight");
-                break;
-            default:
-                console.error("Invalid swipe direction:", direction);
-                return -1;
-        }
+        if (this.getSettings.pres_mode == 'true') {
+            switch (direction) {
+                case "left":
+                    window.electronAPI?.pressKey("ArrowLeft");
+                    break;
+                case "right":
+                    window.electronAPI?.pressKey("ArrowRight");
+                    break;
+                default:
+                    console.error("Invalid swipe direction:", direction);
+                    return -1;
+            }
         console.log("Swipe right action executed with params:", params);
+        } else {
+            console.log("Swipe Action as not been executed since the presentation mode is disable (See Settings Mode)"); // Commentary for debug only, delete for user test
+        }
 
         return 0;
     };
@@ -41,24 +51,32 @@ class Actions {
             return -1;
         }
         const { x, y } = params;
-        window.electronAPI?.moveMouse(x, y);
-        console.log("Move action executed with params:", params);
+        if (this.getActions.nav_mode == 'true') {
+            window.electronAPI?.moveMouse(x, y);
+            console.log("Move action executed with params:", params);
+        } else {
+            console.log("Move not performed since the naviguation mode is disable (See Settings Mode");
+        }
 
         return 0;
     };
 
     click(params) {
         // Click at the coordinates provided in params
-        if (params && params.x && params.y) {
-            const { x, y } = params;
-            window.electronAPI?.pressMouse(x, y);
-            window.electronAPI?.releaseMouse(x, y);
-            console.log("Click action executed with params:", params);
+        if (this.getActions.nav_mode == 'true') {
+            if (params && params.x && params.y) {
+                const { x, y } = params;
+                window.electronAPI?.pressMouse(x, y);
+                window.electronAPI?.releaseMouse(x, y);
+                console.log("Click action executed with params:", params);
+            } else {
+                // Click at the current mouse position
+                window.electronAPI?.pressMouse();
+                window.electronAPI?.releaseMouse();
+                console.log("Click action executed at current mouse position");
+            }
         } else {
-            // Click at the current mouse position
-            window.electronAPI?.pressMouse();
-            window.electronAPI?.releaseMouse();
-            console.log("Click action executed at current mouse position");
+            console.log("Click not performed since the naviguation mode is disable (See Settings Mode");
         }
         return 0;
     };
