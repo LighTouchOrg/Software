@@ -8,49 +8,57 @@ const navToggle = document.getElementById('nav-toggle');
 let readerMode = false;
 
 // Text size handler
-textSizeSelector.addEventListener('input', () => {
-  const sizes = {
-    1: '14px',
-    2: '16px',
-    3: '20px'
-  };
+if (textSizeSelector) {
+  textSizeSelector.addEventListener('input', () => {
+    const sizes = {
+      1: '14px',
+      2: '16px',
+      3: '20px'
+    };
 
-  const selectedSize = sizes[textSizeSelector.value];
-  document.body.style.fontSize = selectedSize;
-  document.body.classList.remove('text-small', 'text-medium', 'text-large');
-  switch(selectedSize) {
-    case '14px':
-      document.body.classList.add('text-small');
-      break;
-    case '16px':
-      document.body.classList.add('text-medium');
-      break;
-    case '20px':
-      document.body.classList.add('text-large');
-      break;
-  }
+    const selectedSize = sizes[textSizeSelector.value];
+    document.body.style.fontSize = selectedSize;
+    document.body.classList.remove('text-small', 'text-medium', 'text-large');
+    switch(selectedSize) {
+      case '14px':
+        document.body.classList.add('text-small');
+        break;
+      case '16px':
+        document.body.classList.add('text-medium');
+        break;
+      case '20px':
+        document.body.classList.add('text-large');
+        break;
+    }
 
-  localStorage.setItem('preferredFontSize', selectedSize); // Using localstorage to save the preference of the user
-});
+    localStorage.setItem('preferredFontSize', selectedSize); // Using localstorage to save the preference of the user
+  });
+}
 
 // Dark / Light mode handler
-themeToggle.addEventListener('change', () => {
-  document.body.classList.toggle('dark-mode', themeToggle.checked);
-  themeToggle.checked ? localStorage.setItem('preferredTheme', "Dark") : localStorage.setItem('preferredTheme', "Light"); // Ternary use for set the localstorage of the theme by either 'Light' or 'Dark'
-});
+if (themeToggle) {
+  themeToggle.addEventListener('change', () => {
+    document.body.classList.toggle('dark-mode', themeToggle.checked);
+    themeToggle.checked ? localStorage.setItem('preferredTheme', "Dark") : localStorage.setItem('preferredTheme', "Light"); // Ternary use for set the localstorage of the theme by either 'Light' or 'Dark'
+  });
+}
 
 // Reader
-readerToggle.addEventListener('change', () => {
-  readerMode = readerToggle.checked;
-  localStorage.setItem('Reader', readerToggle.checked);
-});
+if (readerToggle) {
+  readerToggle.addEventListener('change', () => {
+    readerMode = readerToggle.checked;
+    localStorage.setItem('Reader', readerToggle.checked);
+  });
+}
 
 
 // Langage
-langToggle.addEventListener('change', () => {
-  localStorage.setItem('preferredLang', langToggle.value);
-  window.location.reload();
-});
+if (langToggle) {
+  langToggle.addEventListener('change', () => {
+    localStorage.setItem('preferredLang', langToggle.value);
+    window.location.reload();
+  });
+}
 
 // Presentation Mode
 if (presToggle) {
