@@ -10,7 +10,8 @@
     --primary-color-light-dark: #c0abe2;
     --primary-color-light-dark-hover: #9b6ee2;
     --secondary-color-dark: #e09900;
-    --background-color-dark: #0d0d0d;
+    /* --background-color-dark: #0d0d0d; */
+    --background-color-dark: #1F1B24;
     --font-color-dark: #e0e0e0;
 
     --check-true : #2a9d8f;
@@ -110,11 +111,11 @@ body.dark-mode button, body.dark-mode .button_setting {
 
 button:hover, a:hover {
     background-color: var(--primary-color);
-
 }
 
 body.dark-mode a:hover, body.dark-mode button:hover {
     background-color: var(--primary-color-light-dark-hover);
+    /* color: white; */
 }
 
 /* Device Info */
@@ -136,6 +137,19 @@ body.dark-mode a:hover, body.dark-mode button:hover {
 
 body.dark-mode .device-info {
     background-color: var(--background-color);
+}
+
+/* Status div background for dark theme */
+body.dark-mode #connection-status {
+    background-color: var(--background-color-dark);
+}
+
+body.dark-mode {
+    background-color: var(--background-color-dark) !important;
+}
+
+body.dark-mode #device-status, body.dark-mode #connection-status {
+    color: #c81927;
 }
 
 /* Error Message */
@@ -297,6 +311,7 @@ body.dark-mode {
     max-width: 350px;
     width: 100%;
     margin-top: 20px;
+    gap: 1rem;
   }
 
   /* Left Text */
@@ -304,6 +319,7 @@ body.dark-mode {
     font-weight: 600;
     width: 150px;
     font-size: 1em;
+    flex-shrink: 0;
   }
 
   /* For the slider to fill the space left */
@@ -375,4 +391,75 @@ body.text-large .slider:before {
 }
 body.text-large input:checked + .slider:before {
     transform: translateX(26px);
+}
+
+/* Style for putting the two buttons of the parameters in a good row */
+
+.settings-container {
+    max-width: 480px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+.setting_row {
+    display: flex;
+    width: 480px;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.button_setting {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 3em;
+}
+
+/* Box for the key of the binding setting menu */
+
+.bind_box {
+    outline: #301d55 solid 3px;
+    border-radius: 5px;
+    padding: 0.5em;
+    flex: 1;
+    text-align: center;
+    background-color: rgba(48, 29, 85, 0.05);
+}
+
+.bind_box:focus {
+    outline: #9a3412 solid 3px;
+}
+
+
+/* Notifcation Toast for the key error */
+
+.key-conflict {
+    outline: 3px solid red !important;
+}
+
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+}
+
+.toast {
+    background-color: #333;
+    color: #fff;
+    padding: 0.75em 1.5em;
+    margin-top: 10px;
+    border-radius: 8px;
+    font-size: 0.95em;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    opacity: 0;
+    animation: fadeInOut 3s forwards;
+}
+
+@keyframes fadeInOut {
+    0%   { opacity: 0; transform: translateY(20px); }
+    10%  { opacity: 1; transform: translateY(0); }
+    90%  { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-10px); }
 }
