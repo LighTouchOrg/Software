@@ -16,7 +16,12 @@ const translations = {
       on: "On",
       off: "Off",
       fr: "French",
-      en: "English"
+      en: "English",
+      Keybind: "Key Binding",
+      title_keybind: "LighTouch® - Key Binding",
+      title_setting : "LighTouch® – Settings",
+      swipe_right: "Right Swipe",
+      swipe_left: "Left Swipe"
     },
     fr: {
       Calibration: "Calibrer la caméra",
@@ -35,15 +40,20 @@ const translations = {
       on: "Activé",
       off: "Désactivé",
       fr: "Français",
-      en: "Anglais"
+      en: "Anglais",
+      Keybind: "Assignation des touches",
+      title_keybind: "LighTouch® - Assignation des touche",
+      title_setting : "LighTouch® – Réglages",
+      swipe_right: "Balayage Droit",
+      swipe_left: "Balayage Gauche",
     }
 };
 
 function applyTranslations() {
-    lang = localStorage.getItem('preferredLang') || 'en';
+    lang = localStorage.getItem('preferredLang') || 'fr';
     console.log("Apply : ", lang);
     const t = translations[lang];
-    if (!t) return console.warn(`Langue inconnue : ${lang}`);
+    if (!t) return console.warn(`Unknow Language : ${lang}`);
 
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
