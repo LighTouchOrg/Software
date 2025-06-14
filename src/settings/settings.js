@@ -68,6 +68,11 @@ if (presToggle) {
       localStorage.setItem('NavigationMode', 'false');
     }
     localStorage.setItem('PresentationMode', presToggle.checked ? 'true' : 'false');
+
+    if (!presToggle.checked && !navToggle.checked) {
+      presToggle.checked = true;
+      localStorage.setItem('PresentationMode', 'true');
+  }
   });
 }
 
@@ -79,5 +84,10 @@ if (navToggle) {
       localStorage.setItem('PresentationMode', 'false');
     }
     localStorage.setItem('NavigationMode', navToggle.checked ? 'true' : 'false');
+  
+    if (!presToggle.checked && !navToggle.checked) {
+      presToggle.checked = true;
+      localStorage.setItem('PresentationMode', 'true');
+  }
   });
 }
