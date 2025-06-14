@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <title data-i18n="title_keybind"></title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self';">
+  <link rel="stylesheet" href="../style.css">
+  <script defer src="../settings/multi-lang.js"></script>
+  <script defer src="key_binding.js"></script>
+  <script src="../settings/User_Settings.js"></script> <!--  Load this to load the user settings -->
+</head>
+<body>
+  <div class="logo-container">
+    <img src="../img/lightouch-logo.png" alt="Logo Lightouch" class="logo">
+  </div>
+
+  <h1>Lightouch</h1>
+
+  <div id="toast-container"></div>
+
+    <a class="button_setting" href="../index.html" data-i18n="Back"></a>
+
+    <div class="setting-row">
+        <span class="setting_name" data-i18n="swipe_right"></span>
+        <span id="right_swipe" class="bind_box" tabindex="0"></span>
+    </div>
+
+    <div class="setting-row">
+        <span class="setting_name" data-i18n="swipe_left"></span>
+        <span id="left_swipe" class="bind_box" tabindex="0"></span>
+    </div>
+
+  </div>
+</body>
+</html>
