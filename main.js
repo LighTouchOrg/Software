@@ -59,6 +59,7 @@ const createWindow = () => {
   win = new BrowserWindow({
     width: 1000,
     height: 800,
+    autoHideMenuBar: true, // To open devtools, press Ctrl+Shift+I
     icon: iconPath,
     webPreferences: {
       nodeIntegration: true,
