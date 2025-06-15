@@ -19,9 +19,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
   applyTranslations(savedLang);
 
-  if (savedTheme && toggleThemeSelector) {
-      toggleThemeSelector.checked = savedTheme === 'Dark';
-      document.body.classList.toggle('dark-mode', savedTheme === 'Dark');
+  if (savedTheme) {
+    document.body.classList.toggle('dark-mode', savedTheme === 'Dark');
+  }
+
+  if (toggleThemeSelector) {
+    toggleThemeSelector.checked = savedTheme === 'Dark';
   }
 
   if (textSizeSelector && savedFontSize) {
