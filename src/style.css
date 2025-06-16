@@ -463,3 +463,48 @@ body.text-large input:checked + .slider:before {
     90%  { opacity: 1; }
     100% { opacity: 0; transform: translateY(-10px); }
 }
+
+/* Container for the slider and its labels */
+.slider-container {
+    flex-grow: 1;
+    margin-left: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    min-width: 120px;
+    max-width: 220px;
+}
+
+#text-size-slider {
+    width: 100%;
+    min-width: 120px;
+    max-width: 220px;
+    margin-left: 0;
+    margin-right: 0;
+    box-sizing: border-box;
+}
+
+/* Labels under the slider */
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 99%;
+    margin-top: 4px;
+    margin-left: 0;
+    pointer-events: none;
+}
+
+.slider-label.small-t {
+    font-size: 0.7rem;
+}
+.slider-label.medium-t {
+    font-size: 1.1rem;
+}
+.slider-label.large-t {
+    font-size: 1.6rem;
+}
+
+.setting-row {
+    align-items: flex-start;
+}
