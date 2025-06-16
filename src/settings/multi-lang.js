@@ -66,7 +66,7 @@ function applyTranslations() {
 // with tab, the voice will read the text (work with both lang)
 
 document.querySelectorAll('[data-i18n]').forEach(el => {
-    el.addEventListener('focus', () => speakFocusedElementText(el));
+    if (el.id === 'text-size-slider' || el.htmlFor === 'text-size-slider') return;
 
     const inputElement = el.tagName === 'INPUT' && el.type === 'checkbox'
                       ? el
@@ -74,6 +74,8 @@ document.querySelectorAll('[data-i18n]').forEach(el => {
 
     if (inputElement) {
       inputElement.addEventListener('change', () => speakFocusedElementText(el));
+    } else {
+      el.addEventListener('focus', () => speakFocusedElementText(el));
     }
 });
 

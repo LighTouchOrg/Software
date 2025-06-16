@@ -1,7 +1,7 @@
 const textSizeSelector = document.getElementById('text-size-slider');
 const themeToggle = document.getElementById('theme-toggle');
 const readerToggle = document.getElementById('reader-toggle');
-const langToggle = document.getElementById('lang-selector');
+const langSelector = document.getElementById('lang-selector');
 const presToggle = document.getElementById('presentation-toggle');
 const navToggle = document.getElementById('nav-toggle');
 
@@ -14,6 +14,11 @@ if (textSizeSelector) {
       1: '14px',
       2: '16px',
       3: '20px'
+    };
+    const labels = {
+      1: 'text_1',
+      2: 'text_2',
+      3: 'text_3'
     };
 
     const selectedSize = sizes[textSizeSelector.value];
@@ -31,7 +36,20 @@ if (textSizeSelector) {
         break;
     }
 
-    localStorage.setItem('preferredFontSize', selectedSize); // Using localstorage to save the preference of the user
+    localStorage.setItem('preferredFontSize', selectedSize);
+
+    if (localStorage.getItem('Reader') === 'true') {
+      const lang = localStorage.getItem('preferredLang') || 'fr';
+      const translations = {
+        fr: { text_1: "Petite taille de texte", text_2: "Moyenne taille de texte", text_3: "Grande taille de texte" },
+        en: { text_1: "small text size", text_2: "Medium text size", text_3: "Big text size" }
+      };
+      const key = labels[textSizeSelector.value];
+      const text = translations[lang][key];
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.lang = lang === "fr" ? "fr-FR" : "en-US";
+      speechSynthesis.speak(msg);
+    }
   });
 }
 
@@ -51,12 +69,23 @@ if (readerToggle) {
   });
 }
 
-
 // Langage
-if (langToggle) {
-  langToggle.addEventListener('change', () => {
-    localStorage.setItem('preferredLang', langToggle.value);
-    window.location.reload();
+if (langSelector) {
+  langSelector.addEventListener('change', () => {
+    localStorage.setItem('preferredLang', langSelector.value);
+
+    if (localStorage.getItem('Reader') === 'true') {
+      const translations = {
+        fr: { fr: " language Français", en: "language Anglais" },
+        en: { fr: "French language", en: "English language" }
+      };
+      const lang = langSelector.value;
+      const currentLang = localStorage.getItem('preferredLang') || 'fr';
+      const text = translations[currentLang][lang];
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.lang = lang === "fr" ? "fr-FR" : "en-US";
+      speechSynthesis.speak(msg);
+    }
   });
 }
 
