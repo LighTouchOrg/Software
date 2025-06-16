@@ -95,13 +95,11 @@ if (presToggle) {
     if (presToggle.checked) {
       navToggle.checked = false;
       localStorage.setItem('NavigationMode', 'false');
+    } else {
+      navToggle.checked = true;
+      localStorage.setItem('NavigationMode', 'true');
     }
     localStorage.setItem('PresentationMode', presToggle.checked ? 'true' : 'false');
-
-    if (!presToggle.checked && !navToggle.checked) {
-      presToggle.checked = true;
-      localStorage.setItem('PresentationMode', 'true');
-  }
   });
 }
 
@@ -111,12 +109,9 @@ if (navToggle) {
     if (navToggle.checked) {
       presToggle.checked = false;
       localStorage.setItem('PresentationMode', 'false');
-    }
-    localStorage.setItem('NavigationMode', navToggle.checked ? 'true' : 'false');
-  
-    if (!presToggle.checked && !navToggle.checked) {
+    } else {
       presToggle.checked = true;
       localStorage.setItem('PresentationMode', 'true');
-  }
+    }
   });
 }
