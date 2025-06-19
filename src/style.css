@@ -1,10 +1,15 @@
+@font-face {
+    font-family: 'League Spartan';
+    src: url('fonts/LeagueSpartan-VariableFont_wght.ttf') format('truetype');
+}
+
 :root {
     --primary-color: #1d1136;
     --primary-color-light: #301d55;
     --secondary-color: #ffb920;
     --background-color: #f3f3f3;
     --font-color: #1e1e1e;
-    --font-family: 'Tahoma', sans-serif;
+    --font-family: 'League Spartan', 'Tahoma', sans-serif;
 
     --primary-color-dark: #e0e0e0;
     --primary-color-light-dark: #c0abe2;
@@ -22,6 +27,7 @@
     padding: 0;
     box-sizing: border-box;
     font-family: var(--font-family);
+    font-weight: bold;
 }
 
 html,
@@ -56,9 +62,9 @@ body {
 
 /* Title */
 h1 {
-    font-size: 50px;
+    font-size: 60px;
     text-align: center;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'League Spartan', 'Times New Roman', Times, serif;
     font-weight: bold;
     color: transparent;
     -webkit-text-stroke: 1px var(--primary-color);
@@ -75,6 +81,7 @@ button {
     color: white;
     border: none;
     padding: 0.75em 1em;
+    padding-top: 1em;
     font-size: 1em;
     border-radius: 8px;
     cursor: pointer;
@@ -197,7 +204,8 @@ body.dark-mode #device-status, body.dark-mode #connection-status {
 
     button {
         font-size: 1em;
-        padding: 14px;
+        padding-top: 18px;
+        padding-bottom: 14px;
     }
 }
 
