@@ -73,6 +73,7 @@ if (readerToggle) {
 if (langSelector) {
   langSelector.addEventListener('change', () => {
     localStorage.setItem('preferredLang', langSelector.value);
+    window.location.reload();
 
     if (localStorage.getItem('Reader') === 'true') {
       const translations = {
