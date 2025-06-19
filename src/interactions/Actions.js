@@ -5,8 +5,8 @@ class Actions {
     }
 
     getSettings() {
-        this.pres_mode = localStorage.getItem('PresentationMode');
-        this.nav_mode = localStorage.getItem('NavigationMode');
+        this.pres_mode = localStorage.getItem('PresentationMode') || 'false';
+        this.nav_mode = localStorage.getItem('NavigationMode') || 'true';
     }
 
     addAction(action) {
@@ -37,7 +37,7 @@ class Actions {
                     console.error("Invalid swipe direction:", direction);
                     return -1;
             }
-        console.log("Swipe right action executed with params:", params);
+            console.log("Swipe right action executed with params:", params);
         } else {
             console.log("Swipe Action as not been executed since the presentation mode is disable (See Settings Mode)"); // Commentary for debug only, delete for user test
         }
