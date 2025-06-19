@@ -5,8 +5,8 @@ class Actions {
     }
 
     getSettings() {
-        this.pres_mode = localStorage.getItem('PresentationMode') || 'false';
-        this.nav_mode = localStorage.getItem('NavigationMode') || 'true';
+        this.pres_mode = localStorage.getItem('PresentationMode') || 'true';
+        this.nav_mode = localStorage.getItem('NavigationMode') || 'false';
     }
 
     addAction(action) {
