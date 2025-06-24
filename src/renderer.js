@@ -1,7 +1,9 @@
 const calibrateButton = document.getElementById('calibrate-button');
+const onboardingButton = document.getElementById('onboarding-button');
 const deviceStatus = document.getElementById('device-status');
 
 let calibrationWindow = null;
+let onboardingWindow = null;
 let jsonBuffer = "";
 
 // Lancer la calibration
@@ -27,6 +29,32 @@ if (calibrateButton) {
            calibrationWindow = null;
            calibrateButton.disabled = false;
          }
+      });
+    }
+  });
+}
+
+// Lancer l'onboarding
+if (onboardingButton) {
+  onboardingButton.addEventListener('click', () => {
+    if (!onboardingWindow || onboardingWindow.closed) {
+      onboardingButton.disabled = true;
+
+      onboardingWindow = window.open('onboarding.html', '_blank', 'width=800,height=600,fullscreen=yes');
+
+      const checker = setInterval(() => {
+        if (!onboardingWindow || onboardingWindow.closed) {
+          onboardingWindow = null;
+          clearInterval(checker);
+        }
+      }, 500);
+
+      onboardingWindow.addEventListener('keydown', (event) => {
+         if (event.key === 'Escape') {
+            onboardingWindow.close();
+            onboardingWindow = null;
+            onboardingButton.disabled = false;
+          }
       });
     }
   });
