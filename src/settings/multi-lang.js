@@ -17,8 +17,8 @@ const translations = {
       off: "Off",
       fr: "French",
       en: "English",
-      Keybind: "Key Binding",
-      title_keybind: "LighTouch® - Key Binding",
+      Keybind: "Key Bindings",
+      title_keybind: "LighTouch® - Key Bindings",
       title_setting : "LighTouch® – Settings",
       swipe_right: "Right Swipe",
       swipe_left: "Left Swipe"

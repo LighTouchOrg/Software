@@ -57,8 +57,8 @@ const iconPath = path.join(__dirname, "src", "img/lightouch-logo.png");
 
 const createWindow = () => {
   win = new BrowserWindow({
-    width: 1000,
-    height: 800,
+    width: 1150,
+    height: 875,
     autoHideMenuBar: true, // To open devtools, press Ctrl+Shift+I
     icon: iconPath,
     webPreferences: {
