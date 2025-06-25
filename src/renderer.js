@@ -45,6 +45,7 @@ if (onboardingButton) {
       const checker = setInterval(() => {
         if (!onboardingWindow || onboardingWindow.closed) {
           onboardingWindow = null;
+          onboardingButton.disabled = false;
           clearInterval(checker);
         }
       }, 500);
