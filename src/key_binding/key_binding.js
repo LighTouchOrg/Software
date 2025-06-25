@@ -16,10 +16,10 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 const keyTranslations = {
-    "ArrowLeft": "Fleche gauche",
-    "ArrowRight": "Fleche droite",
-    "ArrowUp": "Fleche haut",
-    "ArrowDown": "Fleche bas",
+    "ArrowLeft": "Flèche gauche",
+    "ArrowRight": "Flèche droite",
+    "ArrowUp": "Flèche haut",
+    "ArrowDown": "Flèche bas",
     "Space": "Espace"
 };
 
