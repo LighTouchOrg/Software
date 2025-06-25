@@ -50,46 +50,21 @@ function drawTarget() {
   ctx.fill();
 }
 
+import Actions from './Actions.js';
+const actions = new Actions();
+actions.isOnboarding = true;
+
 function handleMessage(msg) {
   try {
     const parsed = JSON.parse(msg);
     const step = steps[currentStep];
-
     if (!step || step.expected === null) return;
-
-    if (step.expected === "move" && parsed.method === "move") {
-      const { x, y } = parsed.params;
-      cursor.x = x;
-      cursor.y = y;
-      const dx = x - target.x;
-      const dy = y - target.y;
-      if (Math.sqrt(dx * dx + dy * dy) < 50) {
-        advanceStep();
-      }
-      return;
+    if (parsed.category === 'actions' && parsed.method === step.expected.method
+        && JSON.stringify(parsed.params) === JSON.stringify(step.expected.params)) {
+      const result = actions[parsed.method](parsed.params);
+      if (result === 0) advanceStep();
     }
-
-    if (step.expected === "click" && parsed.method === "click") {
-      const { x, y } = parsed.params;
-      const dx = x - target.x;
-      const dy = y - target.y;
-      if (Math.sqrt(dx * dx + dy * dy) < target.radius + 20) {
-        advanceStep();
-      }
-      return;
-    }
-
-    if (
-      parsed.method === step.expected.method &&
-      JSON.stringify(parsed.params) === JSON.stringify(step.expected.params)
-    ) {
-      advanceStep();
-      return;
-    }
-
-  } catch (e) {
-    console.warn("Invalid message:", msg);
-  }
+  } catch {}
 }
 
 document.addEventListener("keydown", (event) => {
