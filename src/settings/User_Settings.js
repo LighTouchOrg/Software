@@ -1,6 +1,7 @@
 window.addEventListener('DOMContentLoaded', () => {
   const savedFontSize = localStorage.getItem('preferredFontSize');
-  const savedTheme = localStorage.getItem('preferredTheme');
+  const savedTheme = localStorage.getItem('preferredTheme')
+    || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Dark' : 'Light');
   const savedLang = localStorage.getItem('preferredLang');
   const savedReader = localStorage.getItem('Reader');
   const savedPres = localStorage.getItem('PresentationMode');
