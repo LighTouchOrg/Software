@@ -15,7 +15,6 @@ let finishBtn = null;
 
 const stepText = document.getElementById('step-text');
 
-// Helper to fetch translation
 function t(key) {
   const lang = localStorage.getItem('preferredLang') || 'fr';
   return window.translations?.[lang]?.[key] || key;
@@ -23,7 +22,6 @@ function t(key) {
 
 function updateStepText() {
   const step = steps[currentStep];
-  // Remplacer les tirets par des underscores pour correspondre aux clés de traduction
   const sanitizedId = step.id.replace(/-/g, '_');
   const key = `onboarding_step_${sanitizedId}`;
   stepText.textContent = t(key);
@@ -106,7 +104,6 @@ window.addEventListener("DOMContentLoaded", () => {
   finishBtn = document.getElementById('finish-btn');
   updateStepText();
   finishBtn.addEventListener('click', () => {
-    // Réactiver le bouton onboarding dans la fenêtre parente
     if (window.opener && !window.opener.closed) {
       const parentBtn = window.opener.document.getElementById('onboarding-button');
       if (parentBtn) parentBtn.disabled = false;
