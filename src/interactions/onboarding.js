@@ -53,54 +53,40 @@ function drawTarget() {
 function handleMessage(msg) {
   try {
     const parsed = JSON.parse(msg);
-    switch (parsed.method) {
-      case 'swipe': {
-        const dir = parsed.params?.direction?.toLowerCase();
-        const key = dir === 'right'
-          ? (localStorage.getItem('Swipe_Right_Key') || 'ArrowRight')
-          : (localStorage.getItem('Swipe_Left_Key') || 'ArrowLeft');
-        window.electronAPI?.pressKey(key);
-        break;
-      }
-      case 'move': {
-        const { x, y } = parsed.params;
-        window.electronAPI?.moveMouse(x, y);
-        break;
-      }
-      case 'click': {
-        const { x, y } = parsed.params;
-        window.electronAPI?.pressMouse(x, y);
-        window.electronAPI?.releaseMouse(x, y);
-        break;
-      }
-    }
     const step = steps[currentStep];
 
-    if (step.expected === null) return;
+    if (!step || step.expected === null) return;
 
     if (step.expected === "move" && parsed.method === "move") {
       const { x, y } = parsed.params;
       cursor.x = x;
       cursor.y = y;
-
       const dx = x - target.x;
       const dy = y - target.y;
       if (Math.sqrt(dx * dx + dy * dy) < 50) {
         advanceStep();
       }
-    } else if (step.expected === "click" && parsed.method === "click") {
+      return;
+    }
+
+    if (step.expected === "click" && parsed.method === "click") {
       const { x, y } = parsed.params;
       const dx = x - target.x;
       const dy = y - target.y;
       if (Math.sqrt(dx * dx + dy * dy) < target.radius + 20) {
         advanceStep();
       }
-    } else if (
+      return;
+    }
+
+    if (
       parsed.method === step.expected.method &&
       JSON.stringify(parsed.params) === JSON.stringify(step.expected.params)
     ) {
       advanceStep();
+      return;
     }
+
   } catch (e) {
     console.warn("Invalid message:", msg);
   }
