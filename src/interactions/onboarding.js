@@ -7,11 +7,17 @@ const steps = [
 ];
 
 let currentStep = 0;
-let cursor = { x: 0, y: 0 };
-let canvas = null;
-let ctx = null;
-let target = { x: 300, y: 200, radius: 30 };
-let finishBtn = null;
+let canvas, ctx, finishBtn;
+
+const cursor = { x: undefined, y: undefined };
+const target = { x: 300, y: 200, radius: 30 };
+
+const frame = {
+  width: 180,
+  height: 100,
+  x: 0,
+  y: 0
+};
 
 const stepText = document.getElementById('step-text');
 
@@ -22,61 +28,118 @@ function t(key) {
 
 function updateStepText() {
   const step = steps[currentStep];
-  const sanitizedId = step.id.replace(/-/g, '_');
-  const key = `onboarding_step_${sanitizedId}`;
-  stepText.textContent = t(key);
-  if (step.id === 'click-target') {
+  stepText.textContent = t(`onboarding_step_${step.id.replace(/-/g, '_')}`);
+  if (step.id === 'move-cursor' || step.id === 'click-target') {
     canvas.classList.remove('hidden');
-    drawTarget();
+    requestAnimationFrame(drawTarget);
   } else {
-    canvas?.classList.add('hidden');
+    canvas.classList.add('hidden');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
   if (step.id === 'end') {
     finishBtn.classList.remove('hidden');
+  } else {
+    finishBtn.classList.add('hidden');
   }
 }
 
 function advanceStep() {
   currentStep++;
-  if (currentStep >= steps.length) return;
-  updateStepText();
+  if (currentStep < steps.length) updateStepText();
 }
 
 function drawTarget() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.beginPath();
-  ctx.arc(target.x, target.y, target.radius, 0, 2 * Math.PI);
-  ctx.fillStyle = "#c81927";
-  ctx.fill();
-}
+  if (!steps[currentStep]) return;
 
-import Actions from './Actions.js';
-const actions = new Actions();
-actions.isOnboarding = true;
+  const stepId = steps[currentStep].id;
+
+  if (stepId === 'move-cursor') {
+    frame.x = (canvas.width - frame.width) / 2;
+    frame.y = (canvas.height - frame.height) / 2;
+    ctx.strokeStyle = '#c81927';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(frame.x, frame.y, frame.width, frame.height);
+  }
+
+  if (stepId === 'click-target') {
+    ctx.beginPath();
+    ctx.arc(target.x, target.y, target.radius, 0, 2 * Math.PI);
+    ctx.fillStyle = "#c81927";
+    ctx.fill();
+  }
+
+  if (cursor.x !== undefined && cursor.y !== undefined) {
+    ctx.beginPath();
+    ctx.arc(cursor.x, cursor.y, 5, 0, 2 * Math.PI);
+    ctx.fillStyle = "#2a9d8f";
+    ctx.fill();
+  }
+}
 
 function handleMessage(msg) {
   try {
     const parsed = JSON.parse(msg);
     const step = steps[currentStep];
     if (!step || step.expected === null) return;
-    if (parsed.category === 'actions' && parsed.method === step.expected.method
-        && JSON.stringify(parsed.params) === JSON.stringify(step.expected.params)) {
-      const result = actions[parsed.method](parsed.params);
-      if (result === 0) advanceStep();
+
+    // MOVE
+    if (step.expected === "move" && parsed.method === "move") {
+      const x = Number(parsed.params.x);
+      const y = Number(parsed.params.y);
+      const canvasX = (x / 640) * canvas.width;
+      const canvasY = (y / 480) * canvas.height;
+      cursor.x = canvasX;
+      cursor.y = canvasY;
+
+      const inFrame =
+        canvasX >= frame.x &&
+        canvasX <= frame.x + frame.width &&
+        canvasY >= frame.y &&
+        canvasY <= frame.y + frame.height;
+
+      requestAnimationFrame(drawTarget);
+
+      if (inFrame) {
+        advanceStep();
+      }
+      return;
     }
-  } catch {}
+
+    // CLICK
+    if (step.expected === "click" && parsed.method === "click") {
+      const x = Number(parsed.params.x);
+      const y = Number(parsed.params.y);
+      const dx = x - target.x;
+      const dy = y - target.y;
+      if (Math.sqrt(dx * dx + dy * dy) < target.radius + 20) {
+        advanceStep();
+      }
+      return;
+    }
+
+    // SWIPE
+    if (
+      parsed.method === step.expected.method &&
+      JSON.stringify(parsed.params) === JSON.stringify(step.expected.params)
+    ) {
+      advanceStep();
+      return;
+    }
+
+  } catch (e) {
+    console.warn("Message invalide dans handleMessage :", msg);
+  }
 }
 
 document.addEventListener("keydown", (event) => {
-  const testMessages = {
+  const test = {
     ArrowRight: '{"category":"actions","method":"swipe","params":{"direction":"right"}}',
     ArrowLeft: '{"category":"actions","method":"swipe","params":{"direction":"left"}}',
     m: '{"category":"actions","method":"move","params":{"x":300,"y":200}}',
     c: '{"category":"actions","method":"click","params":{"x":300,"y":200}}'
   };
-  if (testMessages[event.key]) {
-    handleMessage(testMessages[event.key]);
-  }
+  if (test[event.key]) handleMessage(test[event.key]);
 });
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -84,7 +147,6 @@ window.addEventListener("DOMContentLoaded", () => {
   canvas = document.getElementById("target-canvas");
   ctx = canvas.getContext("2d");
   finishBtn = document.getElementById('finish-btn');
-  updateStepText();
   finishBtn.addEventListener('click', () => {
     if (window.opener && !window.opener.closed) {
       const parentBtn = window.opener.document.getElementById('onboarding-button');
@@ -92,11 +154,11 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     window.close();
   });
+  updateStepText();
 });
 
-window.electronAPI?.onPythonData((event, data) => {
-  if (data.startsWith("BT:")) {
-    const raw = data.slice(3).trim();
-    handleMessage(raw);
+window.addEventListener("message", (event) => {
+  if (typeof event.data === "string") {
+    handleMessage(event.data);
   }
 });

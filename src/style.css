@@ -646,7 +646,24 @@ body.text-large input:checked + .slider:before {
   align-items: flex-start;
 }
 
-/* Ajustement spécifique au tutoriel pour centrer correctement le texte */
 #step-text {
   max-width: 600px;
+}
+
+#target-canvas {
+  display: block;
+  margin: 2em auto;
+  z-index: 1000;
+  background: white;
+  position: relative;
+  box-shadow: 0 0 20px 2px #c8192744;
+  border: 2px solid #c81927;
+  width: 200px !important;
+  height: 120px !important;
+  max-width: 200px;
+  max-height: 120px;
+}
+
+#target-canvas.hidden {
+  display: none !important;
 }
