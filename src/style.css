@@ -29,6 +29,7 @@
   box-sizing: border-box;
   font-family: var(--font-family);
   font-weight: bold;
+  user-select: none;
 }
 
 html,
