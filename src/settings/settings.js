@@ -110,9 +110,11 @@ if (navToggle) {
     if (navToggle.checked) {
       presToggle.checked = false;
       localStorage.setItem('PresentationMode', 'false');
+      localStorage.setItem('NavigationMode', 'true');
     } else {
       presToggle.checked = true;
       localStorage.setItem('PresentationMode', 'true');
+      localStorage.setItem('NavigationMode', 'false');
     }
   });
 }
