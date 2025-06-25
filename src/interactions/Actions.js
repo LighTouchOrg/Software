@@ -1,7 +1,7 @@
 class Actions {
     constructor() {
         this.actions = [];
-
+        this.isOnboarding = window.location.pathname.includes('onboarding');
     }
 
     getSettings() {
@@ -29,7 +29,7 @@ class Actions {
         }
 
         const direction = params.direction.toLowerCase();
-        if (this.pres_mode == 'true') {
+        if (this.isOnboarding || this.pres_mode == 'true') {
             switch (direction) {
                 case "left":
                     window.electronAPI?.pressKey(this.left_key);
@@ -41,9 +41,9 @@ class Actions {
                     console.error("Invalid swipe direction:", direction);
                     return -1;
             }
-            console.log("Swipe right action executed with params:", params);
+            console.log("Swipe action executed with params:", params);
         } else {
-            console.log("Swipe Action as not been executed since the presentation mode is disable (See Settings Mode)"); // Commentary for debug only, delete for user test
+            console.log("Swipe not executed since presentation mode est désactivé");
         }
 
         return 0;
@@ -57,11 +57,11 @@ class Actions {
             return -1;
         }
         const { x, y } = params;
-        if (this.nav_mode == 'true') {
+        if (this.isOnboarding || this.nav_mode == 'true') {
             window.electronAPI?.moveMouse(x, y);
             console.log("Move action executed with params:", params);
         } else {
-            console.log("Move not performed since the naviguation mode is disable (See Settings Mode");
+            console.log("Move not performed since navigation mode est désactivé");
         }
 
         return 0;
@@ -69,21 +69,20 @@ class Actions {
 
     click(params) {
         this.getActions();
-        // Click at the coordinates provided in params
-        if (this.nav_mode == 'true') {
+        this.getSettings();
+        if (this.isOnboarding || this.nav_mode == 'true') {
             if (params && params.x && params.y) {
                 const { x, y } = params;
                 window.electronAPI?.pressMouse(x, y);
                 window.electronAPI?.releaseMouse(x, y);
                 console.log("Click action executed with params:", params);
             } else {
-                // Click at the current mouse position
                 window.electronAPI?.pressMouse();
                 window.electronAPI?.releaseMouse();
                 console.log("Click action executed at current mouse position");
             }
         } else {
-            console.log("Click not performed since the naviguation mode is disable (See Settings Mode");
+            console.log("Click not performed since navigation mode est désactivé");
         }
         return 0;
     };
