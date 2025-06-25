@@ -645,3 +645,8 @@ body.text-large input:checked + .slider:before {
 .setting-row {
   align-items: flex-start;
 }
+
+/* Ajustement spécifique au tutoriel pour centrer correctement le texte */
+#step-text {
+  max-width: 600px;
+}

@@ -22,13 +22,7 @@ const translations = {
       title_keybind: "LighTouch® - Key Bindings",
       title_setting : "LighTouch® – Settings",
       swipe_right: "Right Swipe",
-      swipe_left: "Left Swipe",
-      onboarding_step_swipe_right: "Swipe right to continue.",
-      onboarding_step_swipe_left: "Swipe left to continue.",
-      onboarding_step_move_cursor: "Move your hand to move the cursor to the center of the frame.",
-      onboarding_step_click_target: "Click on the red target on the screen to validate.",
-      onboarding_step_end: "Congratulations, you have completed the tutorial! 🎉",
-      onboarding_finish: "Back to Main Page",
+      swipe_left: "Left Swipe"
     },
     fr: {
       Calibration: "Calibrer la caméra",
@@ -54,17 +48,8 @@ const translations = {
       title_setting : "LighTouch® – Réglages",
       swipe_right: "Balayage Droit",
       swipe_left: "Balayage Gauche",
-      onboarding_step_swipe_right: "Faites un geste vers la droite (swipe droit) pour continuer.",
-      onboarding_step_swipe_left: "Faites un geste vers la gauche (swipe gauche).",
-      onboarding_step_move_cursor: "Déplacez votre main pour déplacer le curseur vers le centre du cadre.",
-      onboarding_step_click_target: "Cliquez sur la cible rouge à l’écran pour valider.",
-      onboarding_step_end: "Félicitations, vous avez terminé le tutoriel ! 🎉",
-      onboarding_finish: "Retour à la page principale",
     }
 };
-
-// Expose translations for onboarding.js
-window.translations = translations;
 
 function applyTranslations() {
     lang = localStorage.getItem('preferredLang') || 'fr';
