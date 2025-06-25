@@ -83,21 +83,21 @@ contextBridge.exposeInMainWorld("electronAPI", {
   },
   pressKey: async (key) => {
     let nutKey;
-    switch (key) {
-      case 'ArrowUp':
-        nutKey = Key.Up;
-        break;
-      case 'ArrowDown':
-        nutKey = Key.Down;
-        break;
-      case 'ArrowLeft':
-        nutKey = Key.Left;
-        break;
-      case 'ArrowRight':
-        nutKey = Key.Right;
-        break;
-      default:
-        console.error(`Key ${key} not recognized`);
+
+    if (key.startsWith("Arrow")) {
+        switch (key) {
+            case 'ArrowUp': nutKey = Key.Up; break;
+            case 'ArrowDown': nutKey = Key.Down; break;
+            case 'ArrowLeft': nutKey = Key.Left; break;
+            case 'ArrowRight': nutKey = Key.Right; break;
+        }
+    } else {
+        const upperKey = key.length === 1 ? key.toUpperCase() : key;
+        nutKey = Key[upperKey];
+    }
+
+    if (!nutKey) {
+        console.error(`Key "${key}" not recognized in nut.js Key map`);
         return;
     }
 
