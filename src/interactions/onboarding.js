@@ -53,6 +53,27 @@ function drawTarget() {
 function handleMessage(msg) {
   try {
     const parsed = JSON.parse(msg);
+    switch (parsed.method) {
+      case 'swipe': {
+        const dir = parsed.params?.direction?.toLowerCase();
+        const key = dir === 'right'
+          ? (localStorage.getItem('Swipe_Right_Key') || 'ArrowRight')
+          : (localStorage.getItem('Swipe_Left_Key') || 'ArrowLeft');
+        window.electronAPI?.pressKey(key);
+        break;
+      }
+      case 'move': {
+        const { x, y } = parsed.params;
+        window.electronAPI?.moveMouse(x, y);
+        break;
+      }
+      case 'click': {
+        const { x, y } = parsed.params;
+        window.electronAPI?.pressMouse(x, y);
+        window.electronAPI?.releaseMouse(x, y);
+        break;
+      }
+    }
     const step = steps[currentStep];
 
     if (step.expected === null) return;
