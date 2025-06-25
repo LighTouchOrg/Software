@@ -7,6 +7,8 @@ class Actions {
     getSettings() {
         this.pres_mode = localStorage.getItem('PresentationMode') || 'true';
         this.nav_mode = localStorage.getItem('NavigationMode') || 'false';
+        this.left_key = localStorage.getItem('Swipe_Right_Key') || 'ArrowRight';
+        this.right_key = localStorage.getItem('Swipe_Left_Key') || 'ArrowLeft';
     }
 
     addAction(action) {
@@ -20,18 +22,20 @@ class Actions {
     // Lightouch methods
 
     swipe(params) {
+        this.getSettings();
         if (!params || !params.direction) {
             console.error("Invalid parameters for swipe action:", params);
             return -1;
         }
+
         const direction = params.direction.toLowerCase();
-        if (this.getSettings.pres_mode == 'true') {
+        if (this.pres_mode == 'true') {
             switch (direction) {
                 case "left":
-                    window.electronAPI?.pressKey("ArrowLeft");
+                    window.electronAPI?.pressKey(this.left_key);
                     break;
                 case "right":
-                    window.electronAPI?.pressKey("ArrowRight");
+                    window.electronAPI?.pressKey(this.right_key);
                     break;
                 default:
                     console.error("Invalid swipe direction:", direction);
@@ -46,12 +50,14 @@ class Actions {
     };
 
     move(params) {
+        this.getSettings();
+
         if (!params || !params.x || !params.y) {
             console.error("Invalid parameters for move action:", params);
             return -1;
         }
         const { x, y } = params;
-        if (this.getActions.nav_mode == 'true') {
+        if (this.nav_mode == 'true') {
             window.electronAPI?.moveMouse(x, y);
             console.log("Move action executed with params:", params);
         } else {
@@ -62,8 +68,9 @@ class Actions {
     };
 
     click(params) {
+        this.getActions();
         // Click at the coordinates provided in params
-        if (this.getActions.nav_mode == 'true') {
+        if (this.nav_mode == 'true') {
             if (params && params.x && params.y) {
                 const { x, y } = params;
                 window.electronAPI?.pressMouse(x, y);
