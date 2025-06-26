@@ -87,4 +87,39 @@ class Actions {
         return 0;
     };
 
+    click_down(params) {
+        this.getActions();
+        this.getSettings();
+        if (this.isOnboarding || this.nav_mode == 'true') {
+            if (params && params.x && params.y) {
+                const { x, y } = params;
+                window.electronAPI?.pressMouse(x, y);
+                console.log("Click down action executed with params:", params);
+            } else {
+                window.electronAPI?.pressMouse();
+                console.log("Click down action executed at current mouse position");
+            }
+        } else {
+            console.log("Click down not performed since navigation mode est désactivé");
+        }
+        return 0;
+    };
+
+    click_up(params) {
+        this.getActions();
+        this.getSettings();
+        if (this.isOnboarding || this.nav_mode == 'true') {
+            if (params && params.x && params.y) {
+                const { x, y } = params;
+                window.electronAPI?.releaseMouse(x, y);
+                console.log("Click up action executed with params:", params);
+            } else {
+                window.electronAPI?.releaseMouse();
+                console.log("Click up action executed at current mouse position");
+            }
+        } else {
+            console.log("Click up not performed since navigation mode est désactivé");
+        }
+        return 0;
+    };
 }
