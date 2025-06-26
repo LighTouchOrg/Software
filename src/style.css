@@ -238,6 +238,12 @@ body.dark-mode .button_setting {
   max-width: 50%;
 }
 
+.top-left-corner {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
 button:hover,
 a:hover {
   background-color: var(--primary-color);
