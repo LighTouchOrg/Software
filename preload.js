@@ -15,6 +15,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
       throw new Error(`Invalid y coordinate: ${y}`);
     }
 
+    mouse.config.mouseSpeed = 2000; // move speed
     await mouse.move(straightTo(new Point(x, y)));
   },
   pressMouse: async (x, y, btn="LEFT") => {
