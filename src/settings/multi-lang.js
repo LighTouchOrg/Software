@@ -27,7 +27,7 @@ const translations = {
       onboarding_step_swipe_left: "Swipe left to continue.",
       onboarding_step_move_cursor: "Move your hand to move the cursor to the center of the frame.",
       onboarding_step_click_target: "Click on the red target on the screen to validate.",
-      onboarding_step_end: "Congratulations, you have completed the tutorial! 🎉",
+      onboarding_step_end: "Congratulations, you have completed the tutorial!",
       onboarding_finish: "Back to Main Page",
     },
     fr: {
@@ -58,7 +58,7 @@ const translations = {
       onboarding_step_swipe_left: "Faites un geste vers la gauche (swipe gauche).",
       onboarding_step_move_cursor: "Déplacez votre main pour déplacer le curseur vers le centre du cadre.",
       onboarding_step_click_target: "Cliquez sur la cible rouge à l'écran pour valider.",
-      onboarding_step_end: "Félicitations, vous avez terminé le tutoriel ! 🎉",
+      onboarding_step_end: "Félicitations, vous avez terminé le tutoriel !",
       onboarding_finish: "Retour à la page principale",
     }
 };

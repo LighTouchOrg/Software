@@ -135,12 +135,24 @@ function handleMessage(msg) {
 document.addEventListener("keydown", (event) => {
   const test = {
     ArrowRight: '{"category":"actions","method":"swipe","params":{"direction":"right"}}',
-    ArrowLeft: '{"category":"actions","method":"swipe","params":{"direction":"left"}}',
-    m: '{"category":"actions","method":"move","params":{"x":300,"y":200}}',
-    c: '{"category":"actions","method":"click","params":{"x":300,"y":200}}'
+    ArrowLeft: '{"category":"actions","method":"swipe","params":{"direction":"left"}}'
   };
   if (test[event.key]) handleMessage(test[event.key]);
 });
+
+document.addEventListener("mousemove", (event) => {
+  let x = event.offsetX || event.layerX;
+  let y = event.offsetY || event.layerY;
+  handleMessage(`{"category":"actions","method":"move","params":{"x":${x},"y":${y}}}`);
+});
+
+document.addEventListener("mousedown", (event) => {
+  console.log("mousedown", event);
+  let x = event.offsetX || event.layerX;
+  let y = event.offsetY || event.layerY;
+  handleMessage(`{"category":"actions","method":"click","params":{"x":${x},"y":${y}}}`);
+});
+
 
 window.addEventListener("DOMContentLoaded", () => {
   if (typeof applyTranslations === 'function') applyTranslations();
