@@ -32,6 +32,15 @@ def start_calibration(conn):
         conn.sendall("CALIBRATION_STARTED".encode())
     except Exception as e:
         print("Failed to notify Electron:", e)
+# à test
+def stop_calibration(conn):
+    msg = build_message("screen", "stop_calibration", "")
+    send_bluetooth_message(msg, conn)
+    try:
+        conn.sendall("CALIBRATION_STOPPED".encode())
+    except Exception as e:
+        print("Failed to notify Electron:", e)
+# -----
 
 def listen_to_electron(conn):
     calibration_active = False
@@ -41,7 +50,7 @@ def listen_to_electron(conn):
                 data = conn.recv(1024).decode()
                 if data:
                     print("Received from Electron:", data)
-                    if data == "START_CALIBRATION":
+                    if data == "START_CALIBRATION" and not calibration_active:
                         start_calibration(conn)
                         calibration_active = True
                     elif data == '{"category": "screen", "method": "calibrate", "params": {"value": true}}':
@@ -52,6 +61,10 @@ def listen_to_electron(conn):
                         hand = "left" if data == "MAIN_HAND_LEFT" else "right"
                         msg = build_message("settings", "main_hand", {"value": hand})
                         send_bluetooth_message(msg, conn)
+                    # à test
+                    # elif data == "STOP_CALIBRATION":
+                    #     stop_calibration(conn)
+                    #     calibration_active = False
             except socket.timeout:
                 continue
             except (socket.error, OSError) as e:
