@@ -55,24 +55,28 @@ function drawTarget() {
   const stepId = steps[currentStep].id;
 
   if (stepId === 'move-cursor') {
-    frame.x = (canvas.width - frame.width) / 2;
-    frame.y = (canvas.height - frame.height) / 2;
-    ctx.strokeStyle = '#c81927';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(frame.x, frame.y, frame.width, frame.height);
+      // Draw a red-white target at the center
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radii = [75, 60, 45, 30, 15]; // radii for the rings
+      const colors = ['#c81927', '#fff', '#c81927', '#fff', '#c81927']; // red, white, red
+  
+      for (let i = 0; i < radii.length; i++) {
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radii[i], 0, 2 * Math.PI);
+        ctx.fillStyle = colors[i];
+        ctx.fill();
+      }
+
+      target.x = centerX;
+      target.y = centerY;
+      target.radius = radii[0];
   }
 
   if (stepId === 'click-target') {
     ctx.beginPath();
-    ctx.arc(target.x, target.y, target.radius, 0, 2 * Math.PI);
+    ctx.arc(300, 200, 30, 0, 2 * Math.PI);
     ctx.fillStyle = "#c81927";
-    ctx.fill();
-  }
-
-  if (cursor.x !== undefined && cursor.y !== undefined) {
-    ctx.beginPath();
-    ctx.arc(cursor.x, cursor.y, 5, 0, 2 * Math.PI);
-    ctx.fillStyle = "#2a9d8f";
     ctx.fill();
   }
 }
@@ -87,20 +91,18 @@ function handleMessage(msg) {
     if (step.expected === "move" && parsed.method === "move") {
       const x = Number(parsed.params.x);
       const y = Number(parsed.params.y);
-      const canvasX = (x / 640) * canvas.width;
-      const canvasY = (y / 480) * canvas.height;
+      const canvasX = (x / 400) * canvas.width;
+      const canvasY = (y / 240) * canvas.height;
       cursor.x = canvasX;
       cursor.y = canvasY;
 
-      const inFrame =
-        canvasX >= frame.x &&
-        canvasX <= frame.x + frame.width &&
-        canvasY >= frame.y &&
-        canvasY <= frame.y + frame.height;
+      const inTarget = Math.sqrt(
+        (canvasX - target.x) ** 2 + (canvasY - target.y) ** 2
+      ) < target.radius - 5;
 
       requestAnimationFrame(drawTarget);
 
-      if (inFrame) {
+      if (inTarget) {
         advanceStep();
       }
       return;
