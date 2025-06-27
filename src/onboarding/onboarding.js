@@ -10,14 +10,7 @@ let currentStep = 0;
 let canvas, ctx, finishBtn;
 
 const cursor = { x: undefined, y: undefined };
-const target = { x: 300, y: 200, radius: 30 };
-
-const frame = {
-  width: 180,
-  height: 100,
-  x: 0,
-  y: 0
-};
+const target = { x: undefined, y: undefined, radius: undefined };
 
 const stepText = document.getElementById('step-text');
 
@@ -77,7 +70,7 @@ function drawTarget() {
     // Draw a red-white target at the center
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
-      const radii = [62, 49, 36, 23, 10]; // radii for the rings
+      const radii = [75, 60, 45, 30, 15]; // radii for the rings
       const colors = ['#c81927', '#fff', '#c81927', '#fff', '#c81927']; // red, white, red
   
       for (let i = 0; i < radii.length; i++) {
@@ -124,9 +117,16 @@ function handleMessage(msg) {
     if (step.expected === "click" && parsed.method === "click") {
       const x = Number(parsed.params.x);
       const y = Number(parsed.params.y);
+      const canvasX = (x / 400) * canvas.width;
+      const canvasY = (y / 240) * canvas.height;
       const dx = x - target.x;
       const dy = y - target.y;
-      if (Math.sqrt(dx * dx + dy * dy) < target.radius + 20) {
+
+      const inTarget = Math.sqrt(
+        (canvasX - target.x) ** 2 + (canvasY - target.y) ** 2
+      ) < target.radius - 5;
+
+      if (inTarget) {
         advanceStep();
       }
       return;
