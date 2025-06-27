@@ -36,11 +36,12 @@ html,
 body {
   width: 100%;
   overflow-x: hidden;
+  min-height: 100vh;
+  height: 100%;
 }
 
 body {
   color: var(--font-color);
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -50,18 +51,18 @@ body {
 }
 
 .background {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
   background: radial-gradient(
     circle at 50% 50%,
     var(--background-color-1) 0%,
     var(--background-color-2) 80%
   );
   overflow: hidden;
-  z-index: -1;
 }
 
 body.dark-mode .background {
@@ -464,7 +465,8 @@ input:checked + .slider:before {
 
 /* For select lang option */
 
-#lang-selector {
+#lang-selector,
+#hand-selector {
   width: 120px;
   height: 30px;
   border: 1px solid #999;
@@ -473,11 +475,13 @@ input:checked + .slider:before {
   border-radius: 5px;
 }
 
-#lang-selector:hover {
+#lang-selector:hover,
+#hand-selector:hover {
   cursor: pointer;
 }
 
-.lang {
+.lang,
+.hand {
   text-align: center;
   font-weight: bold;
 }

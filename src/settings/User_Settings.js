@@ -6,6 +6,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const savedReader = localStorage.getItem('Reader');
   const savedPres = localStorage.getItem('PresentationMode');
   const savedNav = localStorage.getItem('NavigationMode');
+  const savedHand = localStorage.getItem('dominantHand');
 
   const textSizeSelector = document.getElementById('text-size-slider');
   const toggleThemeSelector = document.getElementById('theme-toggle');
@@ -13,6 +14,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const reader = document.getElementById('reader-toggle');
   const presToggle = document.getElementById('presentation-toggle');
   const navToggle = document.getElementById('nav-toggle');
+  const handSelector = document.getElementById('hand-selector');
 
   if (savedFontSize) {
       document.body.style.fontSize = savedFontSize;
@@ -43,6 +45,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
   if (inputLang && savedLang) {
       inputLang.value = savedLang;
+  }
+
+  if (handSelector && savedHand) {
+      handSelector.value = savedHand;
   }
 
   const presEnabled = savedPres === 'true';

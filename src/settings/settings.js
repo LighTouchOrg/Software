@@ -4,6 +4,7 @@ const readerToggle = document.getElementById('reader-toggle');
 const langSelector = document.getElementById('lang-selector');
 const presToggle = document.getElementById('presentation-toggle');
 const navToggle = document.getElementById('nav-toggle');
+const handSelector = document.getElementById('hand-selector');
 
 let readerMode = false;
 
@@ -115,6 +116,31 @@ if (navToggle) {
       presToggle.checked = true;
       localStorage.setItem('PresentationMode', 'true');
       localStorage.setItem('NavigationMode', 'false');
+    }
+  });
+}
+
+// Main hand (dominant hand)
+if (handSelector) {
+  const storedHand = localStorage.getItem('dominantHand');
+  if (!storedHand) {
+    handSelector.value = 'right';
+    localStorage.setItem('dominantHand', 'right');
+  } else {
+    handSelector.value = storedHand;
+  }
+  handSelector.addEventListener('change', () => {
+    localStorage.setItem('dominantHand', handSelector.value);
+    if (localStorage.getItem('Reader') === 'true') {
+      const translations = {
+        fr: { left: "main gauche", right: "main droite" },
+        en: { left: "left hand", right: "right hand" }
+      };
+      const lang = localStorage.getItem('preferredLang') || 'fr';
+      const text = translations[lang][handSelector.value];
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.lang = lang === "fr" ? "fr-FR" : "en-US";
+      speechSynthesis.speak(msg);
     }
   });
 }

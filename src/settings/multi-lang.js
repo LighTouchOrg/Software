@@ -31,6 +31,9 @@ const translations = {
       onboarding_step_end: "Congratulations, you have completed the tutorial!",
       onboarding_finish: "Back to the main page",
       onboarding_restart: "Restart",
+      DominantHand: "Dominant hand",
+      left: "Left",
+      right: "Right",
     },
     fr: {
       Calibration: "Calibrer la caméra",
@@ -64,6 +67,9 @@ const translations = {
       onboarding_step_end: "Félicitations, vous avez terminé le tutoriel !",
       onboarding_finish: "Retourner à l'écran principal",
       onboarding_restart: "Redémarrer",
+      DominantHand: "Main dominante",
+      left: "Gauche",
+      right: "Droite",
     }
 };
 
