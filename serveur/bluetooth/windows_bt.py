@@ -1,4 +1,5 @@
 from threading import Thread
+import bluetooth.common
 
 def find_active_bluetooth_port():
     import serial.tools.list_ports
@@ -11,11 +12,10 @@ def find_active_bluetooth_port():
 
 def receive_data_windows(port, conn):
     import serial
-    from bluetooth.common import serial_connection
     try:
         ser = serial.Serial(port, 9600, timeout=1)
-        serial_connection = ser
-        ser.write(b"Connected to the raspberry\\n")
+        bluetooth.common.serial_connection = ser
+        ser.write(b"Connected to the raspberry\n")
         while True:
             data = ser.readline().decode('utf-8', errors='ignore').strip()
             if data:
