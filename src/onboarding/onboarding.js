@@ -74,10 +74,22 @@ function drawTarget() {
   }
 
   if (stepId === 'click-target') {
-    ctx.beginPath();
-    ctx.arc(300, 200, 30, 0, 2 * Math.PI);
-    ctx.fillStyle = "#c81927";
-    ctx.fill();
+    // Draw a red-white target at the center
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radii = [62, 49, 36, 23, 10]; // radii for the rings
+      const colors = ['#c81927', '#fff', '#c81927', '#fff', '#c81927']; // red, white, red
+  
+      for (let i = 0; i < radii.length; i++) {
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radii[i], 0, 2 * Math.PI);
+        ctx.fillStyle = colors[i];
+        ctx.fill();
+      }
+
+      target.x = centerX;
+      target.y = centerY;
+      target.radius = radii[0];
   }
 }
 
