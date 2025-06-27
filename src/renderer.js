@@ -40,7 +40,7 @@ if (onboardingButton) {
     if (!onboardingWindow || onboardingWindow.closed) {
       onboardingButton.disabled = true;
 
-      onboardingWindow = window.open('onboarding.html', '_blank', 'width=800,height=600,fullscreen=yes');
+      onboardingWindow = window.open('onboarding/onboarding.html', '_blank', 'width=800,height=600,fullscreen=yes');
 
       const checker = setInterval(() => {
         if (!onboardingWindow || onboardingWindow.closed) {
