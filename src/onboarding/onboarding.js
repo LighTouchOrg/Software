@@ -71,7 +71,7 @@ function drawTarget() {
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
       const radii = [75, 60, 45, 30, 15]; // radii for the rings
-      const colors = ['#c81927', '#fff', '#c81927', '#fff', '#c81927']; // red, white, red
+      const colors = ['#2c8ad1', '#fff', '#2c8ad1', '#fff', '#2c8ad1']; // red, white, red
   
       for (let i = 0; i < radii.length; i++) {
         ctx.beginPath();

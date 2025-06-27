@@ -657,8 +657,20 @@ body.text-large input:checked + .slider:before {
   align-items: flex-start;
 }
 
+#tutorial-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 #step-text {
-  max-width: 600px;
+  max-width: 800px;
+  font-size: 1.7em;
+  color: midnightblue;
+}
+
+body.dark-mode #step-text {
+  color: navajowhite;
 }
 
 #target-canvas {
@@ -672,4 +684,8 @@ body.text-large input:checked + .slider:before {
 
 #target-canvas.hidden {
   display: none !important;
+}
+
+#finish-btn {
+  margin-top: 2em;
 }
