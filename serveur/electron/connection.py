@@ -48,6 +48,10 @@ def listen_to_electron(conn):
                         if calibration_active:
                             conn.sendall("CLOSE_CALIBRATION_WINDOW".encode())
                             calibration_active = False
+                    elif data in ("MAIN_HAND_LEFT", "MAIN_HAND_RIGHT"):
+                        hand = "left" if data == "MAIN_HAND_LEFT" else "right"
+                        msg = build_message("settings", "main_hand", {"value": hand})
+                        send_bluetooth_message(msg, conn)
             except socket.timeout:
                 continue
             except (socket.error, OSError) as e:

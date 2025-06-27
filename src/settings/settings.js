@@ -126,11 +126,20 @@ if (handSelector) {
   if (!storedHand) {
     handSelector.value = 'right';
     localStorage.setItem('dominantHand', 'right');
+    if (window.electronAPI && window.electronAPI.sendToPython) {
+      window.electronAPI.sendToPython('MAIN_HAND_RIGHT');
+    }
   } else {
     handSelector.value = storedHand;
+    if (window.electronAPI && window.electronAPI.sendToPython) {
+      window.electronAPI.sendToPython(storedHand === 'left' ? 'MAIN_HAND_LEFT' : 'MAIN_HAND_RIGHT');
+    }
   }
   handSelector.addEventListener('change', () => {
     localStorage.setItem('dominantHand', handSelector.value);
+    if (window.electronAPI && window.electronAPI.sendToPython) {
+      window.electronAPI.sendToPython(handSelector.value === 'left' ? 'MAIN_HAND_LEFT' : 'MAIN_HAND_RIGHT');
+    }
     if (localStorage.getItem('Reader') === 'true') {
       const translations = {
         fr: { left: "main gauche", right: "main droite" },
