@@ -41,7 +41,7 @@ def listen_to_electron(conn):
                 data = conn.recv(1024).decode()
                 if data:
                     print("Received from Electron:", data)
-                    if data == "START_CALIBRATION" and not calibration_active:
+                    if data == "START_CALIBRATION":
                         start_calibration(conn)
                         calibration_active = True
                     elif data == '{"category": "screen", "method": "calibrate", "params": {"value": true}}':

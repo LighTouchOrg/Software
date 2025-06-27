@@ -10,13 +10,25 @@ def find_active_bluetooth_port():
             return port.device
     return ports[0].device if ports else None
 
+def ensure_serial_connection(port):
+    import serial
+    if bluetooth.common.serial_connection is None or not bluetooth.common.serial_connection.is_open:
+        try:
+            bluetooth.common.serial_connection = serial.Serial(port, 9600, timeout=1)
+            bluetooth.common.serial_connection.write(b"Connected to the raspberry\n")
+        except Exception as e:
+            print("Erreur lors de l'ouverture du port série:", e)
+            bluetooth.common.serial_connection = None
+
 def receive_data_windows(port, conn):
     import serial
     try:
-        ser = serial.Serial(port, 9600, timeout=1)
-        bluetooth.common.serial_connection = ser
-        ser.write(b"Connected to the raspberry\n")
+        ensure_serial_connection(port)
+        ser = bluetooth.common.serial_connection
         while True:
+            if ser is None or not ser.is_open:
+                ensure_serial_connection(port)
+                ser = bluetooth.common.serial_connection
             data = ser.readline().decode('utf-8', errors='ignore').strip()
             if data:
                 print("Received (Serial):", data)
@@ -29,6 +41,7 @@ def handle_bluetooth_windows(conn):
         import serial
         port = find_active_bluetooth_port()
         if port:
+            ensure_serial_connection(port)
             thread = Thread(target=receive_data_windows, args=(port, conn), daemon=True)
             thread.start()
         else:
