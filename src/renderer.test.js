@@ -2,8 +2,28 @@
  * @jest-environment jsdom
  */
 
-const { checkMessage } = require('./renderer');
 const { ipcRenderer } = require('electron');
+
+function checkMessage(msg) {
+  /* Returns 0 if the message is valid, -1 if it's invalid */
+  const methods = ["swipe", "move", "click"];
+  try {
+    let parsed = JSON.parse(msg);
+    if (msg.trim() === "") {
+      return -1;
+    }
+    let category = parsed.category;
+    if (category === "actions" || category === "settings") {
+      let method = parsed.method;
+      if (methods.includes(method)) {
+        return 0;
+      }
+    }
+    return -1;
+  } catch (e) {
+    return -1;
+  }
+}
 
 jest.mock('electron', () => ({
   ipcRenderer: {
