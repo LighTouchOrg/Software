@@ -1,7 +1,7 @@
 const translations = {
     en: {
       Calibration: "Camera calibration",
-      Onboarding: "Learn to use Lightouch",
+      Onboarding: "Learn to use LighTouch",
       Setting: "Settings",
       Status: "No Bluetooth device connected",
       Back: "Back",

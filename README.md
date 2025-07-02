@@ -1,6 +1,6 @@
-# Lightouch Software
+# LighTouch Software
 
-Lightouch Software est une application Electron utilisée pour contrôler le système Lightouch.
+LighTouch Software est une application Electron utilisée pour contrôler le système LighTouch.
 
 ## Installation
 
