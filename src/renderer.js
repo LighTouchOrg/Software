@@ -1,3 +1,5 @@
+const { Actions } = require('./interactions/Actions');
+
 const calibrateButton = document.getElementById('calibrate-button');
 const onboardingButton = document.getElementById('onboarding-button');
 const deviceStatus = document.getElementById('device-status');
@@ -25,7 +27,8 @@ if (calibrateButton) {
 
       calibrationWindow.addEventListener('keydown', (event) => {
          if (event.key === 'Escape') {
-           window.electronAPI.sendToPython("STOP_CALIBRATION");
+          // à test
+          //  window.electronAPI.sendToPython("STOP_CALIBRATION");
            calibrationWindow.close();
            calibrationWindow = null;
            calibrateButton.disabled = false;
@@ -109,6 +112,27 @@ function readMessage(msg) {
   }
 }
 
+function checkMessage(msg) {
+  /* Returns 0 if the message is valid, -1 if it's invalid */
+  const methods = ["swipe", "move", "click"];
+  try {
+    let parsed = JSON.parse(msg);
+    if (msg.trim() === "") {
+      return -1; 
+    }
+    let category = parsed.category;
+    if (category === "actions" || category === "settings") {
+      let method = parsed.method;
+      if (methods.includes(method)) {
+        return 0;
+      } 
+    }
+    return -1;
+  } catch (e) {
+    return -1; 
+  }
+}
+
 // Pour tester sans Raspberry
 // document.onkeydown = async (event) => {
 //   if (event.key === 's') {
@@ -173,3 +197,7 @@ window.electronAPI?.onPythonData((event, data) => {
     jsonBuffer = "";
   }
 });
+
+module.exports = {
+  checkMessage,
+};

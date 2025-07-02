@@ -7,7 +7,8 @@
     "start": "electron .",
     "build": "electron-builder",
     "dist": "electron-builder --win --x64",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "build": {
     "appId": "com.lightouch.app",
@@ -40,8 +41,12 @@
   },
   "homepage": "https://github.com/LighTouchOrg/Software#readme",
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
     "electron": "^35.1.4",
-    "electron-builder": "^26.0.12"
+    "electron-builder": "^26.0.12",
+    "jest": "^30.0.3",
+    "jest-environment-jsdom": "^30.0.2",
+    "jsdom": "^26.1.0"
   },
   "dependencies": {
     "@nut-tree-fork/nut-js": "^4.2.6",
