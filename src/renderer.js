@@ -27,8 +27,7 @@ if (calibrateButton) {
 
       calibrationWindow.addEventListener('keydown', (event) => {
          if (event.key === 'Escape') {
-          // à test
-          //  window.electronAPI.sendToPython("STOP_CALIBRATION");
+           window.electronAPI.sendToPython("STOP_CALIBRATION");
            calibrationWindow.close();
            calibrationWindow = null;
            calibrateButton.disabled = false;
@@ -118,18 +117,18 @@ function checkMessage(msg) {
   try {
     let parsed = JSON.parse(msg);
     if (msg.trim() === "") {
-      return -1; 
+      return -1;
     }
     let category = parsed.category;
     if (category === "actions" || category === "settings") {
       let method = parsed.method;
       if (methods.includes(method)) {
         return 0;
-      } 
+      }
     }
     return -1;
   } catch (e) {
-    return -1; 
+    return -1;
   }
 }
 
