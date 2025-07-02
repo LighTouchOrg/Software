@@ -59,7 +59,7 @@ class Actions {
         const { x, y } = params;
         if (this.isOnboarding || this.nav_mode == 'true') {
             window.electronAPI?.moveMouse(x, y);
-            console.log("Move action executed with params:", params);
+            // console.log("Move action executed with params:", params);
         } else {
             console.log("Move not performed since navigation mode est désactivé");
         }

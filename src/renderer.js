@@ -110,7 +110,7 @@ function readMessage(msg) {
 }
 
 window.electronAPI?.onPythonData((event, data) => {
-  console.log("Donnée reçue de Python :", data);
+  // console.log("Donnée reçue de Python :", data);
 
   if (!data.startsWith("BT:")) {
     return;

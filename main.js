@@ -39,7 +39,7 @@ pythonServer.on('close', (code) => {
 
 client.on('data', (data) => {
   const receivedData = data.toString();
-  console.log('Received from Python:', receivedData);
+  // console.log('Received from Python:', receivedData);
   if (win) {
     win.webContents.send('python-data', receivedData);
   }

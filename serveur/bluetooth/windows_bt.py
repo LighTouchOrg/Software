@@ -31,7 +31,7 @@ def receive_data_windows(port, conn):
                 ser = bluetooth.common.serial_connection
             data = ser.readline().decode('utf-8', errors='ignore').strip()
             if data:
-                print("Received (Serial):", data)
+                print(data)
                 conn.sendall(f"BT:{data}".encode())
     except Exception as e:
         print("Serial error:", e)
