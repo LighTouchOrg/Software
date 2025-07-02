@@ -29,6 +29,10 @@ if (calibrateButton) {
            calibrationWindow.close();
            calibrationWindow = null;
            calibrateButton.disabled = false;
+           if (deviceStatus) {
+             deviceStatus.textContent = "Calibration interrompue.";
+             setDeviceStatusColor();
+           }
          }
       });
     }
@@ -136,9 +140,14 @@ window.electronAPI?.onPythonData((event, data) => {
 
       if (parsed?.category === "screen" && parsed?.method === "calibrate") {
         const value = parsed.params?.value;
-        deviceStatus.textContent = value === false
-          ? "Calibration terminée."
-          : "Calibration échouée. Veuillez réessayer.";
+        if (deviceStatus) {
+          if (value === false) {
+            deviceStatus.textContent = "Calibration terminée.";
+          } else {
+            deviceStatus.textContent = "Calibration échouée. Veuillez réessayer.";
+          }
+          setDeviceStatusColor();
+        }
         calibrateButton.disabled = false;
         calibrationWindow?.close();
         calibrationWindow = null;
@@ -158,6 +167,23 @@ window.electronAPI?.onPythonData((event, data) => {
     calibrationWindow = null;
     calibrateButton.disabled = false;
     deviceStatus.textContent = "Calibration terminée. Vous pouvez recalibrer.";
+    setDeviceStatusColor();
     jsonBuffer = "";
   }
 });
+
+function setDeviceStatusColor() {
+  const defaultColor = '#c81927';
+  const darkThemeColor = 'navajowhite';
+  const lightThemeColor = 'midnightblue';
+  if (!deviceStatus) return;
+  const isDark = document.body.classList.contains('dark-mode');
+  const text = deviceStatus.textContent || '';
+  if (text.includes('Calibration interrompue.')) {
+    deviceStatus.style.color = isDark ? darkThemeColor : lightThemeColor;
+  } else if (text.includes('Calibration terminée.') || text.includes('Calibration échouée')) {
+    deviceStatus.style.color = isDark ? darkThemeColor : lightThemeColor;
+  } else {
+    deviceStatus.style.color = defaultColor;
+  }
+}

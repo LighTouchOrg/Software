@@ -8,17 +8,27 @@
 <body class="calibration-window">
   <div class="loading-center">
     Calibration en cours<span id="loading-dots">...</span>
+    <div id="echap-text" data-i18n="calibration_cancel">Appuyez sur Échap pour annuler</div>
   </div>
 
   <script>
     let dotCount = 0;
     const loadingDots = document.getElementById('loading-dots');
 
-    // Animation des points
+    // Animation for loading dots
     setInterval(() => {
       dotCount = (dotCount + 1) % 4;
       if (loadingDots) loadingDots.textContent = '.'.repeat(dotCount);
     }, 500);
+
+    // Translation handling
+    if (window.applyTranslations) {
+      window.applyTranslations();
+    } else {
+      window.addEventListener('DOMContentLoaded', function() {
+        if (window.applyTranslations) window.applyTranslations();
+      });
+    }
   </script>
 </body>
 </html>

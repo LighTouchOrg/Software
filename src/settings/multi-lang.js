@@ -34,6 +34,7 @@ const translations = {
       DominantHand: "Dominant hand",
       left: "Left",
       right: "Right",
+      calibration_cancel: "Press ESC to cancel",
     },
     fr: {
       Calibration: "Calibrer la caméra",
@@ -70,6 +71,7 @@ const translations = {
       DominantHand: "Main dominante",
       left: "Gauche",
       right: "Droite",
+      calibration_cancel: "Appuyez sur Échap pour annuler",
     }
 };
 
