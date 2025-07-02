@@ -4,6 +4,7 @@
   "description": "Software used to control the LightTouch system",
   "main": "main.js",
   "scripts": {
+    "dev": "electron .",
     "start": "electron .",
     "build": "electron-builder",
     "dist": "electron-builder --win --x64",

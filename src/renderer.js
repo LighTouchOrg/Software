@@ -122,6 +122,7 @@ window.electronAPI?.onPythonData((event, data) => {
   const regex = /{[^{}]*(?:{[^{}]*}[^{}]*)*}/g;
   let match;
   let lastIndex = 0;
+  // deviceStatus.textContent = "test deviceStatus";
 
   while ((match = regex.exec(jsonBuffer)) !== null) {
     const possibleJson = match[0];
