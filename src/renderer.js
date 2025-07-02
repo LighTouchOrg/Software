@@ -109,19 +109,6 @@ function readMessage(msg) {
   }
 }
 
-// Pour tester sans Raspberry
-// document.onkeydown = async (event) => {
-//   if (event.key === 's') {
-//     readMessage('{"category":"actions","method":"swipe","params":{"direction":"right"}}');
-//   }
-//   if (event.key === 'm') {
-//     readMessage('{"category":"actions","method":"move","params":{"x":"400","y":"400"}}');
-//   }
-//   if (event.key === 'c') {
-//     readMessage('{"category":"actions","method":"click","params":{"x":"450","y":"400"}}');
-//   }
-// }
-
 window.electronAPI?.onPythonData((event, data) => {
   console.log("Donnée reçue de Python :", data);
 
