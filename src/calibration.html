@@ -7,8 +7,11 @@
 </head>
 <body class="calibration-window">
   <div class="loading-center">
-    Calibration en cours<span id="loading-dots">...</span>
-    <div id="echap-text" data-i18n="calibration_cancel">Appuyez sur Échap pour annuler</div>
+    <div class="calibration-row">
+      <span id="calibration-status"></span>
+      <span id="loading-dots">...</span>
+    </div>
+    <span id="echap-text" data-i18n="calibration_cancel"></span>
   </div>
 
   <script>
@@ -22,12 +25,46 @@
     }, 500);
 
     // Translation handling
-    if (window.applyTranslations) {
-      window.applyTranslations();
+    function applyTranslationsForCalibration() {
+      const lang = localStorage.getItem('preferredLang') || 'fr';
+      // Ajout fallback direct si window.translations n'existe pas
+      if (!window.translations) {
+        window.translations = {
+          fr: {
+            calibration_in_progress: 'Calibration en cours',
+            calibration_cancel: 'Appuyez sur Échap pour annuler'
+          },
+          en: {
+            calibration_in_progress: 'Calibration in progress',
+            calibration_cancel: 'Press Esc to cancel'
+          }
+        };
+      }
+      // Use the same logic as applyTranslations for [data-i18n] elements
+      if (window.translations && window.translations[lang]) {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          if (window.translations[lang][key]) {
+            el.textContent = window.translations[lang][key];
+          } else {
+            // fallback to English if missing
+            el.textContent = (window.translations['en'] && window.translations['en'][key]) || key;
+          }
+        });
+      }
+      // fallback for status text if not set by i18n
+      let statusText = (window.translations && window.translations[lang] && window.translations[lang]['calibration_in_progress'])
+        || (lang === 'en' ? 'Calibration in progress' : 'Calibration en cours');
+      document.getElementById('calibration-status').textContent = statusText;
+    }
+    function runTranslations() {
+      if (window.applyTranslations) window.applyTranslations();
+      applyTranslationsForCalibration();
+    }
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', runTranslations);
     } else {
-      window.addEventListener('DOMContentLoaded', function() {
-        if (window.applyTranslations) window.applyTranslations();
-      });
+      runTranslations();
     }
   </script>
 </body>

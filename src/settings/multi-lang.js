@@ -1,6 +1,7 @@
 const translations = {
     en: {
       Calibration: "Camera calibration",
+      calibration_in_progress: "Calibration in progress",
       Onboarding: "Learn to use LighTouch",
       Setting: "Settings",
       Status: "No Bluetooth device connected",
@@ -38,6 +39,7 @@ const translations = {
     },
     fr: {
       Calibration: "Calibrer la caméra",
+      calibration_in_progress: "Calibration en cours",
       Onboarding: "Apprendre à utiliser LighTouch",
       Setting: "Paramètres",
       Status: "Aucun appareil Bluetooth connecté",

@@ -30,8 +30,15 @@ if (calibrateButton) {
            calibrationWindow = null;
            calibrateButton.disabled = false;
            if (deviceStatus) {
-             deviceStatus.textContent = "Calibration interrompue.";
-             setDeviceStatusColor();
+             const lang = localStorage.getItem('preferredLang') || 'fr';
+             const isDark = document.body.classList.contains('dark-mode');
+             const messages = {
+               fr: { interrupted: 'Calibration interrompue.' },
+               en: { interrupted: 'Calibration interrupted.' }
+             };
+             const m = messages[lang] || messages['fr'];
+             deviceStatus.textContent = m.interrupted;
+             deviceStatus.style.color = isDark ? 'navajowhite' : 'midnightblue';
            }
          }
       });
@@ -126,7 +133,6 @@ window.electronAPI?.onPythonData((event, data) => {
   const regex = /{[^{}]*(?:{[^{}]*}[^{}]*)*}/g;
   let match;
   let lastIndex = 0;
-  // deviceStatus.textContent = "test deviceStatus";
 
   while ((match = regex.exec(jsonBuffer)) !== null) {
     const possibleJson = match[0];
@@ -141,12 +147,19 @@ window.electronAPI?.onPythonData((event, data) => {
       if (parsed?.category === "screen" && parsed?.method === "calibrate") {
         const value = parsed.params?.value;
         if (deviceStatus) {
+          const lang = localStorage.getItem('preferredLang') || 'fr';
+          const isDark = document.body.classList.contains('dark-mode');
+          const messages = {
+            fr: { done: 'Calibration terminée.', failed: 'Calibration échouée. Veuillez réessayer.' },
+            en: { done: 'Calibration finished.', failed: 'Calibration failed. Please try again.' }
+          };
+          const m = messages[lang] || messages['fr'];
           if (value === false) {
-            deviceStatus.textContent = "Calibration terminée.";
+            deviceStatus.textContent = m.done;
           } else {
-            deviceStatus.textContent = "Calibration échouée. Veuillez réessayer.";
+            deviceStatus.textContent = m.failed;
           }
-          setDeviceStatusColor();
+          deviceStatus.style.color = isDark ? 'navajowhite' : 'midnightblue';
         }
         calibrateButton.disabled = false;
         calibrationWindow?.close();
@@ -166,24 +179,15 @@ window.electronAPI?.onPythonData((event, data) => {
     calibrationWindow?.close();
     calibrationWindow = null;
     calibrateButton.disabled = false;
-    deviceStatus.textContent = "Calibration terminée. Vous pouvez recalibrer.";
-    setDeviceStatusColor();
+    // Get language
+    const lang = localStorage.getItem('preferredLang') || 'fr';
+    const isDark = document.body.classList.contains('dark-mode');
+    const messages = {
+      fr: 'Calibration terminée. Vous pouvez recalibrer.',
+      en: 'Calibration finished. You can recalibrate.'
+    };
+    deviceStatus.textContent = messages[lang] || messages['fr'];
+    deviceStatus.style.color = isDark ? 'navajowhite' : 'midnightblue';
     jsonBuffer = "";
   }
 });
-
-function setDeviceStatusColor() {
-  const defaultColor = '#c81927';
-  const darkThemeColor = 'navajowhite';
-  const lightThemeColor = 'midnightblue';
-  if (!deviceStatus) return;
-  const isDark = document.body.classList.contains('dark-mode');
-  const text = deviceStatus.textContent || '';
-  if (text.includes('Calibration interrompue.')) {
-    deviceStatus.style.color = isDark ? darkThemeColor : lightThemeColor;
-  } else if (text.includes('Calibration terminée.') || text.includes('Calibration échouée')) {
-    deviceStatus.style.color = isDark ? darkThemeColor : lightThemeColor;
-  } else {
-    deviceStatus.style.color = defaultColor;
-  }
-}

@@ -306,17 +306,37 @@ body.dark-mode #connection-status {
 }
 
 .loading-center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
   font-size: 1.5rem;
   color: var(--font-color);
 }
 
+.calibration-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+}
+
+#calibration-status {
+  display: inline-block;
+  vertical-align: middle;
+}
+#loading-dots {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 0.3em;
+}
+
 #echap-text {
-  margin-top: 8px;
-  font-size: 1rem;
+  margin-top: 15px;
+  font-size: 1.3rem;
+  text-align: center;
 }
 
 /* Responsive */
