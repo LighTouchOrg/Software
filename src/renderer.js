@@ -1,5 +1,3 @@
-const { Actions } = require('./interactions/Actions');
-
 const calibrateButton = document.getElementById('calibrate-button');
 const onboardingButton = document.getElementById('onboarding-button');
 const deviceStatus = document.getElementById('device-status');
