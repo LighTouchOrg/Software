@@ -25,8 +25,7 @@ if (calibrateButton) {
 
       calibrationWindow.addEventListener('keydown', (event) => {
          if (event.key === 'Escape') {
-          // à test
-          //  window.electronAPI.sendToPython("STOP_CALIBRATION");
+           window.electronAPI.sendToPython("STOP_CALIBRATION");
            calibrationWindow.close();
            calibrationWindow = null;
            calibrateButton.disabled = false;
