@@ -57,7 +57,7 @@ def listen_to_electron(conn):
                             calibration_active = False
                     elif data in ("MAIN_HAND_LEFT", "MAIN_HAND_RIGHT"):
                         hand = "left" if data == "MAIN_HAND_LEFT" else "right"
-                        msg = build_message("settings", "main_hand", {"value": hand})
+                        msg = build_message("settings", "main_hand", hand)
                         send_bluetooth_message(msg, conn)
                     elif data == "STOP_CALIBRATION":
                         stop_calibration(conn)
