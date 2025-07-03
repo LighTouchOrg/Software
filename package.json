@@ -1,6 +1,6 @@
 {
   "name": "lightouch",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Software used to control the LightTouch system",
   "main": "main.js",
   "scripts": {
@@ -18,12 +18,12 @@
       "main.js",
       "preload.js",
       "src/**/*",
-      "serveur/**/*"
+       "resources/**/*"
     ],
     "extraFiles": [
       {
-        "from": "serveur",
-        "to": "resources/serveur"
+        "from": "resources/server",
+        "to": "resources/server"
       }
     ],
     "win": {
