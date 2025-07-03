@@ -23,7 +23,7 @@
     "extraFiles": [
       {
         "from": "serveur",
-        "to": "serveur"
+        "to": "resources/serveur"
       }
     ],
     "win": {
