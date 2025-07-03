@@ -320,7 +320,6 @@ body.dark-mode #connection-status {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 0.5em;
 }
 
 #calibration-status {
@@ -330,7 +329,7 @@ body.dark-mode #connection-status {
 #loading-dots {
   display: inline-block;
   vertical-align: middle;
-  margin-left: 0.3em;
+  margin-left: 0.1em;
 }
 
 #echap-text {

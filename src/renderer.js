@@ -22,8 +22,18 @@ const statusMessages = {
 let calibrationWindow = null;
 let onboardingWindow = null;
 let jsonBuffer = "";
-let deviceStatusString = "device_not_connected";
-let deviceStatusColor = { light: '#9a3412', dark: '#c81927' };
+
+// Initialize device status variables from localStorage or set defaults
+let deviceStatusString = localStorage.getItem('deviceStatusString') || 'device_not_connected';
+let deviceStatusColor = JSON.parse(localStorage.getItem('deviceStatusColor')) || { light: '#9a3412', dark: '#c81927' };
+
+// Save device status variables to localStorage
+function updateDeviceStatus(statusString, color) {
+  deviceStatusString = statusString;
+  deviceStatusColor = color;
+  localStorage.setItem('deviceStatusString', deviceStatusString);
+  localStorage.setItem('deviceStatusColor', JSON.stringify(deviceStatusColor));
+}
 
 // Lancer la calibration
 if (calibrateButton) {
@@ -137,6 +147,7 @@ function readMessage(msg) {
   }
 }
 
+// Update device status on page load
 window.addEventListener('load', () => {
   const lang = localStorage.getItem('preferredLang') || 'fr';
   const isDark = document.body.classList.contains('dark-mode');
@@ -145,9 +156,8 @@ window.addEventListener('load', () => {
   deviceStatus.style.color = isDark ? deviceStatusColor.dark : deviceStatusColor.light;
 });
 
+// Update device status dynamically
 window.electronAPI?.onPythonData((event, data) => {
-  // console.log("Donnée reçue de Python :", data);
-
   if (!data.startsWith("BT:")) {
     return;
   }
@@ -159,14 +169,12 @@ window.electronAPI?.onPythonData((event, data) => {
   let match;
   let lastIndex = 0;
 
-  // If we received a valid BT message, it means the device is connected
   const lang = localStorage.getItem('preferredLang') || 'fr';
   const isDark = document.body.classList.contains('dark-mode');
   const m = statusMessages[lang] || statusMessages['fr'];
   deviceStatus.textContent = m.device_connected;
   deviceStatus.style.color = isDark ? 'darkseagreen' : 'darkgreen';
-  deviceStatusString = "device_connected";
-  deviceStatusColor = { light: 'darkgreen', dark: 'darkseagreen' };
+  updateDeviceStatus('device_connected', { light: 'darkgreen', dark: 'darkseagreen' });
 
   while ((match = regex.exec(jsonBuffer)) !== null) {
     const possibleJson = match[0];
@@ -186,13 +194,12 @@ window.electronAPI?.onPythonData((event, data) => {
           const m = statusMessages[lang] || statusMessages['fr'];
           if (value === false) {
             deviceStatus.textContent = m.calibration_done;
-            deviceStatusString = "calibration_done";
+            updateDeviceStatus('calibration_done', { light: 'midnightblue', dark: 'navajowhite' });
           } else {
             deviceStatus.textContent = m.calibration_failed;
-            deviceStatusString = "calibration_failed";
+            updateDeviceStatus('calibration_failed', { light: 'midnightblue', dark: 'navajowhite' });
           }
           deviceStatus.style.color = isDark ? 'navajowhite' : 'midnightblue';
-          deviceStatusColor = { light: 'midnightblue', dark: 'navajowhite' };
         }
         calibrateButton.disabled = false;
         calibrationWindow?.close();
@@ -212,14 +219,12 @@ window.electronAPI?.onPythonData((event, data) => {
     calibrationWindow?.close();
     calibrationWindow = null;
     calibrateButton.disabled = false;
-    // Get language
     const lang = localStorage.getItem('preferredLang') || 'fr';
     const isDark = document.body.classList.contains('dark-mode');
     const m = statusMessages[lang] || statusMessages['fr'];
     deviceStatus.textContent = m.calibration_done;
     deviceStatus.style.color = isDark ? 'navajowhite' : 'midnightblue';
-    deviceStatusString = "calibration_done";
-    deviceStatusColor = { light: 'midnightblue', dark: 'navajowhite' };
+    updateDeviceStatus('calibration_done', { light: 'midnightblue', dark: 'navajowhite' });
     jsonBuffer = "";
   }
 });
