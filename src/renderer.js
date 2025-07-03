@@ -25,7 +25,7 @@ let jsonBuffer = "";
 
 // Initialize device status variables from localStorage or set defaults
 let deviceStatusString = localStorage.getItem('deviceStatusString') || 'device_not_connected';
-let deviceStatusColor = JSON.parse(localStorage.getItem('deviceStatusColor')) || { light: '#9a3412', dark: '#c81927' };
+let deviceStatusColor = localStorage.getItem('deviceStatusColor') ? JSON.parse(localStorage.getItem('deviceStatusColor')) : { light: '#9a3412', dark: '#c81927' };
 
 // Save device status variables to localStorage
 function updateDeviceStatus(statusString, color) {

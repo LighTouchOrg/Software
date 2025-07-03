@@ -106,3 +106,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
     await keyboard.releaseKey(nutKey);
   }
 });
+
+localStorage.setItem('deviceStatusString', "");
+localStorage.setItem('deviceStatusColor', "");
