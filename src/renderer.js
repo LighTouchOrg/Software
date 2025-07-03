@@ -66,6 +66,7 @@ if (calibrateButton) {
              deviceStatus.style.color = isDark ? 'navajowhite' : 'midnightblue';
              deviceStatusString = "calibration_interrupted";
              deviceStatusColor = { light: 'midnightblue', dark: 'navajowhite' };
+             updateDeviceStatus("calibration_interrupted", { light: 'midnightblue', dark: 'navajowhite' });
            }
          }
       });
@@ -149,9 +150,12 @@ function readMessage(msg) {
 
 // Update device status on page load
 window.addEventListener('load', () => {
+  deviceStatusString = localStorage.getItem('deviceStatusString') || 'device_not_connected';
+  deviceStatusColor = localStorage.getItem('deviceStatusColor') ? JSON.parse(localStorage.getItem('deviceStatusColor')) : { light: '#9a3412', dark: '#c81927' };
   const lang = localStorage.getItem('preferredLang') || 'fr';
   const isDark = document.body.classList.contains('dark-mode');
   const m = statusMessages[lang] || statusMessages['fr'];
+  if (!deviceStatus) return;
   deviceStatus.textContent = deviceStatusString ? m[deviceStatusString] : m.device_not_connected;
   deviceStatus.style.color = isDark ? deviceStatusColor.dark : deviceStatusColor.light;
 });

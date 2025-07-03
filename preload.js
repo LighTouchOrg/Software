@@ -107,5 +107,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
   }
 });
 
-localStorage.setItem('deviceStatusString', "");
-localStorage.setItem('deviceStatusColor', "");
+ipcRenderer.invoke('check-app-initialized').then((isFirstLoad) => {
+  if (isFirstLoad) {
+    localStorage.setItem('deviceStatusString', "");
+    localStorage.setItem('deviceStatusColor', "");
+  }
+});

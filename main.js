@@ -3,6 +3,8 @@ const net = require('net');
 const path = require('node:path');
 const { spawn } = require('child_process');
 
+let appInitialized = false;
+
 app.commandLine.appendSwitch('enable-experimental-web-platform-features');
 
 const client = new net.Socket();
@@ -73,6 +75,14 @@ const createWindow = () => {
 
 app.whenReady().then(async () => {
   ipcMain.handle('ping', () => 'pong');
+
+  ipcMain.handle('check-app-initialized', () => {
+  if (!appInitialized) {
+    appInitialized = true; // Set the flag to true
+    return true; // Indicate that this is the first load
+  }
+  return false; // Indicate that the app has already been initialized
+});
 
   ipcMain.on('send-to-python', (event, data) => {
     if (client && client.writable) {
