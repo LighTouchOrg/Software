@@ -1,6 +1,7 @@
 const calibrateButton = document.getElementById('calibrate-button');
 const onboardingButton = document.getElementById('onboarding-button');
 const deviceStatus = document.getElementById('device-status');
+const enabledStatus = document.getElementById('enabled-status');
 
 const statusMessages = {
   fr: {
@@ -8,20 +9,23 @@ const statusMessages = {
     calibration_failed: 'Calibration échouée. Veuillez réessayer.',
     calibration_interrupted: 'Calibration interrompue.',
     device_connected: 'Votre appareil LighTouch est connecté.',
-    device_not_connected: 'Aucun appareil Bluetooth connecté.'
+    device_not_connected: 'Aucun appareil Bluetooth connecté.',
+    disabled: 'Les actions sont désactivées. Appuyez sur la barre d’espace pour les réactiver.',
   },
   en: {
     calibration_done: 'Calibration finished.',
     calibration_failed: 'Calibration failed. Please try again.',
     calibration_interrupted: 'Calibration interrupted.',
     device_connected: 'Your LighTouch device is connected.',
-    device_not_connected: 'No Bluetooth device connected.'
+    device_not_connected: 'No Bluetooth device connected.',
+    disabled: 'Actions are disabled. Press the spacebar to re-enable them.',
   }
 };
 
 let calibrationWindow = null;
 let onboardingWindow = null;
 let jsonBuffer = "";
+let enabled = true;
 
 // Initialize device status variables from localStorage or set defaults
 let deviceStatusString = localStorage.getItem('deviceStatusString') || 'device_not_connected';
@@ -33,6 +37,21 @@ function updateDeviceStatus(statusString, color) {
   deviceStatusColor = color;
   localStorage.setItem('deviceStatusString', deviceStatusString);
   localStorage.setItem('deviceStatusColor', JSON.stringify(deviceStatusColor));
+}
+
+function updateEnabledStatus() {
+  enabled = !enabled;
+  console.log(`Actions are now ${enabled ? "enabled" : "disabled"}`);
+  localStorage.setItem('enabled', enabled);
+  const lang = localStorage.getItem('preferredLang') || 'fr';
+  const m = statusMessages[lang] || statusMessages['fr'];
+  if (enabledStatus) {
+    if (!enabled) {
+      enabledStatus.textContent = m.disabled;
+    } else {
+      enabledStatus.textContent = '';
+    }
+  }
 }
 
 // Lancer la calibration
@@ -132,6 +151,7 @@ function readMessage(msg) {
 
     switch (category) {
       case "actions":
+        if (!enabled) return;
         const action = new Actions();
         action[method](params);
         break;
@@ -155,6 +175,10 @@ window.addEventListener('load', () => {
   const lang = localStorage.getItem('preferredLang') || 'fr';
   const isDark = document.body.classList.contains('dark-mode');
   const m = statusMessages[lang] || statusMessages['fr'];
+  if (localStorage.getItem('enabled') && localStorage.getItem('enabled') === 'false') {
+    enabled = false;
+    enabledStatus.textContent = m.disabled;
+  }
   if (!deviceStatus) return;
   deviceStatus.textContent = deviceStatusString ? m[deviceStatusString] : m.device_not_connected;
   deviceStatus.style.color = isDark ? deviceStatusColor.dark : deviceStatusColor.light;
@@ -230,5 +254,11 @@ window.electronAPI?.onPythonData((event, data) => {
     deviceStatus.style.color = isDark ? 'navajowhite' : 'midnightblue';
     updateDeviceStatus('calibration_done', { light: 'midnightblue', dark: 'navajowhite' });
     jsonBuffer = "";
+  }
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.code === 'Space') {
+    updateEnabledStatus();
   }
 });
