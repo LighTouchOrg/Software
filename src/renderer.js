@@ -27,6 +27,10 @@ let calibrationWindow = null;
 let onboardingWindow = null;
 let jsonBuffer = "";
 let enabled = true;
+// Cache variables to avoid recalculations
+let cachedLang = null;
+let cachedIsDark = null;
+let cachedMessages = null;
 
 // Initialize device status variables from localStorage or set defaults
 let deviceStatusString =
@@ -45,16 +49,12 @@ function updateDeviceStatus(statusString, color) {
 
 function updateEnabledStatus() {
   enabled = !enabled;
-  console.log(`Actions are now ${enabled ? "enabled" : "disabled"}`);
   localStorage.setItem("enabled", enabled);
-  const lang = localStorage.getItem("preferredLang") || "fr";
-  const m = statusMessages[lang] || statusMessages["fr"];
+  // Usage of cache to avoid repeated localStorage access
+  if (!cachedLang) cachedLang = localStorage.getItem("preferredLang") || "fr";
+  if (!cachedMessages) cachedMessages = statusMessages[cachedLang] || statusMessages["fr"];
   if (enabledStatus) {
-    if (!enabled) {
-      enabledStatus.textContent = m.disabled;
-    } else {
-      enabledStatus.textContent = "";
-    }
+    enabledStatus.textContent = !enabled ? cachedMessages.disabled : "";
   }
 }
 
@@ -167,12 +167,13 @@ function readMessage(msg) {
     switch (category) {
       case "actions":
         if (!enabled) return;
-        const action = new Actions();
-        action[method](params);
+        // use unique instance of Actions/Settings if possible (avoids unnecessary allocations)
+        if (!window._actionsInstance) window._actionsInstance = new Actions();
+        window._actionsInstance[method](params);
         break;
       case "settings":
-        const settings = new Settings();
-        settings[method](params);
+        if (!window._settingsInstance) window._settingsInstance = new Settings();
+        window._settingsInstance[method](params);
         break;
       default:
         console.error("Catégorie non reconnue:", category);
@@ -185,35 +186,29 @@ function readMessage(msg) {
 
 // Update device status on page load
 window.addEventListener("load", () => {
-  deviceStatusString =
-    localStorage.getItem("deviceStatusString") || "device_not_connected";
+  deviceStatusString = localStorage.getItem("deviceStatusString") || "device_not_connected";
   deviceStatusColor = localStorage.getItem("deviceStatusColor")
     ? JSON.parse(localStorage.getItem("deviceStatusColor"))
     : { light: "#9a3412", dark: "#c81927" };
-  const lang = localStorage.getItem("preferredLang") || "fr";
-  const isDark = document.body.classList.contains("dark-mode");
-  const m = statusMessages[lang] || statusMessages["fr"];
-  if (
-    localStorage.getItem("enabled") &&
-    localStorage.getItem("enabled") === "false"
-  ) {
+  cachedLang = localStorage.getItem("preferredLang") || "fr";
+  cachedIsDark = document.body.classList.contains("dark-mode");
+  cachedMessages = statusMessages[cachedLang] || statusMessages["fr"];
+  if (localStorage.getItem("enabled") === "false") {
     enabled = false;
-    enabledStatus.textContent = m.disabled;
+    if (enabledStatus) enabledStatus.textContent = cachedMessages.disabled;
   }
   if (!deviceStatus) return;
   deviceStatus.textContent = deviceStatusString
-    ? m[deviceStatusString]
-    : m.device_not_connected;
-  deviceStatus.style.color = isDark
+    ? cachedMessages[deviceStatusString]
+    : cachedMessages.device_not_connected;
+  deviceStatus.style.color = cachedIsDark
     ? deviceStatusColor.dark
     : deviceStatusColor.light;
 });
 
 // Update device status dynamically
 window.electronAPI?.onPythonData((event, data) => {
-  if (!data.startsWith("BT:")) {
-    return;
-  }
+  if (!data.startsWith("BT:")) return;
 
   const raw = data.slice(3).trim();
   jsonBuffer += raw;
@@ -222,15 +217,16 @@ window.electronAPI?.onPythonData((event, data) => {
   let match;
   let lastIndex = 0;
 
+  if (!cachedLang) cachedLang = localStorage.getItem("preferredLang") || "fr";
+  if (!cachedIsDark) cachedIsDark = document.body.classList.contains("dark-mode");
+  if (!cachedMessages) cachedMessages = statusMessages[cachedLang] || statusMessages["fr"];
+
   if (
     deviceStatus.textContent === statusMessages["fr"].device_not_connected ||
     deviceStatus.textContent === statusMessages["en"].device_not_connected
   ) {
-    const lang = localStorage.getItem("preferredLang") || "fr";
-    const isDark = document.body.classList.contains("dark-mode");
-    const m = statusMessages[lang] || statusMessages["fr"];
-    deviceStatus.textContent = m.device_connected;
-    deviceStatus.style.color = isDark ? "darkseagreen" : "darkgreen";
+    deviceStatus.textContent = cachedMessages.device_connected;
+    deviceStatus.style.color = cachedIsDark ? "darkseagreen" : "darkgreen";
     updateDeviceStatus("device_connected", {
       light: "darkgreen",
       dark: "darkseagreen",
@@ -250,23 +246,23 @@ window.electronAPI?.onPythonData((event, data) => {
       if (parsed?.category === "screen" && parsed?.method === "calibrate") {
         const value = parsed.params?.value;
         if (deviceStatus) {
-          const lang = localStorage.getItem("preferredLang") || "fr";
-          const isDark = document.body.classList.contains("dark-mode");
-          const m = statusMessages[lang] || statusMessages["fr"];
+          if (!cachedLang) cachedLang = localStorage.getItem("preferredLang") || "fr";
+          if (!cachedIsDark) cachedIsDark = document.body.classList.contains("dark-mode");
+          if (!cachedMessages) cachedMessages = statusMessages[cachedLang] || statusMessages["fr"];
           if (value === false) {
-            deviceStatus.textContent = m.calibration_done;
+            deviceStatus.textContent = cachedMessages.calibration_done;
             updateDeviceStatus("calibration_done", {
               light: "midnightblue",
               dark: "navajowhite",
             });
           } else {
-            deviceStatus.textContent = m.calibration_failed;
+            deviceStatus.textContent = cachedMessages.calibration_failed;
             updateDeviceStatus("calibration_failed", {
               light: "midnightblue",
               dark: "navajowhite",
             });
           }
-          deviceStatus.style.color = isDark ? "navajowhite" : "midnightblue";
+          deviceStatus.style.color = cachedIsDark ? "navajowhite" : "midnightblue";
         }
         calibrateButton.disabled = false;
         calibrationWindow?.close();
@@ -286,11 +282,11 @@ window.electronAPI?.onPythonData((event, data) => {
     calibrationWindow?.close();
     calibrationWindow = null;
     calibrateButton.disabled = false;
-    const lang = localStorage.getItem("preferredLang") || "fr";
-    const isDark = document.body.classList.contains("dark-mode");
-    const m = statusMessages[lang] || statusMessages["fr"];
-    deviceStatus.textContent = m.calibration_done;
-    deviceStatus.style.color = isDark ? "navajowhite" : "midnightblue";
+    if (!cachedLang) cachedLang = localStorage.getItem("preferredLang") || "fr";
+    if (!cachedIsDark) cachedIsDark = document.body.classList.contains("dark-mode");
+    if (!cachedMessages) cachedMessages = statusMessages[cachedLang] || statusMessages["fr"];
+    deviceStatus.textContent = cachedMessages.calibration_done;
+    deviceStatus.style.color = cachedIsDark ? "navajowhite" : "midnightblue";
     updateDeviceStatus("calibration_done", {
       light: "midnightblue",
       dark: "navajowhite",
