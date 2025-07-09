@@ -26,6 +26,7 @@ const statusMessages = {
 let calibrationWindow = null;
 let onboardingWindow = null;
 let jsonBuffer = "";
+let lastMove = null;
 let enabled = true;
 
 // Initialize device status variables from localStorage or set defaults
@@ -218,10 +219,6 @@ window.electronAPI?.onPythonData((event, data) => {
   const raw = data.slice(3).trim();
   jsonBuffer += raw;
 
-  const regex = /{[^{}]*(?:{[^{}]*}[^{}]*)*}/g;
-  let match;
-  let lastIndex = 0;
-
   if (
     deviceStatus.textContent === statusMessages["fr"].device_not_connected ||
     deviceStatus.textContent === statusMessages["en"].device_not_connected
@@ -237,10 +234,21 @@ window.electronAPI?.onPythonData((event, data) => {
     });
   }
 
+  const regex = /{[^{}]*(?:{[^{}]*}[^{}]*)*}/g;
+  let match;
+  let lastIndex = 0;
   while ((match = regex.exec(jsonBuffer)) !== null) {
     const possibleJson = match[0];
     try {
       const parsed = JSON.parse(possibleJson);
+      if (parsed.method === "move" && parsed.params) {
+        const moveKey = `${parsed.params.x},${parsed.params.y}`;
+        if (moveKey === lastMove) {
+          lastIndex = regex.lastIndex;
+          continue;
+        }
+        lastMove = moveKey;
+      }
       readMessage(possibleJson);
 
       if (onboardingWindow && !onboardingWindow.closed) {
@@ -272,14 +280,11 @@ window.electronAPI?.onPythonData((event, data) => {
         calibrationWindow?.close();
         calibrationWindow = null;
       }
-
       lastIndex = regex.lastIndex;
     } catch (e) {
-      console.error("Erreur de parsing JSON :", e, possibleJson);
       break;
     }
   }
-
   jsonBuffer = jsonBuffer.slice(lastIndex);
 
   if (data === "CLOSE_CALIBRATION_WINDOW") {
