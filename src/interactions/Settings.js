@@ -1,33 +1,33 @@
 class Settings {
-    constructor() {
-        this.settings = {
-            name: 'Settings',
-            theme: 'light',
-            notifications: true,
-            logs: true,
-        };
-    }
+  constructor() {
+    this.settings = {
+      name: "Settings",
+      theme: "light",
+      notifications: true,
+      logs: true,
+    };
+  }
 
-    // Methods to get and set settings
+  // Methods to get and set settings
 
-    setTheme(theme) {
-        this.settings.theme = theme;
-    }
+  setTheme(theme) {
+    this.settings.theme = theme;
+  }
 
-    setNotifications(enabled) {
-        this.settings.notifications = enabled;
-    }
+  setNotifications(enabled) {
+    this.settings.notifications = enabled;
+  }
 
-    setLogs(enabled) {
-        this.settings.logs = enabled;
-    }
+  setLogs(enabled) {
+    this.settings.logs = enabled;
+  }
 
-    getSettings() {
-        return this.settings;
-    }
+  getSettings() {
+    return this.settings;
+  }
 
-    // Lightouch methods
+  // Lightouch methods
 
-    startCalibration() {};
-    stopCalibration() {};
+  startCalibration() {}
+  stopCalibration() {}
 }

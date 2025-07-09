@@ -1,57 +1,67 @@
-const { app, BrowserWindow, ipcMain } = require('electron/main');
-const net = require('net');
-const path = require('node:path');
-const { spawn } = require('child_process');
+const { app, BrowserWindow, ipcMain } = require("electron/main");
+const net = require("net");
+const path = require("node:path");
+const { spawn } = require("child_process");
 
 let appInitialized = false;
 
-app.commandLine.appendSwitch('enable-experimental-web-platform-features');
+app.commandLine.appendSwitch("enable-experimental-web-platform-features");
 
 const client = new net.Socket();
 
-const pythonServer = spawn('python', [path.join(app.isPackaged ? process.resourcesPath : 'resources', 'server', 'server.py')], {
-  stdio: ['pipe', 'pipe', 'pipe']
-}).on('error', (err) => {
-  console.error('Failed to start Python process:', err);
+const pythonServer = spawn(
+  "python",
+  [
+    path.join(
+      app.isPackaged ? process.resourcesPath : "resources",
+      "server",
+      "server.py"
+    ),
+  ],
+  {
+    stdio: ["pipe", "pipe", "pipe"],
+  }
+).on("error", (err) => {
+  console.error("Failed to start Python process:", err);
 });
 
 let connectedOnce = false;
 
-pythonServer.stdout.on('data', (data) => {
+pythonServer.stdout.on("data", (data) => {
   const output = data.toString();
   console.log(output);
 
   if (!connectedOnce && output.includes("Python server is ready")) {
-    console.log('Attempting to connect to Python server...');
-    client.connect(9000, '127.0.0.1', () => {
-      console.log('Successfully connected to Python Bluetooth backend');
+    console.log("Attempting to connect to Python server...");
+    client.connect(9000, "127.0.0.1", () => {
+      console.log("Successfully connected to Python Bluetooth backend");
       connectedOnce = true;
     });
   }
 });
 
-pythonServer.stderr.on('data', (data) => {
+pythonServer.stderr.on("data", (data) => {
   console.error(`Python server error: ${data}`);
 });
 
-pythonServer.on('close', (code) => {
+pythonServer.on("close", (code) => {
   console.log(`Python server exited with code ${code}`);
 });
 
-client.on('data', (data) => {
+client.on("data", (data) => {
   const receivedData = data.toString();
-  console.log('Received from Python:', receivedData);
+  console.log("Received from Python:", receivedData);
   if (win) {
-    win.webContents.send('python-data', receivedData);
+    win.webContents.send("python-data", receivedData);
   }
 });
 
-client.on('error', (err) => {
-  console.error('Connection connection closed:', err.code);
+client.on("error", (err) => {
+  console.error("Connection connection closed:", err.code);
 });
 
-client.on('close', () => {
-  console.log('Connection to Python server closed');
+client.on("close", () => {
+  console.log("Connection to Python server closed");
 });
 
 let win;
@@ -66,27 +76,27 @@ const createWindow = () => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, "preload.js"),
     },
   });
 
-  win.loadFile('./src/index.html');
+  win.loadFile("./src/index.html");
 };
 
 app.whenReady().then(async () => {
-  ipcMain.handle('ping', () => 'pong');
+  ipcMain.handle("ping", () => "pong");
 
-  ipcMain.handle('check-app-initialized', () => {
-  if (!appInitialized) {
-    appInitialized = true; // Set the flag to true
-    return true; // Indicate that this is the first load
-  }
-  return false; // Indicate that the app has already been initialized
-});
+  ipcMain.handle("check-app-initialized", () => {
+    if (!appInitialized) {
+      appInitialized = true; // Set the flag to true
+      return true; // Indicate that this is the first load
+    }
+    return false; // Indicate that the app has already been initialized
+  });
 
-  ipcMain.on('send-to-python', (event, data) => {
+  ipcMain.on("send-to-python", (event, data) => {
     if (client && client.writable) {
-      console.log('Sending to Python:', data);
+      console.log("Sending to Python:", data);
       client.write(data);
     }
   });
@@ -94,8 +104,8 @@ app.whenReady().then(async () => {
   createWindow();
 });
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
     app.quit();
     pythonServer.kill();
   }
