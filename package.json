@@ -28,7 +28,7 @@
     ],
     "win": {
       "target": "nsis",
-      "icon": "src/img/lightouch-logo.png"
+      "icon": "src/img/lightouch-logo-cropped.png"
     }
   },
   "repository": {
