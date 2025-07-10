@@ -1,4 +1,5 @@
 from threading import Thread
+import time
 import bluetooth.common
 
 def find_active_bluetooth_port():
@@ -17,7 +18,7 @@ def ensure_serial_connection(port):
             bluetooth.common.serial_connection = serial.Serial(port, 9600, timeout=1)
             bluetooth.common.serial_connection.write(b"Connected to the raspberry\n")
         except Exception as e:
-            print("Erreur lors de l'ouverture du port série:", e)
+            print(f"[BT] Échec ouverture du port série {port} :", e)
             bluetooth.common.serial_connection = None
 
 def receive_data_windows(port, conn):
@@ -37,14 +38,22 @@ def receive_data_windows(port, conn):
         print("Serial error:", e)
 
 def handle_bluetooth_windows(conn):
-    try:
-        import serial
+    import serial
+    connected = False
+
+    while not connected:
         port = find_active_bluetooth_port()
         if port:
-            ensure_serial_connection(port)
-            thread = Thread(target=receive_data_windows, args=(port, conn), daemon=True)
-            thread.start()
+            try:
+                ensure_serial_connection(port)
+                if bluetooth.common.serial_connection and bluetooth.common.serial_connection.is_open:
+                    thread = Thread(target=receive_data_windows, args=(port, conn), daemon=True)
+                    thread.start()
+                    connected = True
+            except Exception as e:
+                print(f"[BT] Port {port} trouvé mais erreur :", e)
         else:
-            print("No COM port found.")
-    except Exception as e:
-        print("Windows Bluetooth setup failed:", e)
+            print("[BT] Aucun port COM Bluetooth trouvé.")
+
+        if not connected:
+            time.sleep(10)
