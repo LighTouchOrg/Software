@@ -21,7 +21,7 @@ const steps = [
 ];
 
 let currentStep = 0;
-let canvas, drawingCanvas, ctx, drawingCtx, finishBtn;
+let canvas, drawingCanvas, ctx, drawingCtx, finishBtn, onboardingTitle;
 
 const cursor = { x: undefined, y: undefined };
 const target = { x: undefined, y: undefined, radius: undefined };
@@ -46,6 +46,7 @@ function updateStepText() {
   if (step.id === "end") {
     finishBtn.classList.remove("hidden");
     drawingCanvas.classList.remove("hidden");
+    onboardingTitle.classList.add("hidden");
   } else {
     finishBtn.classList.add("hidden");
     drawingCanvas.classList.add("hidden");
@@ -233,6 +234,7 @@ window.addEventListener("DOMContentLoaded", () => {
   if (typeof applyTranslations === "function") applyTranslations();
   canvas = document.getElementById("target-canvas");
   drawingCanvas = document.getElementById("drawing-canvas");
+  onboardingTitle = document.getElementById("onboarding-title");
   ctx = canvas.getContext("2d");
   drawingCtx = drawingCanvas.getContext("2d");
   finishBtn = document.getElementById("finish-btn");
