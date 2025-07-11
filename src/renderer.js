@@ -138,10 +138,12 @@ if (onboardingButton) {
 
 // Action swipe simple
 async function swipe(params) {
+  const leftKey = localStorage.getItem("Swipe_Left_Key") || "ArrowLeft";
+  const rightKey = localStorage.getItem("Swipe_Right_Key") || "ArrowRight";
   if (params.direction === "left") {
-    window.electronAPI?.pressKey("ArrowLeft");
+    window.electronAPI?.pressKey(leftKey);
   } else if (params.direction === "right") {
-    window.electronAPI.pressKey("ArrowRight");
+    window.electronAPI.pressKey(rightKey);
   }
 }
 
