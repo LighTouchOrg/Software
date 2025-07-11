@@ -21,7 +21,7 @@ const steps = [
 ];
 
 let currentStep = 0;
-let canvas, ctx, finishBtn;
+let canvas, drawingCanvas, ctx, drawingCtx, finishBtn;
 
 const cursor = { x: undefined, y: undefined };
 const target = { x: undefined, y: undefined, radius: undefined };
@@ -45,8 +45,10 @@ function updateStepText() {
   }
   if (step.id === "end") {
     finishBtn.classList.remove("hidden");
+    drawingCanvas.classList.remove("hidden");
   } else {
     finishBtn.classList.add("hidden");
+    drawingCanvas.classList.add("hidden");
   }
 }
 
@@ -178,6 +180,47 @@ document.addEventListener("mousemove", (event) => {
 });
 
 document.addEventListener("mousedown", (event) => {
+  if (!drawingCanvas.classList.contains("hidden")) {
+    let isDrawing = false;
+    
+    // Define the mousemove handler as a named function
+    const handleMouseMove = (e) => {
+      if (!isDrawing) {
+        drawingCtx.beginPath();
+        drawingCtx.moveTo(e.offsetX, e.offsetY);
+        isDrawing = true;
+      } else {
+        drawingCtx.lineTo(e.offsetX, e.offsetY);
+        drawingCtx.stroke();
+      }
+    };
+    
+    // Set up drawing style
+    drawingCtx.strokeStyle = "#9b6ee2";
+    drawingCtx.lineWidth = 10;
+    drawingCtx.lineCap = "round"; // Rounded line ends
+    drawingCtx.lineJoin = "round"; // Rounded line joins
+    
+    // Start drawing
+    drawingCtx.beginPath();
+    drawingCtx.moveTo(event.offsetX, event.offsetY);
+    isDrawing = true;
+    
+    // Add the mousemove listener to the canvas
+    drawingCanvas.addEventListener("mousemove", handleMouseMove);
+    
+    // Define the mouseup handler
+    const handleMouseUp = () => {
+      drawingCanvas.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp); // Remove from document
+      isDrawing = false;
+    };
+    
+    // Add the mouseup listener to the document (not just the canvas)
+    document.addEventListener("mouseup", handleMouseUp);
+    return;
+  }
+  
   console.log("mousedown", event);
   let x = event.offsetX || event.layerX;
   let y = event.offsetY || event.layerY;
@@ -189,7 +232,9 @@ document.addEventListener("mousedown", (event) => {
 window.addEventListener("DOMContentLoaded", () => {
   if (typeof applyTranslations === "function") applyTranslations();
   canvas = document.getElementById("target-canvas");
+  drawingCanvas = document.getElementById("drawing-canvas");
   ctx = canvas.getContext("2d");
+  drawingCtx = drawingCanvas.getContext("2d");
   finishBtn = document.getElementById("finish-btn");
   finishBtn.addEventListener("click", () => {
     if (window.opener && !window.opener.closed) {

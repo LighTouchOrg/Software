@@ -706,6 +706,28 @@ body.dark-mode #step-text {
   display: none !important;
 }
 
+#drawing-canvas {
+  display: block;
+  margin: 2em auto;
+  z-index: 1000;
+  position: relative;
+  width: 800px !important;
+  height: 480px !important;
+  background-color: whitesmoke;
+  border-radius: 8px;
+  border: 2px solid var(--primary-color);
+  color: var(--font-color-dark);
+}
+
+body.dark-mode #drawing-canvas {
+  border: 2px solid var(--primary-color-dark);
+  color: var(--font-color);
+}
+
+#drawing-canvas.hidden {
+  display: none !important;
+}
+
 #finish-btn {
   margin-top: 2em;
 }
