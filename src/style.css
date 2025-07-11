@@ -711,12 +711,11 @@ body.dark-mode #step-text {
   margin: 2em auto;
   z-index: 1000;
   position: relative;
-  width: 800px !important;
-  height: 480px !important;
+  /* width: 800px !important;
+  height: 40vh !important; */
   background-color: whitesmoke;
   border-radius: 8px;
   border: 2px solid var(--primary-color);
-  color: var(--font-color-dark);
 }
 
 body.dark-mode #drawing-canvas {

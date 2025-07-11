@@ -230,6 +230,28 @@ document.addEventListener("mousedown", (event) => {
   );
 });
 
+function resizeCanvas() {
+  const drawingCanvas = document.getElementById('drawing-canvas');
+  
+  if (!drawingCanvas) return;
+  
+  // Calculate responsive dimensions
+  const viewportHeight = window.innerHeight;
+  const displayHeight = Math.floor(viewportHeight * 0.4); // 40vh
+  const displayWidth = Math.min(800, window.innerWidth * 0.9);
+  
+  // Set canvas internal dimensions (affects drawing area)
+  drawingCanvas.width = displayWidth;
+  drawingCanvas.height = displayHeight;
+  
+  // Set CSS dimensions (affects display size) - should match internal dimensions
+  drawingCanvas.style.width = displayWidth + 'px';
+  drawingCanvas.style.height = displayHeight + 'px';
+}
+
+window.addEventListener('load', resizeCanvas);
+window.addEventListener('resize', resizeCanvas);
+
 window.addEventListener("DOMContentLoaded", () => {
   if (typeof applyTranslations === "function") applyTranslations();
   canvas = document.getElementById("target-canvas");
