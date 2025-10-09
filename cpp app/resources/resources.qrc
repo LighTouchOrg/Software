@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>img/lightouch-logo-cropped.png</file>
+    </qresource>
+</RCC>
