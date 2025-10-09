@@ -65,14 +65,33 @@ client.on("close", () => {
 });
 
 let win;
+let splash;
 const iconPath = path.join(__dirname, "src", "img/lightouch-logo.png");
 
 const createWindow = () => {
+  // Splash window (simple, fast-loading)
+  splash = new BrowserWindow({
+    width: 420,
+    height: 320,
+    frame: false,
+    resizable: false,
+    movable: true,
+    alwaysOnTop: true,
+    skipTaskbar: true,
+    show: true,
+    icon: iconPath,
+    backgroundColor: "#121212",
+  });
+  splash.loadFile(path.join(__dirname, "src", "splash.html"));
+
+  // Main window (hidden until ready)
   win = new BrowserWindow({
     width: 1150,
     height: 875,
     autoHideMenuBar: true, // To open devtools, press Ctrl+Shift+I
     icon: iconPath,
+    show: false,
+    backgroundColor: "#121212", // Match your app's theme color
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
@@ -80,7 +99,26 @@ const createWindow = () => {
     },
   });
 
-  win.loadFile("./src/index.html");
+  // Use absolute path to avoid any resolution delay
+  win.loadFile(path.join(__dirname, "src", "index.html"));
+
+  // Reveal main window only when it's ready; close splash
+  win.once("ready-to-show", () => {
+    if (splash && !splash.isDestroyed()) {
+      splash.close();
+      splash = null;
+    }
+    win.show();
+  });
+
+  // Fallback: if load fails, still close splash and show window
+  win.webContents.on("did-fail-load", () => {
+    if (splash && !splash.isDestroyed()) {
+      splash.close();
+      splash = null;
+    }
+    win.show();
+  });
 };
 
 app.whenReady().then(async () => {
