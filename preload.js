@@ -11,6 +11,10 @@ const {
 contextBridge.exposeInMainWorld("electronAPI", {
   onPythonData: (callback) => ipcRenderer.on("python-data", callback),
   sendToPython: (data) => ipcRenderer.send("send-to-python", data),
+  // WiFi QR Code functionality
+  generateWiFiQR: (ssid, password, security) =>
+    ipcRenderer.invoke('generate-wifi-qr', ssid, password, security),
+  refreshWiFi: () => ipcRenderer.invoke('refresh-wifi'),
   moveMouse: async (x, y) => {
     if (typeof x === "string") x = parseFloat(x);
     if (typeof y === "string") y = parseFloat(y);

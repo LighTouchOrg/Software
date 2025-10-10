@@ -2,36 +2,28 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>WiFi QR Code Generator</title>
+  <title>WiFi QR Code Generator - LighTouch</title>
+  <link rel="stylesheet" href="style.css">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .container {
-      background: white;
+    .wifi-container {
+      background: rgba(255, 255, 255, 0.95);
       padding: 40px;
       border-radius: 20px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
       max-width: 600px;
       width: 100%;
+      margin: 20px auto;
+      backdrop-filter: blur(10px);
     }
-    h1 {
+    
+    .wifi-title {
       color: #333;
       text-align: center;
       margin-bottom: 30px;
       font-size: 28px;
+      font-weight: bold;
     }
+    
     .status {
       padding: 15px;
       border-radius: 10px;
@@ -39,21 +31,25 @@
       text-align: center;
       font-weight: 500;
     }
+    
     .status.loading {
       background: #fff3cd;
       color: #856404;
       border: 2px solid #ffeaa7;
     }
+    
     .status.success {
       background: #d4edda;
       color: #155724;
       border: 2px solid #c3e6cb;
     }
+    
     .status.error {
       background: #f8d7da;
       color: #721c24;
       border: 2px solid #f5c6cb;
     }
+    
     .wifi-info {
       background: #f8f9fa;
       padding: 20px;
@@ -61,62 +57,75 @@
       margin-bottom: 25px;
       display: none;
     }
+    
     .wifi-info.visible {
       display: block;
     }
+    
     .wifi-info h3 {
       color: #495057;
       margin-bottom: 15px;
       font-size: 18px;
     }
+    
     .info-row {
       display: flex;
       justify-content: space-between;
       padding: 10px 0;
       border-bottom: 1px solid #dee2e6;
     }
+    
     .info-row:last-child {
       border-bottom: none;
     }
+    
     .info-label {
       color: #6c757d;
       font-weight: 600;
     }
+    
     .info-value {
       color: #212529;
       font-weight: 500;
     }
+    
     .password-container {
       margin: 20px 0;
     }
+    
     .password-container label {
       display: block;
       margin-bottom: 8px;
       color: #495057;
       font-weight: 600;
     }
+    
     .password-input-wrapper {
       position: relative;
     }
-    input[type="password"],
-    input[type="text"] {
+    
+    .wifi-input {
       width: 100%;
       padding: 12px;
       border: 2px solid #ced4da;
       border-radius: 8px;
       font-size: 15px;
       transition: border-color 0.3s;
+      background: rgba(255, 255, 255, 0.9);
     }
-    input:focus {
+    
+    .wifi-input:focus {
       outline: none;
       border-color: #667eea;
     }
+    
     .btn-group {
       display: flex;
       gap: 10px;
       margin-top: 20px;
     }
-    button {
+    
+    .wifi-btn {
       flex: 1;
       padding: 15px;
       font-size: 16px;
@@ -127,37 +136,55 @@
       transition: all 0.3s;
       color: white;
     }
-    button:disabled {
+    
+    .wifi-btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
+    
     .btn-primary {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
+    
     .btn-primary:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
     }
+    
     .btn-secondary {
       background: #6c757d;
     }
+    
     .btn-secondary:hover:not(:disabled) {
       background: #5a6268;
       transform: translateY(-2px);
     }
+    
+    .btn-back {
+      background: #28a745;
+    }
+    
+    .btn-back:hover:not(:disabled) {
+      background: #218838;
+      transform: translateY(-2px);
+    }
+    
     #qr-container {
       margin-top: 30px;
       text-align: center;
       display: none;
     }
+    
     #qr-container.visible {
       display: block;
     }
+    
     #qr-container h3 {
       color: #495057;
       margin-bottom: 20px;
     }
+    
     #qr-container img {
       max-width: 100%;
       border: 3px solid #667eea;
@@ -166,6 +193,7 @@
       background: white;
       box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
+    
     .spinner {
       border: 3px solid #f3f3f3;
       border-top: 3px solid #667eea;
@@ -175,6 +203,7 @@
       animation: spin 1s linear infinite;
       margin: 20px auto;
     }
+    
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -182,8 +211,18 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🔐 Générateur QR Code WiFi</h1>
+  <div class="background">
+    <div class="grid"></div>
+    <div class="glow"></div>
+    <div class="scanline"></div>
+  </div>
+
+  <div class="logo-container">
+    <img src="./img/lightouch-logo-cropped.png" alt="Logo LighTouch" class="logo">
+  </div>
+
+  <div class="wifi-container">
+    <h1 class="wifi-title">🔐 Générateur QR Code WiFi</h1>
     
     <div id="status" class="status loading">
       <div class="spinner"></div>
@@ -208,14 +247,15 @@
       <div class="password-container" id="password-section">
         <label for="password">Mot de passe WiFi</label>
         <div class="password-input-wrapper">
-          <input type="password" id="password" placeholder="Entrez le mot de passe">
+          <input type="password" id="password" class="wifi-input" placeholder="Entrez le mot de passe">
         </div>
       </div>
     </div>
     
     <div class="btn-group">
-      <button id="refreshBtn" class="btn-secondary">🔄 Actualiser</button>
-      <button id="generateBtn" class="btn-primary" disabled>✨ Générer QR Code</button>
+      <button onclick="window.location.href='index.html'" class="wifi-btn btn-back">🏠 Retour</button>
+      <button id="refreshBtn" class="wifi-btn btn-secondary">🔄 Actualiser</button>
+      <button id="generateBtn" class="wifi-btn btn-primary" disabled>✨ Générer QR Code</button>
     </div>
     
     <div id="qr-container">
@@ -269,8 +309,9 @@
       generateBtn.disabled = false;
     }
     
-    // Écouter la détection automatique au démarrage
-    window.electronAPI.onWiFiDetected((wifiInfo) => {
+    // Initialiser la détection WiFi au chargement de la page
+    window.addEventListener('DOMContentLoaded', async () => {
+      const wifiInfo = await window.electronAPI.refreshWiFi();
       displayWiFiInfo(wifiInfo);
     });
     
