@@ -10,6 +10,29 @@ namespace LighTouch.Services
 {
     public class WiFiManager
     {
+        private string _cachedProfiles = null;
+        private DateTime _cacheTime = DateTime.MinValue;
+        private readonly TimeSpan _cacheExpiry = TimeSpan.FromMinutes(5);
+
+        public WiFiManager()
+        {
+            // Pre-load profiles in background
+            System.Threading.Tasks.Task.Run(() => PreloadProfiles());
+        }
+
+        private void PreloadProfiles()
+        {
+            try
+            {
+                _cachedProfiles = GetSavedWiFiProfiles();
+                _cacheTime = DateTime.Now;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error preloading profiles: {ex.Message}");
+            }
+        }
+
         public string GetCurrentWiFiInfo()
         {
             try
@@ -34,7 +57,19 @@ namespace LighTouch.Services
                 if (string.IsNullOrEmpty(ssid))
                 {
                     Console.WriteLine("Not connected to WiFi, getting saved profiles...");
-                    return GetSavedWiFiProfiles();
+
+                    // Use cache if available and not expired
+                    if (_cachedProfiles != null && (DateTime.Now - _cacheTime) < _cacheExpiry)
+                    {
+                        Console.WriteLine("Using cached profiles");
+                        return _cachedProfiles;
+                    }
+
+                    // Otherwise fetch fresh data
+                    var profilesResult = GetSavedWiFiProfiles();
+                    _cachedProfiles = profilesResult;
+                    _cacheTime = DateTime.Now;
+                    return profilesResult;
                 }
 
                 // Get password
@@ -75,10 +110,6 @@ namespace LighTouch.Services
                 Console.WriteLine("=== GetSavedWiFiProfiles START ===");
 
                 string output = ExecuteCommand("netsh wlan show profiles");
-                Console.WriteLine($"PROFILES OUTPUT LENGTH: {output?.Length ?? 0}");
-                Console.WriteLine("RAW OUTPUT:");
-                Console.WriteLine(output);
-                Console.WriteLine("=== END RAW OUTPUT ===");
 
                 if (string.IsNullOrWhiteSpace(output))
                 {
@@ -93,16 +124,12 @@ namespace LighTouch.Services
                 {
                     @"Profil\s+[Tt]ous\s+les\s+utilisateurs\s*:\s*(.+)",  // French
                     @"All\s+[Uu]ser\s+[Pp]rofile\s*:\s*(.+)",            // English
-                    @":\s*(.+)"  // Fallback - anything after colon
                 };
 
                 var lines = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                Console.WriteLine($"Total lines: {lines.Length}");
 
                 foreach (var line in lines)
                 {
-                    Console.WriteLine($"LINE: '{line}'");
-
                     foreach (var pattern in patterns)
                     {
                         var match = Regex.Match(line, pattern, RegexOptions.IgnoreCase);
@@ -116,7 +143,7 @@ namespace LighTouch.Services
                                 !profileName.Contains("User profiles") &&
                                 !profileName.Contains("Profils utilisateur"))
                             {
-                                Console.WriteLine($"=== Found profile: {profileName} ===");
+                                Console.WriteLine($"Found profile: {profileName}");
 
                                 // Get profile details
                                 string profileOutput = ExecuteCommand($"netsh wlan show profile \"{profileName}\"");
@@ -148,14 +175,12 @@ namespace LighTouch.Services
                 });
 
                 Console.WriteLine($"Found {profiles.Count} profiles");
-                Console.WriteLine("=== GetSavedWiFiProfiles END ===");
 
                 return result;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"=== EXCEPTION: {ex.Message} ===");
-                Console.WriteLine($"STACK: {ex.StackTrace}");
+                Console.WriteLine($"EXCEPTION: {ex.Message}");
                 return JsonSerializer.Serialize(new { success = false, error = ex.Message });
             }
         }

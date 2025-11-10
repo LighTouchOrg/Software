@@ -377,50 +377,57 @@
     
     // Initialiser la détection WiFi au chargement de la page
     window.addEventListener('DOMContentLoaded', () => {
-      try {
-        console.log('=== WiFi Detection Start ===');
-        console.log('electronAPI:', electronAPI);
+      // Use setTimeout to let the UI refresh (show spinner) before blocking COM call
+      setTimeout(() => {
+        try {
+          console.log('=== WiFi Detection Start ===');
+          console.log('electronAPI:', electronAPI);
 
-        if (!electronAPI) {
-          throw new Error('electronAPI non disponible - Utilisez chrome.webview.hostObjects.sync.electronAPI');
+          if (!electronAPI) {
+            throw new Error('electronAPI non disponible - Utilisez chrome.webview.hostObjects.sync.electronAPI');
+          }
+
+          console.log('Calling RefreshWiFi...');
+          const wifiInfoJson = electronAPI.RefreshWiFi();
+          console.log('Raw JSON:', wifiInfoJson);
+
+          const wifiInfo = JSON.parse(wifiInfoJson);
+          console.log('Parsed data:', wifiInfo);
+
+          displayWiFiInfo(wifiInfo);
+        } catch (error) {
+          console.error('=== ERROR ===', error);
+          statusDiv.className = 'status error';
+          statusDiv.innerHTML = `❌ Erreur: ${error.message}<br><small>Vérifiez la console (F12)</small>`;
         }
-
-        console.log('Calling RefreshWiFi...');
-        const wifiInfoJson = electronAPI.RefreshWiFi();
-        console.log('Raw JSON:', wifiInfoJson);
-
-        const wifiInfo = JSON.parse(wifiInfoJson);
-        console.log('Parsed data:', wifiInfo);
-
-        displayWiFiInfo(wifiInfo);
-      } catch (error) {
-        console.error('=== ERROR ===', error);
-        statusDiv.className = 'status error';
-        statusDiv.innerHTML = `❌ Erreur: ${error.message}<br><small>Vérifiez la console (F12)</small>`;
-      }
+      }, 100); // Small delay to let UI refresh
     });
     
     // Bouton actualiser
     refreshBtn.addEventListener('click', () => {
-      try {
-        console.log('=== Refresh WiFi ===');
-        statusDiv.className = 'status loading';
-        statusDiv.innerHTML = '<div class="spinner"></div>Actualisation...';
-        generateBtn.disabled = true;
-        qrContainer.classList.remove('visible');
+      // Show loading state immediately
+      console.log('=== Refresh WiFi ===');
+      statusDiv.className = 'status loading';
+      statusDiv.innerHTML = '<div class="spinner"></div>Actualisation...';
+      generateBtn.disabled = true;
+      qrContainer.classList.remove('visible');
 
-        const wifiInfoJson = electronAPI.RefreshWiFi();
-        console.log('Refresh - Raw JSON:', wifiInfoJson);
+      // Use setTimeout to let the UI refresh (show spinner) before blocking COM call
+      setTimeout(() => {
+        try {
+          const wifiInfoJson = electronAPI.RefreshWiFi();
+          console.log('Refresh - Raw JSON:', wifiInfoJson);
 
-        const wifiInfo = JSON.parse(wifiInfoJson);
-        console.log('Refresh - Parsed data:', wifiInfo);
+          const wifiInfo = JSON.parse(wifiInfoJson);
+          console.log('Refresh - Parsed data:', wifiInfo);
 
-        displayWiFiInfo(wifiInfo);
-      } catch (error) {
-        console.error('=== REFRESH ERROR ===', error);
-        statusDiv.className = 'status error';
-        statusDiv.innerHTML = `❌ Erreur: ${error.message}`;
-      }
+          displayWiFiInfo(wifiInfo);
+        } catch (error) {
+          console.error('=== REFRESH ERROR ===', error);
+          statusDiv.className = 'status error';
+          statusDiv.innerHTML = `❌ Erreur: ${error.message}`;
+        }
+      }, 100); // Small delay to let UI refresh
     });
     
     // Bouton générer QR Code

@@ -96,6 +96,7 @@ namespace LighTouch.Services
         // Refresh WiFi information
         public string RefreshWiFi()
         {
+            // WiFiManager uses cache, so this should be fast
             return _wifiManager.GetCurrentWiFiInfo();
         }
 
