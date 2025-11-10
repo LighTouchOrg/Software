@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
@@ -13,31 +14,39 @@ namespace LighTouch.Services
         {
             try
             {
-                // Execute netsh command to get WiFi info
-                string output = ExecuteCommand("netsh wlan show interfaces");
+                Console.WriteLine("=== GetCurrentWiFiInfo START ===");
 
-                if (string.IsNullOrWhiteSpace(output))
+                // Try to get current WiFi connection first
+                string output = ExecuteCommand("netsh wlan show interfaces");
+                Console.WriteLine($"NETSH OUTPUT LENGTH: {output?.Length ?? 0}");
+
+                string ssid = null;
+                string signal = null;
+
+                if (!string.IsNullOrWhiteSpace(output))
                 {
-                    return JsonSerializer.Serialize(new { success = false, error = "No WiFi interface found" });
+                    ssid = ExtractValue(output, new[] { "SSID", "SSID" });
+                    signal = ExtractValue(output, new[] { "Signal", "Signal" });
+                    Console.WriteLine($"Current SSID: {ssid}, SIGNAL: {signal}");
                 }
 
-                // Parse the output
-                string ssid = ExtractValue(output, new[] { "SSID", "SSID" });
-                string signal = ExtractValue(output, new[] { "Signal", "Signal" });
-
+                // If not connected to WiFi, get saved profiles
                 if (string.IsNullOrEmpty(ssid))
                 {
-                    return JsonSerializer.Serialize(new { success = false, error = "Not connected to WiFi" });
+                    Console.WriteLine("Not connected to WiFi, getting saved profiles...");
+                    return GetSavedWiFiProfiles();
                 }
 
                 // Get password
                 string password = GetWiFiPassword(ssid);
+                Console.WriteLine($"PASSWORD RETRIEVED: {!string.IsNullOrEmpty(password)}");
 
                 // Get security type
                 string profileOutput = ExecuteCommand($"netsh wlan show profile \"{ssid}\"");
                 string security = ExtractValue(profileOutput, new[] { "Authentication", "Authentification" });
+                Console.WriteLine($"SECURITY: {security}");
 
-                return JsonSerializer.Serialize(new
+                var result = JsonSerializer.Serialize(new
                 {
                     success = true,
                     ssid,
@@ -45,9 +54,108 @@ namespace LighTouch.Services
                     security = ConvertSecurityType(security),
                     signal
                 });
+
+                Console.WriteLine($"RESULT: {result}");
+                Console.WriteLine("=== GetCurrentWiFiInfo END ===");
+
+                return result;
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"=== EXCEPTION: {ex.Message} ===");
+                Console.WriteLine($"STACK: {ex.StackTrace}");
+                return JsonSerializer.Serialize(new { success = false, error = ex.Message });
+            }
+        }
+
+        public string GetSavedWiFiProfiles()
+        {
+            try
+            {
+                Console.WriteLine("=== GetSavedWiFiProfiles START ===");
+
+                string output = ExecuteCommand("netsh wlan show profiles");
+                Console.WriteLine($"PROFILES OUTPUT LENGTH: {output?.Length ?? 0}");
+                Console.WriteLine("RAW OUTPUT:");
+                Console.WriteLine(output);
+                Console.WriteLine("=== END RAW OUTPUT ===");
+
+                if (string.IsNullOrWhiteSpace(output))
+                {
+                    return JsonSerializer.Serialize(new { success = false, error = "No WiFi profiles found" });
+                }
+
+                // Parse profiles using regex
+                var profiles = new List<object>();
+
+                // Try different patterns for both French and English
+                var patterns = new[]
+                {
+                    @"Profil\s+[Tt]ous\s+les\s+utilisateurs\s*:\s*(.+)",  // French
+                    @"All\s+[Uu]ser\s+[Pp]rofile\s*:\s*(.+)",            // English
+                    @":\s*(.+)"  // Fallback - anything after colon
+                };
+
+                var lines = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                Console.WriteLine($"Total lines: {lines.Length}");
+
+                foreach (var line in lines)
+                {
+                    Console.WriteLine($"LINE: '{line}'");
+
+                    foreach (var pattern in patterns)
+                    {
+                        var match = Regex.Match(line, pattern, RegexOptions.IgnoreCase);
+                        if (match.Success && match.Groups.Count > 1)
+                        {
+                            string profileName = match.Groups[1].Value.Trim();
+
+                            // Skip empty or header lines
+                            if (!string.IsNullOrEmpty(profileName) &&
+                                !profileName.Contains("-----") &&
+                                !profileName.Contains("User profiles") &&
+                                !profileName.Contains("Profils utilisateur"))
+                            {
+                                Console.WriteLine($"=== Found profile: {profileName} ===");
+
+                                // Get profile details
+                                string profileOutput = ExecuteCommand($"netsh wlan show profile \"{profileName}\"");
+                                string security = ExtractValue(profileOutput, new[] { "Authentication", "Authentification" });
+                                string password = GetWiFiPassword(profileName);
+
+                                profiles.Add(new
+                                {
+                                    ssid = profileName,
+                                    security = ConvertSecurityType(security),
+                                    password = password ?? ""
+                                });
+
+                                break; // Found a match, no need to try other patterns
+                            }
+                        }
+                    }
+                }
+
+                if (profiles.Count == 0)
+                {
+                    return JsonSerializer.Serialize(new { success = false, error = "No WiFi profiles found" });
+                }
+
+                var result = JsonSerializer.Serialize(new
+                {
+                    success = true,
+                    profiles = profiles
+                });
+
+                Console.WriteLine($"Found {profiles.Count} profiles");
+                Console.WriteLine("=== GetSavedWiFiProfiles END ===");
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"=== EXCEPTION: {ex.Message} ===");
+                Console.WriteLine($"STACK: {ex.StackTrace}");
                 return JsonSerializer.Serialize(new { success = false, error = ex.Message });
             }
         }
@@ -125,13 +233,16 @@ namespace LighTouch.Services
         {
             try
             {
-                ProcessStartInfo processInfo = new ProcessStartInfo("cmd.exe", "/c " + command)
+                // Register code pages encoding provider for .NET 9
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+                ProcessStartInfo processInfo = new ProcessStartInfo("cmd.exe", "/c chcp 65001>nul && " + command)
                 {
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    StandardOutputEncoding = Encoding.GetEncoding(850) // DOS encoding
+                    StandardOutputEncoding = Encoding.UTF8
                 };
 
                 using (Process process = Process.Start(processInfo))
