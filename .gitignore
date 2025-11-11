@@ -41,9 +41,12 @@ bld/
 **/packages/*
 !**/packages/build/
 
-# wwwroot copied files (keep the adapter only)
-CSharpApp/wwwroot/
-!CSharpApp/wwwroot/webview-adapter.js
+# Test files - DO NOT COMMIT
+CSharpApp/test_tcp_client.py
+CSharpApp/test_electronAPI.html
+CSharpApp/DEBUG_LOGS.md
+CSharpApp/FIX_SOURIS_SENDINPUT.md
+CSharpApp/PROTOCOLE_TESTS.md
 
 # ==========================================
 # Legacy files (kept for reference)

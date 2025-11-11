@@ -9,7 +9,9 @@ namespace LighTouch
     public partial class MainWindow : Window
     {
         private JavaScriptBridge jsBridge;
-        private BluetoothHandler bluetoothHandler;
+        // MIGRATION: Bluetooth remplacé par TCP/IP
+        // private BluetoothHandler bluetoothHandler;
+        private TcpServerHandler tcpServerHandler;
         private MouseKeyboardController mouseKeyboardController;
         private WiFiManager wifiManager;
 
@@ -27,13 +29,17 @@ namespace LighTouch
                 await webView.EnsureCoreWebView2Async(null);
 
                 // Initialize handlers
-                bluetoothHandler = new BluetoothHandler();
+                // MIGRATION: Utilisation de TCP au lieu de Bluetooth
+                // bluetoothHandler = new BluetoothHandler();
+                tcpServerHandler = new TcpServerHandler();
+                tcpServerHandler.Port = 8888; // Port TCP configurable
+
                 mouseKeyboardController = new MouseKeyboardController();
                 wifiManager = new WiFiManager();
 
                 // Create and expose JavaScript bridge
                 jsBridge = new JavaScriptBridge(
-                    bluetoothHandler,
+                    tcpServerHandler,  // Passe TcpServerHandler au lieu de BluetoothHandler
                     mouseKeyboardController,
                     wifiManager,
                     webView
@@ -65,21 +71,25 @@ namespace LighTouch
                 }
                 else
                 {
-                    MessageBox.Show($"Cannot find index.html at {indexPath}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    System.Windows.MessageBox.Show($"Cannot find index.html at {indexPath}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
-                // Start Bluetooth handler
-                await bluetoothHandler.StartAsync();
+                // Start TCP server
+                // MIGRATION: Démarre le serveur TCP au lieu de Bluetooth
+                // await bluetoothHandler.StartAsync();
+                await tcpServerHandler.StartAsync();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Initialization error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show($"Initialization error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         protected override void OnClosed(EventArgs e)
         {
-            bluetoothHandler?.Dispose();
+            // MIGRATION: Dispose du serveur TCP au lieu de Bluetooth
+            // bluetoothHandler?.Dispose();
+            tcpServerHandler?.Dispose();
             base.OnClosed(e);
         }
     }

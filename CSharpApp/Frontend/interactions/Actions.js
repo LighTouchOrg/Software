@@ -30,18 +30,23 @@ class Actions {
 
     const direction = params.direction.toLowerCase();
     if (this.isOnboarding || this.pres_mode == "true") {
-      switch (direction) {
-        case "left":
-          window.electronAPI?.pressKey(this.left_key);
-          break;
-        case "right":
-          window.electronAPI?.pressKey(this.right_key);
-          break;
-        default:
-          console.error("Invalid swipe direction:", direction);
-          return -1;
+      // Ne pas utiliser ?. avec les objets COM
+      if (window.electronAPI && window.electronAPI.pressKey) {
+        switch (direction) {
+          case "left":
+            window.electronAPI.pressKey(this.left_key);
+            break;
+          case "right":
+            window.electronAPI.pressKey(this.right_key);
+            break;
+          default:
+            console.error("Invalid swipe direction:", direction);
+            return -1;
+        }
+        console.log("Swipe action executed with params:", params);
+      } else {
+        console.error("electronAPI.pressKey n'est pas disponible");
       }
-      console.log("Swipe action executed with params:", params);
     } else {
       console.log("Swipe not executed since presentation mode est désactivé");
     }
@@ -52,16 +57,34 @@ class Actions {
   move(params) {
     this.getSettings();
 
-    if (!params || !params.x || !params.y) {
-      console.error("Invalid parameters for move action:", params);
+    console.log("[Actions] move() appelé avec params:", params);
+    console.log("[Actions] nav_mode:", this.nav_mode, "isOnboarding:", this.isOnboarding);
+    console.log("[Actions] electronAPI disponible:", !!window.electronAPI);
+    console.log("[Actions] moveMouse existe:", window.electronAPI ? typeof window.electronAPI.moveMouse : 'N/A');
+
+    // FIX: Accepter x=0 et y=0 comme valides (ne pas utiliser !params.x car 0 est falsy)
+    if (!params || params.x === undefined || params.x === null || params.y === undefined || params.y === null) {
+      console.error("[Actions] Invalid parameters for move action:", params);
       return -1;
     }
     const { x, y } = params;
     if (this.isOnboarding || this.nav_mode == "true") {
-      window.electronAPI?.moveMouse(x, y);
-      // console.log("Move action executed with params:", params);
+      console.log("[Actions] Tentative d'appel moveMouse(", x, ",", y, ")");
+
+      // Ne pas utiliser ?. avec les objets COM - appel direct
+      if (window.electronAPI && window.electronAPI.moveMouse) {
+        try {
+          console.log("[Actions] Appel direct moveMouse...");
+          window.electronAPI.moveMouse(x, y);
+          console.log("[Actions] ✓ Move action executed with params:", params);
+        } catch (e) {
+          console.error("[Actions] ✗ Erreur lors de l'appel moveMouse:", e);
+        }
+      } else {
+        console.error("[Actions] ✗ electronAPI.moveMouse n'est pas disponible");
+      }
     } else {
-      console.log("Move not performed since navigation mode est désactivé");
+      console.log("[Actions] Move not performed since navigation mode est désactivé (nav_mode=" + this.nav_mode + ")");
     }
 
     return 0;

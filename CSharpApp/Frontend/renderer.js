@@ -9,7 +9,7 @@ const statusMessages = {
     calibration_failed: "Calibration échouée. Veuillez réessayer.",
     calibration_interrupted: "Calibration interrompue.",
     device_connected: "Votre appareil LighTouch est connecté.",
-    device_not_connected: "Aucun appareil Bluetooth connecté.",
+    device_not_connected: "Aucun appareil LighTouch connecté.",
     disabled:
       "Les actions sont désactivées. Appuyez sur la barre d’espace pour les réactiver.",
   },
@@ -167,35 +167,66 @@ function readMessage(msg) {
     let { category, method, params } = parsed;
     method = method.trim().toLowerCase();
 
+    console.log("[TCP] readMessage - category:", category, "method:", method, "params:", params);
+    console.log("[TCP] Actions enabled:", enabled);
+
     switch (category) {
       case "actions":
-        if (!enabled) return;
+        if (!enabled) {
+          console.log("[TCP] Actions désactivées, message ignoré");
+          return;
+        }
+        console.log("[TCP] Création instance Actions et appel méthode:", method);
         const action = new Actions();
-        action[method](params);
+        const result = action[method](params);
+        console.log("[TCP] Résultat action:", result);
         break;
       case "settings":
         const settings = new Settings();
         settings[method](params);
         break;
       default:
-        console.error("Catégorie non reconnue:", category);
+        console.error("[TCP] Catégorie non reconnue:", category);
         break;
     }
   } catch (e) {
-    console.error("Erreur de parsing du message:", e);
+    console.error("[TCP] Erreur de parsing du message:", e);
   }
 }
 
-// Update device status on page load
-window.addEventListener("load", () => {
-  deviceStatusString =
-    localStorage.getItem("deviceStatusString") || "device_not_connected";
-  deviceStatusColor = localStorage.getItem("deviceStatusColor")
-    ? JSON.parse(localStorage.getItem("deviceStatusColor"))
-    : { light: "#9a3412", dark: "#c81927" };
+// MIGRATION TCP: Fonction appelée par C# pour mettre à jour le statut de connexion
+window.updateConnectionStatus = function(isConnected) {
   const lang = localStorage.getItem("preferredLang") || "fr";
   const isDark = document.body.classList.contains("dark-mode");
   const m = statusMessages[lang] || statusMessages["fr"];
+
+  if (deviceStatus) {
+    if (isConnected) {
+      deviceStatus.textContent = m.device_connected;
+      deviceStatus.style.color = isDark ? "darkseagreen" : "darkgreen";
+      console.log("[TCP] ✅ Statut mis à jour: CONNECTÉ (appelé depuis C#)");
+    } else {
+      deviceStatus.textContent = m.device_not_connected;
+      deviceStatus.style.color = isDark ? "#c81927" : "#9a3412";
+      console.log("[TCP] ❌ Statut mis à jour: DÉCONNECTÉ (appelé depuis C#)");
+    }
+  }
+};
+
+// Update device status on page load
+window.addEventListener("load", () => {
+  // MIGRATION TCP: Active le mode Navigation par défaut pour les tests
+  if (!localStorage.getItem("NavigationMode")) {
+    localStorage.setItem("NavigationMode", "true");
+    console.log("[TCP] Mode Navigation activé par défaut");
+  }
+
+  // IMPORTANT: Ne JAMAIS utiliser localStorage pour le statut de connexion
+  // Il doit être vérifié dynamiquement à chaque fois
+  const lang = localStorage.getItem("preferredLang") || "fr";
+  const isDark = document.body.classList.contains("dark-mode");
+  const m = statusMessages[lang] || statusMessages["fr"];
+
   if (
     localStorage.getItem("enabled") &&
     localStorage.getItem("enabled") === "false"
@@ -203,14 +234,19 @@ window.addEventListener("load", () => {
     enabled = false;
     enabledStatus.textContent = m.disabled;
   }
-  if (!deviceStatus) return;
-  deviceStatus.textContent = deviceStatusString
-    ? m[deviceStatusString]
-    : m.device_not_connected;
-  deviceStatus.style.color = isDark
-    ? deviceStatusColor.dark
-    : deviceStatusColor.light;
+
+  // Afficher "non connecté" par défaut
+  if (deviceStatus) {
+    deviceStatus.textContent = m.device_not_connected;
+    deviceStatus.style.color = isDark ? "#c81927" : "#9a3412";
+  }
+
+  console.log("[TCP] Page chargée - en attente des événements de connexion depuis C#");
 });
+
+// MIGRATION TCP: Le statut de connexion est maintenant géré par les événements C#
+// OnClientConnected / OnClientDisconnected appellent window.updateConnectionStatus()
+// Plus besoin de polling - le statut est mis à jour en temps réel !
 
 // Update device status dynamically
 window.electronAPI?.onPythonData((event, data) => {
@@ -221,20 +257,10 @@ window.electronAPI?.onPythonData((event, data) => {
   const raw = data.slice(3).trim();
   jsonBuffer += raw;
 
-  if (
-    deviceStatus.textContent === statusMessages["fr"].device_not_connected ||
-    deviceStatus.textContent === statusMessages["en"].device_not_connected
-  ) {
-    const lang = localStorage.getItem("preferredLang") || "fr";
-    const isDark = document.body.classList.contains("dark-mode");
-    const m = statusMessages[lang] || statusMessages["fr"];
-    deviceStatus.textContent = m.device_connected;
-    deviceStatus.style.color = isDark ? "darkseagreen" : "darkgreen";
-    updateDeviceStatus("device_connected", {
-      light: "darkgreen",
-      dark: "darkseagreen",
-    });
-  }
+  // MIGRATION TCP: Le statut de connexion est géré par le polling périodique (setInterval)
+  // Ne plus mettre à jour le statut ici pour éviter les conflits
+  // Anciennement : mettait le statut en vert dès réception d'un message Bluetooth
+  // Désormais : le setInterval se charge de vérifier IsClientConnected() régulièrement
 
   const regex = /{[^{}]*(?:{[^{}]*}[^{}]*)*}/g;
   let match;
@@ -311,3 +337,87 @@ document.addEventListener("keydown", (event) => {
     updateEnabledStatus();
   }
 });
+
+// MIGRATION TCP: Fonction pour traiter les messages TCP (remplace onPythonData pour Bluetooth)
+window.processTcpMessage = function(jsonMessage) {
+  try {
+    console.log("[TCP] Message reçu brut:", jsonMessage);
+
+    // Simule le format "BT:{json}" attendu par le code existant
+    const data = "BT:" + jsonMessage;
+
+    if (!data.startsWith("BT:")) {
+      console.log("[TCP] Message ne commence pas par BT:");
+      return;
+    }
+
+    const raw = data.slice(3).trim();
+    console.log("[TCP] JSON extrait:", raw);
+    jsonBuffer += raw;
+
+    // MIGRATION TCP: Le statut de connexion est géré par le polling périodique (setInterval)
+    // Ne plus mettre à jour le statut ici pour éviter les conflits
+    // Le setInterval vérifie IsClientConnected() toutes les 2 secondes
+
+    // Traitement du JSON
+    const regex = /{[^{}]*(?:{[^{}]*}[^{}]*)*}/g;
+    let match;
+    let lastIndex = 0;
+    while ((match = regex.exec(jsonBuffer)) !== null) {
+      const possibleJson = match[0];
+      try {
+        const parsed = JSON.parse(possibleJson);
+
+        // Anti-duplicate pour move
+        if (parsed.method === "move" && parsed.params) {
+          const moveKey = `${parsed.params.x},${parsed.params.y}`;
+          if (moveKey === lastMove) {
+            lastIndex = regex.lastIndex;
+            continue;
+          }
+          lastMove = moveKey;
+        }
+
+        console.log("[TCP] Appel readMessage avec:", parsed);
+        readMessage(possibleJson);
+
+        if (onboardingWindow && !onboardingWindow.closed) {
+          onboardingWindow.postMessage(possibleJson, "*");
+        }
+
+        // Gestion calibration
+        if (parsed?.category === "screen" && parsed?.method === "calibrate") {
+          const value = parsed.params?.value;
+          if (deviceStatus) {
+            const lang = localStorage.getItem("preferredLang") || "fr";
+            const isDark = document.body.classList.contains("dark-mode");
+            const m = statusMessages[lang] || statusMessages["fr"];
+            if (value === false) {
+              deviceStatus.textContent = m.calibration_done;
+              updateDeviceStatus("calibration_done", {
+                light: "midnightblue",
+                dark: "navajowhite",
+              });
+            } else {
+              deviceStatus.textContent = m.calibration_failed;
+              updateDeviceStatus("calibration_failed", {
+                light: "midnightblue",
+                dark: "navajowhite",
+              });
+            }
+            deviceStatus.style.color = isDark ? "navajowhite" : "midnightblue";
+          }
+          calibrateButton.disabled = false;
+          calibrationWindow?.close();
+          calibrationWindow = null;
+        }
+        lastIndex = regex.lastIndex;
+      } catch (e) {
+        break;
+      }
+    }
+    jsonBuffer = jsonBuffer.slice(lastIndex);
+  } catch (error) {
+    console.error("Erreur traitement message TCP:", error);
+  }
+};
