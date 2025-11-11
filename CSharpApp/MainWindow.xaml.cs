@@ -11,7 +11,8 @@ namespace LighTouch
         private JavaScriptBridge jsBridge;
         // MIGRATION: Bluetooth remplacé par TCP/IP
         // private BluetoothHandler bluetoothHandler;
-        private TcpServerHandler tcpServerHandler;
+        // MIGRATION V2: Client TCP au lieu de serveur (se connecte au serveur Python)
+        private TcpClientHandler tcpClientHandler;
         private MouseKeyboardController mouseKeyboardController;
         private WiFiManager wifiManager;
 
@@ -31,15 +32,18 @@ namespace LighTouch
                 // Initialize handlers
                 // MIGRATION: Utilisation de TCP au lieu de Bluetooth
                 // bluetoothHandler = new BluetoothHandler();
-                tcpServerHandler = new TcpServerHandler();
-                tcpServerHandler.Port = 8888; // Port TCP configurable
+                // MIGRATION V2: Client TCP qui se connecte au serveur Python
+                tcpClientHandler = new TcpClientHandler();
+                tcpClientHandler.ServerHost = "127.0.0.1"; // Adresse du serveur Python
+                tcpClientHandler.ServerPort = 8888; // Port du serveur Python
+                tcpClientHandler.ReconnectDelayMs = 5000; // Reconnexion toutes les 5 secondes
 
                 mouseKeyboardController = new MouseKeyboardController();
                 wifiManager = new WiFiManager();
 
                 // Create and expose JavaScript bridge
                 jsBridge = new JavaScriptBridge(
-                    tcpServerHandler,  // Passe TcpServerHandler au lieu de BluetoothHandler
+                    tcpClientHandler,  // Passe TcpClientHandler au lieu de TcpServerHandler
                     mouseKeyboardController,
                     wifiManager,
                     webView
@@ -74,10 +78,11 @@ namespace LighTouch
                     System.Windows.MessageBox.Show($"Cannot find index.html at {indexPath}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
-                // Start TCP server
-                // MIGRATION: Démarre le serveur TCP au lieu de Bluetooth
+                // Start TCP client
+                // MIGRATION: Démarre le client TCP au lieu de Bluetooth
+                // MIGRATION V2: Se connecte au serveur Python (avec reconnexion auto)
                 // await bluetoothHandler.StartAsync();
-                await tcpServerHandler.StartAsync();
+                await tcpClientHandler.StartAsync();
             }
             catch (Exception ex)
             {
@@ -87,9 +92,10 @@ namespace LighTouch
 
         protected override void OnClosed(EventArgs e)
         {
-            // MIGRATION: Dispose du serveur TCP au lieu de Bluetooth
+            // MIGRATION: Dispose du client TCP au lieu de Bluetooth
+            // MIGRATION V2: Dispose du client TCP au lieu du serveur
             // bluetoothHandler?.Dispose();
-            tcpServerHandler?.Dispose();
+            tcpClientHandler?.Dispose();
             base.OnClosed(e);
         }
     }

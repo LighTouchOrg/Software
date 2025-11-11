@@ -76,17 +76,11 @@
     },
 
     // MIGRATION TCP: Check if TCP client is connected
-    isClientConnected: function() {
+    isClientConnected: async function() {
       try {
-        // Appel de la méthode C# (peut retourner une Promise avec WebView2)
-        const result = hostAPI.IsClientConnected();
-        
-        // Si c'est une Promise, on doit la gérer différemment
-        if (result && typeof result.then === 'function') {
-          console.warn("[webview-adapter] IsClientConnected retourne une Promise - utiliser version async");
-          return false; // Fallback pour appel synchrone
-        }
-        
+        // Appel de la méthode C# (retourne toujours une Promise avec WebView2)
+        const result = await hostAPI.IsClientConnected();
+
         console.log("[webview-adapter] isClientConnected résultat:", result, "type:", typeof result);
         // Convertir explicitement en boolean
         return result === true || result === 1 || result === "True" || result === "true";

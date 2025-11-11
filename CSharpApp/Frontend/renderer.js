@@ -213,6 +213,18 @@ window.updateConnectionStatus = function(isConnected) {
   }
 };
 
+// Fonction pour vérifier le statut de connexion en appelant l'API C#
+async function checkConnectionStatus() {
+  try {
+    if (window.electronAPI && window.electronAPI.isClientConnected) {
+      const isConnected = await window.electronAPI.isClientConnected();
+      window.updateConnectionStatus(isConnected);
+    }
+  } catch (error) {
+    console.error("[TCP] Erreur lors de la vérification du statut:", error);
+  }
+}
+
 // Update device status on page load
 window.addEventListener("load", () => {
   // MIGRATION TCP: Active le mode Navigation par défaut pour les tests
@@ -241,7 +253,17 @@ window.addEventListener("load", () => {
     deviceStatus.style.color = isDark ? "#c81927" : "#9a3412";
   }
 
-  console.log("[TCP] Page chargée - en attente des événements de connexion depuis C#");
+  console.log("[TCP] Page chargée - vérification initiale du statut de connexion");
+
+  // Vérifier le statut de connexion immédiatement après le chargement
+  setTimeout(() => {
+    checkConnectionStatus();
+  }, 500);
+
+  // Puis vérifier périodiquement toutes les 2 secondes
+  setInterval(() => {
+    checkConnectionStatus();
+  }, 2000);
 });
 
 // MIGRATION TCP: Le statut de connexion est maintenant géré par les événements C#

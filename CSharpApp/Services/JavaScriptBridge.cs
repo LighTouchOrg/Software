@@ -11,31 +11,32 @@ namespace LighTouch.Services
     {
         // MIGRATION: Bluetooth remplacé par TCP/IP
         // private readonly BluetoothHandler _bluetoothHandler;
-        private readonly TcpServerHandler _tcpServerHandler;
+        // MIGRATION V2: Client TCP au lieu de serveur
+        private readonly TcpClientHandler _tcpClientHandler;
         private readonly MouseKeyboardController _mouseKeyboardController;
         private readonly WiFiManager _wifiManager;
         private readonly WebView2 _webView;
 
         public JavaScriptBridge(
-            TcpServerHandler tcpServerHandler,  // TCP au lieu de Bluetooth
+            TcpClientHandler tcpClientHandler,  // Client TCP au lieu de serveur
             MouseKeyboardController mouseKeyboardController,
             WiFiManager wifiManager,
             WebView2 webView)
         {
-            // MIGRATION: Utilise TcpServerHandler au lieu de BluetoothHandler
+            // MIGRATION: Utilise TcpClientHandler au lieu de BluetoothHandler
             // _bluetoothHandler = bluetoothHandler;
-            _tcpServerHandler = tcpServerHandler;
+            _tcpClientHandler = tcpClientHandler;
             _mouseKeyboardController = mouseKeyboardController;
             _wifiManager = wifiManager;
             _webView = webView;
 
             // Subscribe to TCP messages (même interface que Bluetooth)
             // _bluetoothHandler.MessageReceived += OnBluetoothMessageReceived;
-            _tcpServerHandler.MessageReceived += OnTcpMessageReceived;
-            
+            _tcpClientHandler.MessageReceived += OnTcpMessageReceived;
+
             // Subscribe to connection events
-            _tcpServerHandler.ClientConnected += OnClientConnected;
-            _tcpServerHandler.ClientDisconnected += OnClientDisconnected;
+            _tcpClientHandler.ServerConnected += OnServerConnected;
+            _tcpClientHandler.ServerDisconnected += OnServerDisconnected;
         }
 
         // MIGRATION: Renommé de OnBluetoothMessageReceived en OnTcpMessageReceived
@@ -66,8 +67,8 @@ namespace LighTouch.Services
             });
         }
 
-        // Gestion de la connexion du client
-        private async void OnClientConnected(object sender, EventArgs e)
+        // Gestion de la connexion au serveur Python
+        private async void OnServerConnected(object sender, EventArgs e)
         {
             await _webView.Dispatcher.InvokeAsync(async () =>
             {
@@ -75,17 +76,17 @@ namespace LighTouch.Services
                 {
                     string script = "if (window.updateConnectionStatus) { window.updateConnectionStatus(true); }";
                     await _webView.CoreWebView2.ExecuteScriptAsync(script);
-                    Console.WriteLine("[JavaScriptBridge] Client connected event sent to JS");
+                    Console.WriteLine("[JavaScriptBridge] Server connected event sent to JS");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[JavaScriptBridge] Error sending client connected event: {ex.Message}");
+                    Console.WriteLine($"[JavaScriptBridge] Error sending server connected event: {ex.Message}");
                 }
             });
         }
 
-        // Gestion de la déconnexion du client
-        private async void OnClientDisconnected(object sender, EventArgs e)
+        // Gestion de la déconnexion du serveur Python
+        private async void OnServerDisconnected(object sender, EventArgs e)
         {
             await _webView.Dispatcher.InvokeAsync(async () =>
             {
@@ -93,11 +94,11 @@ namespace LighTouch.Services
                 {
                     string script = "if (window.updateConnectionStatus) { window.updateConnectionStatus(false); }";
                     await _webView.CoreWebView2.ExecuteScriptAsync(script);
-                    Console.WriteLine("[JavaScriptBridge] Client disconnected event sent to JS");
+                    Console.WriteLine("[JavaScriptBridge] Server disconnected event sent to JS");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[JavaScriptBridge] Error sending client disconnected event: {ex.Message}");
+                    Console.WriteLine($"[JavaScriptBridge] Error sending server disconnected event: {ex.Message}");
                 }
             });
         }
@@ -115,10 +116,10 @@ namespace LighTouch.Services
             return true;
         }
 
-        // MIGRATION TCP: Vérifie si un client TCP est connecté
+        // MIGRATION TCP: Vérifie si connecté au serveur Python
         public bool IsClientConnected()
         {
-            bool connected = _tcpServerHandler.IsClientConnected();
+            bool connected = _tcpClientHandler.IsClientConnected();
             Console.WriteLine($"[JavaScriptBridge] IsClientConnected appelé depuis JS, résultat: {connected}");
             return connected;
         }
@@ -128,7 +129,7 @@ namespace LighTouch.Services
         public void SendToPython(string message)
         {
             // _bluetoothHandler.SendMessage(message);
-            _tcpServerHandler.SendMessage(message);
+            _tcpClientHandler.SendMessage(message);
         }
 
         // Mouse control methods
