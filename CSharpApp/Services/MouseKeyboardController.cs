@@ -57,20 +57,14 @@ namespace LighTouch.Services
         {
             try
             {
-                Console.WriteLine($"[MouseKeyboardController] MoveMouse appelé: x={x}, y={y}");
-
                 // Obtenir la résolution de l'écran
                 int screenWidth = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
                 int screenHeight = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
-
-                Console.WriteLine($"[MouseKeyboardController] Résolution écran: {screenWidth}x{screenHeight}");
 
                 // Convertir les coordonnées en coordonnées absolues (0-65535)
                 // SendInput utilise un système de coordonnées normalisé
                 int absoluteX = (int)((x * 65535.0) / screenWidth);
                 int absoluteY = (int)((y * 65535.0) / screenHeight);
-
-                Console.WriteLine($"[MouseKeyboardController] Coordonnées absolues: {absoluteX}, {absoluteY}");
 
                 // Créer l'input pour SendInput
                 INPUT input = new INPUT
@@ -93,24 +87,12 @@ namespace LighTouch.Services
                 if (result == 0)
                 {
                     int error = Marshal.GetLastWin32Error();
-                    Console.WriteLine($"[MouseKeyboardController] ✗ SendInput ÉCHEC! Error code: {error}");
-                }
-                else
-                {
-                    Console.WriteLine($"[MouseKeyboardController] ✓ SendInput réussi! {result} événement(s) envoyé(s)");
-
-                    // Vérifier la position réelle de la souris
-                    POINT currentPos;
-                    if (GetCursorPos(out currentPos))
-                    {
-                        Console.WriteLine($"[MouseKeyboardController] Position réelle souris: ({currentPos.X}, {currentPos.Y})");
-                    }
+                    Console.WriteLine($"[Mouse] ✗ Move failed! Error: {error}");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[MouseKeyboardController] ✗ Exception: {ex.Message}");
-                Console.WriteLine($"[MouseKeyboardController] Stack trace: {ex.StackTrace}");
+                Console.WriteLine($"[Mouse] ✗ Move exception: {ex.Message}");
             }
         }
 
@@ -118,9 +100,6 @@ namespace LighTouch.Services
         {
             try
             {
-                Console.WriteLine($"[MouseKeyboardController] PressMouse: x={x}, y={y}, button={button}");
-
-                // Move mouse if coordinates provided
                 if (x >= 0 && y >= 0)
                 {
                     MoveMouse(x, y);
@@ -134,7 +113,6 @@ namespace LighTouch.Services
                     _ => MOUSEEVENTF_LEFTDOWN
                 };
 
-                // Créer l'input pour le clic
                 INPUT input = new INPUT
                 {
                     type = INPUT_MOUSE,
@@ -150,11 +128,14 @@ namespace LighTouch.Services
                 };
 
                 uint result = SendInput(1, new INPUT[] { input }, Marshal.SizeOf(typeof(INPUT)));
-                Console.WriteLine($"[MouseKeyboardController] PressMouse result: {result}");
+                if (result == 0)
+                {
+                    Console.WriteLine($"[Mouse] ✗ Press failed!");
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[MouseKeyboardController] Error pressing mouse: {ex.Message}");
+                Console.WriteLine($"[Mouse] ✗ Press exception: {ex.Message}");
             }
         }
 
@@ -162,9 +143,6 @@ namespace LighTouch.Services
         {
             try
             {
-                Console.WriteLine($"[MouseKeyboardController] ReleaseMouse: x={x}, y={y}, button={button}");
-
-                // Move mouse if coordinates provided
                 if (x >= 0 && y >= 0)
                 {
                     MoveMouse(x, y);
@@ -178,7 +156,6 @@ namespace LighTouch.Services
                     _ => MOUSEEVENTF_LEFTUP
                 };
 
-                // Créer l'input pour relâcher le clic
                 INPUT input = new INPUT
                 {
                     type = INPUT_MOUSE,
@@ -194,11 +171,14 @@ namespace LighTouch.Services
                 };
 
                 uint result = SendInput(1, new INPUT[] { input }, Marshal.SizeOf(typeof(INPUT)));
-                Console.WriteLine($"[MouseKeyboardController] ReleaseMouse result: {result}");
+                if (result == 0)
+                {
+                    Console.WriteLine($"[Mouse] ✗ Release failed!");
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[MouseKeyboardController] Error releasing mouse: {ex.Message}");
+                Console.WriteLine($"[Mouse] ✗ Release exception: {ex.Message}");
             }
         }
 

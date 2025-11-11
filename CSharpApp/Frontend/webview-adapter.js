@@ -33,11 +33,17 @@
     },
 
     pressMouse: (x, y, button) => {
-      hostAPI.PressMouse(x, y, button);
+      const finalX = (x === undefined || x === null) ? -1 : x;
+      const finalY = (y === undefined || y === null) ? -1 : y;
+      const finalButton = (button === undefined || button === null || button === "") ? "LEFT" : button;
+      hostAPI.PressMouse(finalX, finalY, finalButton);
     },
 
     releaseMouse: (x, y, button) => {
-      hostAPI.ReleaseMouse(x, y, button);
+      const finalX = (x === undefined || x === null) ? -1 : x;
+      const finalY = (y === undefined || y === null) ? -1 : y;
+      const finalButton = (button === undefined || button === null || button === "") ? "LEFT" : button;
+      hostAPI.ReleaseMouse(finalX, finalY, finalButton);
     },
 
     // Keyboard control
@@ -80,12 +86,10 @@
       try {
         // Appel de la méthode C# (retourne toujours une Promise avec WebView2)
         const result = await hostAPI.IsClientConnected();
-
-        console.log("[webview-adapter] isClientConnected résultat:", result, "type:", typeof result);
         // Convertir explicitement en boolean
         return result === true || result === 1 || result === "True" || result === "true";
       } catch (e) {
-        console.error("[webview-adapter] Erreur isClientConnected:", e);
+        console.error("[webview-adapter] ✗ isClientConnected error:", e);
         return false;
       }
     },

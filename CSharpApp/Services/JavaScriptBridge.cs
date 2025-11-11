@@ -119,9 +119,7 @@ namespace LighTouch.Services
         // MIGRATION TCP: Vérifie si connecté au serveur Python
         public bool IsClientConnected()
         {
-            bool connected = _tcpClientHandler.IsClientConnected();
-            Console.WriteLine($"[JavaScriptBridge] IsClientConnected appelé depuis JS, résultat: {connected}");
-            return connected;
+            return _tcpClientHandler.IsClientConnected();
         }
 
         // Send message to Python (now via TCP instead of Bluetooth)
@@ -136,12 +134,9 @@ namespace LighTouch.Services
         // FIX: Appeler sur le thread UI principal WPF au lieu du contexte WebView2
         public void MoveMouse(int x, int y)
         {
-            Console.WriteLine($"[JavaScriptBridge] MoveMouse appelé depuis JS: x={x}, y={y}");
-
             // Exécuter sur le thread UI principal de l'application WPF
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
-                Console.WriteLine($"[JavaScriptBridge] MoveMouse exécuté sur thread UI principal");
                 _mouseKeyboardController.MoveMouse(x, y);
             });
         }
