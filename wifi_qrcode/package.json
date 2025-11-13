@@ -1,0 +1,14 @@
+{
+  "name": "wifi-qr-app",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^33.0.0",
+    "node-wifi": "^2.0.16",
+    "wifi-qr-code-generator": "^1.1.1",
+    "qrcode": "^1.5.4"
+  }
+}

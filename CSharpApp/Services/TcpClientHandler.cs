@@ -24,7 +24,7 @@ namespace LighTouch.Services
         private readonly object _lock = new object();
 
         // Configuration
-        public string ServerHost { get; set; } = "127.0.0.1";
+        public string ServerHost { get; set; } = null; // Sera défini par UDP Discovery
         public int ServerPort { get; set; } = 8888;
         public int ReconnectDelayMs { get; set; } = 5000; // Délai entre les tentatives de reconnexion
 
@@ -43,12 +43,12 @@ namespace LighTouch.Services
         /// <summary>
         /// Démarre le client TCP de manière asynchrone
         /// </summary>
-        public async Task StartAsync()
+        public Task StartAsync()
         {
             if (_isRunning)
             {
                 Console.WriteLine("[TcpClientHandler] Client déjà démarré");
-                return;
+                return Task.CompletedTask;
             }
 
             _isRunning = true;
@@ -57,7 +57,10 @@ namespace LighTouch.Services
             Console.WriteLine($"[TcpClientHandler] Démarrage du client TCP...");
             Console.WriteLine($"[TcpClientHandler] Cible: {ServerHost}:{ServerPort}");
 
-            await Task.Run(() => ConnectionLoop(_cancellationTokenSource.Token), _cancellationTokenSource.Token);
+            // Démarre le thread en arrière-plan SANS bloquer
+            Task.Run(() => ConnectionLoop(_cancellationTokenSource.Token), _cancellationTokenSource.Token);
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -106,6 +109,13 @@ namespace LighTouch.Services
         /// </summary>
         private async Task ConnectToServer(CancellationToken cancellationToken)
         {
+            // Ne tente pas de se connecter si l'IP n'est pas encore découverte
+            if (string.IsNullOrEmpty(ServerHost))
+            {
+                Console.WriteLine("[TcpClientHandler] En attente de découverte du serveur (UDP Discovery)...");
+                return;
+            }
+
             try
             {
                 Console.WriteLine($"[TcpClientHandler] Tentative de connexion à {ServerHost}:{ServerPort}...");

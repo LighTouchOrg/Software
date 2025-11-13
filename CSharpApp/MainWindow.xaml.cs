@@ -13,6 +13,7 @@ namespace LighTouch
         // private BluetoothHandler bluetoothHandler;
         // MIGRATION V2: Client TCP au lieu de serveur (se connecte au serveur Python)
         private TcpClientHandler tcpClientHandler;
+        private UdpDiscoveryService udpDiscoveryService;
         private MouseKeyboardController mouseKeyboardController;
         private WiFiManager wifiManager;
 
@@ -34,9 +35,12 @@ namespace LighTouch
                 // bluetoothHandler = new BluetoothHandler();
                 // MIGRATION V2: Client TCP qui se connecte au serveur Python
                 tcpClientHandler = new TcpClientHandler();
-                tcpClientHandler.ServerHost = "127.0.0.1"; // Adresse du serveur Python
-                tcpClientHandler.ServerPort = 8888; // Port du serveur Python
+                // L'IP sera définie automatiquement par la découverte UDP
                 tcpClientHandler.ReconnectDelayMs = 5000; // Reconnexion toutes les 5 secondes
+
+                // Service de découverte réseau pour trouver automatiquement le serveur
+                udpDiscoveryService = new UdpDiscoveryService(8889);
+                udpDiscoveryService.ServerDiscovered += OnServerDiscovered;
 
                 mouseKeyboardController = new MouseKeyboardController();
                 wifiManager = new WiFiManager();
@@ -78,7 +82,10 @@ namespace LighTouch
                     System.Windows.MessageBox.Show($"Cannot find index.html at {indexPath}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
-                // Start TCP client
+                // Start UDP discovery first
+                await udpDiscoveryService.StartAsync();
+
+                // Start TCP client (will connect when server is discovered)
                 // MIGRATION: Démarre le client TCP au lieu de Bluetooth
                 // MIGRATION V2: Se connecte au serveur Python (avec reconnexion auto)
                 // await bluetoothHandler.StartAsync();
@@ -90,11 +97,26 @@ namespace LighTouch
             }
         }
 
+        /// <summary>
+        /// Appelé quand un serveur est découvert via UDP broadcast
+        /// </summary>
+        private void OnServerDiscovered(object sender, ServerDiscoveredEventArgs e)
+        {
+            Console.WriteLine($"[MainWindow] Serveur découvert: {e.ServerIp}:{e.ServerPort}");
+
+            // Met à jour l'IP et le port du client TCP
+            tcpClientHandler.ServerHost = e.ServerIp;
+            tcpClientHandler.ServerPort = e.ServerPort;
+
+            Console.WriteLine($"[MainWindow] Configuration TCP mise à jour: {e.ServerIp}:{e.ServerPort}");
+        }
+
         protected override void OnClosed(EventArgs e)
         {
             // MIGRATION: Dispose du client TCP au lieu de Bluetooth
             // MIGRATION V2: Dispose du client TCP au lieu du serveur
             // bluetoothHandler?.Dispose();
+            udpDiscoveryService?.Dispose();
             tcpClientHandler?.Dispose();
             base.OnClosed(e);
         }
