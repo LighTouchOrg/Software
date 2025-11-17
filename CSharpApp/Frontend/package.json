@@ -1,0 +1,14 @@
+{
+  "name": "lightouch-frontend-tests",
+  "version": "1.0.0",
+  "description": "Jest tests for LighTouch Frontend",
+  "scripts": {
+    "test": "jest --verbose",
+    "test:coverage": "jest --verbose --coverage",
+    "test:watch": "jest --watch"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  }
+}
