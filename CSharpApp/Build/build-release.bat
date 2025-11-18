@@ -37,7 +37,7 @@ echo.
 
 REM Publish the application
 echo Step 4: Publishing self-contained executable...
-dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
+dotnet publish -c Release -r win-x64 --self-contained true /p:IncludeNativeLibrariesForSelfExtract=true /p:EnableCompressionInSingleFile=true
 if errorlevel 1 (
     echo Error publishing application!
     pause

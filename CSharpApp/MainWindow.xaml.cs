@@ -27,8 +27,21 @@ namespace LighTouch
         {
             try
             {
+                // Configure WebView2 to use AppData for user data
+                string userDataFolder = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "LighTouch",
+                    "WebView2Data"
+                );
+
+                var webView2Environment = await CoreWebView2Environment.CreateAsync(
+                    null, // browserExecutableFolder (null = use installed WebView2)
+                    userDataFolder, // userDataFolder
+                    null // options
+                );
+
                 // Initialize WebView2
-                await webView.EnsureCoreWebView2Async(null);
+                await webView.EnsureCoreWebView2Async(webView2Environment);
 
                 // Initialize handlers
                 // MIGRATION: Utilisation de TCP au lieu de Bluetooth
@@ -65,11 +78,25 @@ namespace LighTouch
                 string wwwrootPath = Path.Combine(appPath, "wwwroot");
                 string indexPath = Path.Combine(wwwrootPath, "index.html");
 
-                // If wwwroot doesn't exist, try the Frontend folder directly
+                // If wwwroot doesn't exist locally, try the Frontend folder (dev mode)
                 if (!File.Exists(indexPath))
                 {
                     wwwrootPath = Path.Combine(Directory.GetParent(appPath).Parent.Parent.Parent.FullName, "Frontend");
                     indexPath = Path.Combine(wwwrootPath, "index.html");
+                }
+
+                // If still not found, try embedded resources (release mode)
+                if (!File.Exists(indexPath))
+                {
+                    try
+                    {
+                        wwwrootPath = ResourceExtractor.GetWwwRootPath();
+                        indexPath = Path.Combine(wwwrootPath, "index.html");
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Windows.MessageBox.Show($"Failed to extract embedded resources: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
 
                 // Load the main HTML file

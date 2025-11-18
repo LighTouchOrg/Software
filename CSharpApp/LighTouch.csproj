@@ -9,6 +9,14 @@
     <RootNamespace>LighTouch</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+
+    <!-- Configuration pour build standalone -->
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishTrimmed>false</PublishTrimmed>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,9 +27,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Toujours copier wwwroot (pour Debug et Release) -->
     <None Update="wwwroot\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+
+    <!-- En Release: embarque AUSSI dans l'exe comme ressources (pour .exe standalone) -->
+    <EmbeddedResource Include="wwwroot\**\*" Condition="'$(Configuration)' == 'Release'">
+      <LogicalName>wwwroot\%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
