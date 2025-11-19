@@ -183,7 +183,7 @@ document.addEventListener("mousemove", (event) => {
 document.addEventListener("mousedown", (event) => {
   if (!drawingCanvas.classList.contains("hidden")) {
     let isDrawing = false;
-    
+
     // Define the mousemove handler as a named function
     const handleMouseMove = (e) => {
       if (!isDrawing) {
@@ -195,33 +195,33 @@ document.addEventListener("mousedown", (event) => {
         drawingCtx.stroke();
       }
     };
-    
+
     // Set up drawing style
     drawingCtx.strokeStyle = "#9b6ee2";
     drawingCtx.lineWidth = 10;
     drawingCtx.lineCap = "round"; // Rounded line ends
     drawingCtx.lineJoin = "round"; // Rounded line joins
-    
+
     // Start drawing
     drawingCtx.beginPath();
     drawingCtx.moveTo(event.offsetX, event.offsetY);
     isDrawing = true;
-    
+
     // Add the mousemove listener to the canvas
     drawingCanvas.addEventListener("mousemove", handleMouseMove);
-    
+
     // Define the mouseup handler
     const handleMouseUp = () => {
       drawingCanvas.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp); // Remove from document
       isDrawing = false;
     };
-    
+
     // Add the mouseup listener to the document (not just the canvas)
     document.addEventListener("mouseup", handleMouseUp);
     return;
   }
-  
+
   console.log("mousedown", event);
   let x = event.offsetX || event.layerX;
   let y = event.offsetY || event.layerY;
@@ -232,18 +232,18 @@ document.addEventListener("mousedown", (event) => {
 
 function resizeCanvas() {
   const drawingCanvas = document.getElementById('drawing-canvas');
-  
+
   if (!drawingCanvas) return;
-  
+
   // Calculate responsive dimensions
   const viewportHeight = window.innerHeight;
   const displayHeight = Math.floor(viewportHeight * 0.4); // 40vh
   const displayWidth = Math.min(800, window.innerWidth * 0.9);
-  
+
   // Set canvas internal dimensions (affects drawing area)
   drawingCanvas.width = displayWidth;
   drawingCanvas.height = displayHeight;
-  
+
   // Set CSS dimensions (affects display size) - should match internal dimensions
   drawingCanvas.style.width = displayWidth + 'px';
   drawingCanvas.style.height = displayHeight + 'px';
@@ -261,12 +261,23 @@ window.addEventListener("DOMContentLoaded", () => {
   drawingCtx = drawingCanvas.getContext("2d");
   finishBtn = document.getElementById("finish-btn");
   finishBtn.addEventListener("click", () => {
-    if (window.opener && !window.opener.closed) {
-      const parentBtn =
-        window.opener.document.getElementById("onboarding-button");
-      if (parentBtn) parentBtn.disabled = false;
+    console.log("Finish button clicked");
+    try {
+      if (window.opener && !window.opener.closed) {
+        const parentBtn =
+          window.opener.document.getElementById("onboarding-button");
+        if (parentBtn) parentBtn.disabled = false;
+      }
+    } catch (e) {
+      console.warn("Could not access window.opener:", e);
     }
+
     window.close();
+
+    // Fallback: if window.close() didn't work > redirect to index
+    setTimeout(() => {
+      window.location.href = "../index.html";
+    }, 300);
   });
   updateStepText();
 });
