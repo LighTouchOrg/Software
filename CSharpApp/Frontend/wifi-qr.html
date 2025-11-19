@@ -15,7 +15,7 @@
       margin: 20px auto;
       backdrop-filter: blur(10px);
     }
-    
+
     .wifi-title {
       color: #333;
       text-align: center;
@@ -23,7 +23,7 @@
       font-size: 28px;
       font-weight: bold;
     }
-    
+
     .status {
       padding: 15px;
       border-radius: 10px;
@@ -31,25 +31,25 @@
       text-align: center;
       font-weight: 500;
     }
-    
+
     .status.loading {
       background: #fff3cd;
       color: #856404;
       border: 2px solid #ffeaa7;
     }
-    
+
     .status.success {
       background: #d4edda;
       color: #155724;
       border: 2px solid #c3e6cb;
     }
-    
+
     .status.error {
       background: #f8d7da;
       color: #721c24;
       border: 2px solid #f5c6cb;
     }
-    
+
     .wifi-info {
       background: #f8f9fa;
       padding: 20px;
@@ -57,53 +57,53 @@
       margin-bottom: 25px;
       display: none;
     }
-    
+
     .wifi-info.visible {
       display: block;
     }
-    
+
     .wifi-info h3 {
       color: #495057;
       margin-bottom: 15px;
       font-size: 18px;
     }
-    
+
     .info-row {
       display: flex;
       justify-content: space-between;
       padding: 10px 0;
       border-bottom: 1px solid #dee2e6;
     }
-    
+
     .info-row:last-child {
       border-bottom: none;
     }
-    
+
     .info-label {
       color: #6c757d;
       font-weight: 600;
     }
-    
+
     .info-value {
       color: #212529;
       font-weight: 500;
     }
-    
+
     .password-container {
       margin: 20px 0;
     }
-    
+
     .password-container label {
       display: block;
       margin-bottom: 8px;
       color: #495057;
       font-weight: 600;
     }
-    
+
     .password-input-wrapper {
       position: relative;
     }
-    
+
     .wifi-input {
       width: 100%;
       padding: 12px;
@@ -113,18 +113,18 @@
       transition: border-color 0.3s;
       background: rgba(255, 255, 255, 0.9);
     }
-    
+
     .wifi-input:focus {
       outline: none;
       border-color: #667eea;
     }
-    
+
     .btn-group {
       display: flex;
       gap: 10px;
       margin-top: 20px;
     }
-    
+
     .wifi-btn {
       flex: 1;
       padding: 15px;
@@ -136,55 +136,55 @@
       transition: all 0.3s;
       color: white;
     }
-    
+
     .wifi-btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
-    
+
     .btn-primary {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
-    
+
     .btn-primary:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
     }
-    
+
     .btn-secondary {
       background: #6c757d;
     }
-    
+
     .btn-secondary:hover:not(:disabled) {
       background: #5a6268;
       transform: translateY(-2px);
     }
-    
+
     .btn-back {
       background: #28a745;
     }
-    
+
     .btn-back:hover:not(:disabled) {
       background: #218838;
       transform: translateY(-2px);
     }
-    
+
     #qr-container {
       margin-top: 30px;
       text-align: center;
       display: none;
     }
-    
+
     #qr-container.visible {
       display: block;
     }
-    
+
     #qr-container h3 {
       color: #495057;
       margin-bottom: 20px;
     }
-    
+
     #qr-container img {
       max-width: 100%;
       border: 3px solid #667eea;
@@ -193,7 +193,7 @@
       background: white;
       box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
-    
+
     .spinner {
       border: 3px solid #f3f3f3;
       border-top: 3px solid #667eea;
@@ -203,12 +203,13 @@
       animation: spin 1s linear infinite;
       margin: 20px auto;
     }
-    
+
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
   </style>
+  <script src="settings/multi-lang.js"></script>
 </head>
 <body>
   <div class="background">
@@ -222,57 +223,61 @@
   </div>
 
   <div class="wifi-container">
-    <h1 class="wifi-title">🔐 Générateur QR Code WiFi</h1>
-    
+    <h1 class="wifi-title" data-i18n="wifi_title">🔐 Générateur QR Code WiFi</h1>
+
     <div id="status" class="status loading">
       <div class="spinner"></div>
-      Détection du WiFi en cours...
+      <span data-i18n="wifi_detecting">Détection du WiFi en cours...</span>
     </div>
-    
+
     <div id="wifi-info" class="wifi-info">
-      <h3>📶 Réseaux WiFi disponibles</h3>
+      <h3 data-i18n="wifi_available_networks">📶 Réseaux WiFi disponibles</h3>
 
       <div class="password-container">
-        <label for="network-select">Sélectionner un réseau</label>
+        <label for="network-select" data-i18n="wifi_select_network">Sélectionner un réseau</label>
         <select id="network-select" class="wifi-input">
-          <option value="">-- Choisir un réseau --</option>
+          <option value="" data-i18n="wifi_choose_network">-- Choisir un réseau --</option>
         </select>
       </div>
 
       <div id="network-details" style="display: none; margin-top: 20px;">
         <div class="info-row">
-          <span class="info-label">Nom du réseau (SSID)</span>
+          <span class="info-label" data-i18n="wifi_ssid">Nom du réseau (SSID)</span>
           <span class="info-value" id="ssid-display">-</span>
         </div>
         <div class="info-row">
-          <span class="info-label">Sécurité</span>
+          <span class="info-label" data-i18n="wifi_security">Sécurité</span>
           <span class="info-value" id="security-display">-</span>
         </div>
 
         <div class="password-container" id="password-section">
-          <label for="password">Mot de passe WiFi</label>
+          <label for="password" data-i18n="wifi_password">Mot de passe WiFi</label>
           <div class="password-input-wrapper">
-            <input type="password" id="password" class="wifi-input" placeholder="Entrez le mot de passe">
+            <input type="password" id="password" class="wifi-input" placeholder="Entrez le mot de passe" data-i18n-placeholder="wifi_password_placeholder">
           </div>
         </div>
       </div>
     </div>
-    
+
     <div class="btn-group">
-      <button onclick="window.location.href='index.html'" class="wifi-btn btn-back">🏠 Retour</button>
-      <button id="refreshBtn" class="wifi-btn btn-secondary">🔄 Actualiser</button>
-      <button id="generateBtn" class="wifi-btn btn-primary" disabled>✨ Générer QR Code</button>
+      <button onclick="window.location.href='index.html'" class="wifi-btn btn-back" data-i18n="wifi_back">🏠 Retour</button>
+      <button id="refreshBtn" class="wifi-btn btn-secondary" data-i18n="wifi_refresh">🔄 Actualiser</button>
+      <button id="generateBtn" class="wifi-btn btn-primary" disabled data-i18n="wifi_generate">✨ Générer QR Code</button>
     </div>
-    
+
     <div id="qr-container">
-      <h3>✅ Scannez ce QR Code</h3>
+      <h3 data-i18n="wifi_scan_qr">✅ Scannez ce QR Code</h3>
       <img id="qr-image" alt="WiFi QR Code">
     </div>
-  </div>
-  
-  <script>
+  </div>  <script>
     let currentWiFi = null;
     let wifiProfiles = [];
+
+    // Helper for translations
+    function getT(key) {
+      const lang = localStorage.getItem("preferredLang") || "fr";
+      return (window.translations && window.translations[lang] && window.translations[lang][key]) || key;
+    }
 
     // Get the correct reference to the COM object
     const electronAPI = chrome?.webview?.hostObjects?.sync?.electronAPI;
@@ -291,7 +296,7 @@
     function displayWiFiInfo(wifiInfo) {
       if (!wifiInfo.success) {
         statusDiv.className = 'status error';
-        statusDiv.innerHTML = `❌ ${wifiInfo.error}`;
+        statusDiv.innerHTML = `❌ ${getT('wifi_error')} ${wifiInfo.error}`;
         wifiInfoDiv.classList.remove('visible');
         generateBtn.disabled = true;
         return;
@@ -302,7 +307,7 @@
         wifiProfiles = wifiInfo.profiles;
 
         // Remplir le select
-        networkSelect.innerHTML = '<option value="">-- Choisir un réseau --</option>';
+        networkSelect.innerHTML = `<option value="">${getT('wifi_choose_network')}</option>`;
         wifiProfiles.forEach((profile, index) => {
           const option = document.createElement('option');
           option.value = index;
@@ -311,7 +316,7 @@
         });
 
         statusDiv.className = 'status success';
-        statusDiv.textContent = `✅ ${wifiProfiles.length} réseau(x) WiFi trouvé(s)`;
+        statusDiv.textContent = `✅ ${wifiProfiles.length} ${getT('wifi_networks_found')}`;
         wifiInfoDiv.classList.add('visible');
         networkDetails.style.display = 'none';
         generateBtn.disabled = true;
@@ -328,12 +333,12 @@
       // Gérer le mot de passe
       if (wifiInfo.password) {
         statusDiv.className = 'status success';
-        statusDiv.textContent = '✅ WiFi détecté avec succès ! Mot de passe récupéré automatiquement.';
+        statusDiv.textContent = `✅ ${getT('wifi_detected_auto_password')}`;
         passwordInput.value = wifiInfo.password;
         passwordSection.style.display = 'none';
       } else {
         statusDiv.className = 'status success';
-        statusDiv.innerHTML = '✅ WiFi détecté ! <br><small>Veuillez entrer le mot de passe manuellement.</small>';
+        statusDiv.innerHTML = `✅ ${getT('wifi_detected')} <br><small>${getT('wifi_enter_password_manual')}</small>`;
         passwordInput.value = '';
         passwordSection.style.display = 'block';
       }
@@ -374,7 +379,7 @@
 
       networkDetails.style.display = 'block';
     });
-    
+
     // Initialiser la détection WiFi au chargement de la page
     window.addEventListener('DOMContentLoaded', () => {
       // Use setTimeout to let the UI refresh (show spinner) before blocking COM call
@@ -398,17 +403,17 @@
         } catch (error) {
           console.error('=== ERROR ===', error);
           statusDiv.className = 'status error';
-          statusDiv.innerHTML = `❌ Erreur: ${error.message}<br><small>Vérifiez la console (F12)</small>`;
+          statusDiv.innerHTML = `❌ ${getT('wifi_error')} ${error.message}<br><small>Vérifiez la console (F12)</small>`;
         }
       }, 100); // Small delay to let UI refresh
     });
-    
+
     // Bouton actualiser
     refreshBtn.addEventListener('click', () => {
       // Show loading state immediately
       console.log('=== Refresh WiFi ===');
       statusDiv.className = 'status loading';
-      statusDiv.innerHTML = '<div class="spinner"></div>Actualisation...';
+      statusDiv.innerHTML = `<div class="spinner"></div>${getT('wifi_refreshing')}`;
       generateBtn.disabled = true;
       qrContainer.classList.remove('visible');
 
@@ -425,11 +430,11 @@
         } catch (error) {
           console.error('=== REFRESH ERROR ===', error);
           statusDiv.className = 'status error';
-          statusDiv.innerHTML = `❌ Erreur: ${error.message}`;
+          statusDiv.innerHTML = `❌ ${getT('wifi_error')} ${error.message}`;
         }
       }, 100); // Small delay to let UI refresh
     });
-    
+
     // Bouton générer QR Code
     generateBtn.addEventListener('click', () => {
       if (!currentWiFi) return;
@@ -438,13 +443,13 @@
 
       if (!password) {
         statusDiv.className = 'status error';
-        statusDiv.textContent = '⚠️ Veuillez entrer le mot de passe WiFi';
+        statusDiv.textContent = `⚠️ ${getT('wifi_enter_password_error')}`;
         return;
       }
 
       try {
         generateBtn.disabled = true;
-        generateBtn.textContent = '⏳ Génération...';
+        generateBtn.textContent = `⏳ ${getT('wifi_generating')}`;
 
         console.log('=== Generate QR Code ===');
         console.log('SSID:', currentWiFi.ssid);
@@ -462,21 +467,21 @@
           document.getElementById('qr-image').src = qrCodeDataUrl;
           qrContainer.classList.add('visible');
           statusDiv.className = 'status success';
-          statusDiv.textContent = '✅ QR Code généré avec succès !';
+          statusDiv.textContent = `✅ ${getT('wifi_qr_generated_success')}`;
         } else {
           statusDiv.className = 'status error';
-          statusDiv.textContent = '❌ Erreur lors de la génération du QR Code';
+          statusDiv.textContent = `❌ ${getT('wifi_qr_generated_error')}`;
         }
       } catch (error) {
         console.error('=== QR ERROR ===', error);
         statusDiv.className = 'status error';
-        statusDiv.textContent = `❌ Erreur : ${error.message}`;
+        statusDiv.textContent = `❌ ${getT('wifi_error')} ${error.message}`;
       } finally {
         generateBtn.disabled = false;
-        generateBtn.textContent = '✨ Générer QR Code';
+        generateBtn.textContent = getT('wifi_generate');
       }
     });
-    
+
     // Activer le bouton si on tape un mot de passe
     passwordInput.addEventListener('input', () => {
       if (currentWiFi && passwordInput.value) {

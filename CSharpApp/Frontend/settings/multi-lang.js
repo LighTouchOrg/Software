@@ -39,6 +39,29 @@ const translations = {
     left: "Left",
     right: "Right",
     calibration_cancel: "Press ESC to cancel",
+    wifi_title: "🔐 WiFi QR Code Generator",
+    wifi_detecting: "Detecting WiFi...",
+    wifi_available_networks: "📶 Available WiFi Networks",
+    wifi_select_network: "Select a network",
+    wifi_choose_network: "-- Choose a network --",
+    wifi_ssid: "Network Name (SSID)",
+    wifi_security: "Security",
+    wifi_password: "WiFi Password",
+    wifi_password_placeholder: "Enter password",
+    wifi_refresh: "🔄 Refresh",
+    wifi_generate: "✨ Generate QR Code",
+    wifi_scan_qr: "✅ Scan this QR Code",
+    wifi_back: "🏠 Back",
+    wifi_networks_found: "WiFi network(s) found",
+    wifi_detected_auto_password: "WiFi detected successfully! Password retrieved automatically.",
+    wifi_detected: "WiFi detected!",
+    wifi_enter_password_manual: "Please enter the password manually.",
+    wifi_refreshing: "Refreshing...",
+    wifi_enter_password_error: "Please enter the WiFi password",
+    wifi_generating: "Generating...",
+    wifi_qr_generated_success: "QR Code generated successfully!",
+    wifi_qr_generated_error: "Error generating QR Code",
+    wifi_error: "Error:",
   },
   fr: {
     Calibration: "Calibrer la caméra",
@@ -82,6 +105,29 @@ const translations = {
     left: "Gauche",
     right: "Droite",
     calibration_cancel: "Appuyez sur Échap pour annuler",
+    wifi_title: "🔐 Générateur QR Code WiFi",
+    wifi_detecting: "Détection du WiFi en cours...",
+    wifi_available_networks: "📶 Réseaux WiFi disponibles",
+    wifi_select_network: "Sélectionner un réseau",
+    wifi_choose_network: "-- Choisir un réseau --",
+    wifi_ssid: "Nom du réseau (SSID)",
+    wifi_security: "Sécurité",
+    wifi_password: "Mot de passe WiFi",
+    wifi_password_placeholder: "Entrez le mot de passe",
+    wifi_refresh: "🔄 Actualiser",
+    wifi_generate: "✨ Générer QR Code",
+    wifi_scan_qr: "✅ Scannez ce QR Code",
+    wifi_back: "🏠 Retour",
+    wifi_networks_found: "réseau(x) WiFi trouvé(s)",
+    wifi_detected_auto_password: "WiFi détecté avec succès ! Mot de passe récupéré automatiquement.",
+    wifi_detected: "WiFi détecté !",
+    wifi_enter_password_manual: "Veuillez entrer le mot de passe manuellement.",
+    wifi_refreshing: "Actualisation...",
+    wifi_enter_password_error: "Veuillez entrer le mot de passe WiFi",
+    wifi_generating: "Génération...",
+    wifi_qr_generated_success: "QR Code généré avec succès !",
+    wifi_qr_generated_error: "Erreur lors de la génération du QR Code",
+    wifi_error: "Erreur :",
   },
 };
 
@@ -97,6 +143,12 @@ function applyTranslations() {
     const key = el.getAttribute("data-i18n");
     if (t[key]) el.textContent = t[key];
     else console.warn(`Missing key : "${key}" for the langage ${lang}`);
+  });
+
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+    const key = el.getAttribute("data-i18n-placeholder");
+    if (t[key]) el.placeholder = t[key];
+    else console.warn(`Missing placeholder key : "${key}" for the langage ${lang}`);
   });
 }
 
