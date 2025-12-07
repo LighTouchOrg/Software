@@ -1,2 +1,0 @@
-pyserial
-pybluez ; sys_platform == "linux"
