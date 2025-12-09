@@ -44,6 +44,77 @@ function updateDeviceStatus(statusString, color) {
   localStorage.setItem("deviceStatusColor", JSON.stringify(deviceStatusColor));
 }
 
+// ==================== HINT SYSTEM INITIALIZATION ====================
+function initializeHintSystem() {
+  if (!window.electronAPI) {
+    console.log("[Hints] electronAPI not available, retrying...");
+    setTimeout(initializeHintSystem, 500);
+    return;
+  }
+
+  try {
+    // Synchroniser l'état du tutoriel
+    const tutorialCompleted = localStorage.getItem("tutorialCompleted") === "true";
+    window.electronAPI.setTutorialCompleted(tutorialCompleted);
+    
+    // Synchroniser la langue
+    const lang = localStorage.getItem("preferredLang") || "fr";
+    window.electronAPI.setHintLanguage(lang);
+    
+    // Vérifier si les hints sont activés dans les settings
+    const hintsEnabled = localStorage.getItem("hintsEnabled") !== "false"; // Activé par défaut
+    window.electronAPI.setHintsEnabled(hintsEnabled);
+    
+    console.log("[Hints] Système de hints initialisé:", {
+      tutorialCompleted,
+      lang,
+      hintsEnabled
+    });
+  } catch (e) {
+    console.warn("[Hints] Erreur initialisation:", e);
+  }
+}
+
+// Initialiser le système de hints après un délai pour laisser WebView2 se charger
+setTimeout(initializeHintSystem, 1000);
+
+// ==================== HINT MESSAGE RELAY ====================
+// Écouteur pour relayer les messages de hints depuis les popups (onboarding)
+window.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'hint') {
+    const { action, direction, value } = event.data;
+    
+    if (!window.electronAPI) {
+      console.warn('[Hints] electronAPI not available for hint relay');
+      return;
+    }
+    
+    console.log('[Hints] Relaying hint message:', action, event.data);
+    
+    switch (action) {
+      case 'setInTutorial':
+        window.electronAPI.setInTutorial(value);
+        break;
+      case 'setTutorialCompleted':
+        window.electronAPI.setTutorialCompleted(value);
+        break;
+      case 'showSwipeHint':
+        window.electronAPI.showSwipeHint(direction);
+        break;
+      case 'showMoveHint':
+        window.electronAPI.showMoveHint();
+        break;
+      case 'showClickHint':
+        window.electronAPI.showClickHint();
+        break;
+      case 'hideHint':
+        window.electronAPI.hideHint();
+        break;
+    }
+  }
+});
+// ==================================================================
+
 function updateEnabledStatus() {
   enabled = !enabled;
   console.log(`Actions are now ${enabled ? "enabled" : "disabled"}`);
@@ -105,33 +176,13 @@ if (calibrateButton) {
   });
 }
 
-// Lancer l'onboarding
+// Lancer l'onboarding - Ouvre une fenêtre WPF plein écran
 if (onboardingButton) {
   onboardingButton.addEventListener("click", () => {
-    if (!onboardingWindow || onboardingWindow.closed) {
-      onboardingButton.disabled = true;
-
-      onboardingWindow = window.open(
-        "onboarding/onboarding.html",
-        "_blank",
-        "width=800,height=600,fullscreen=yes"
-      );
-
-      const checker = setInterval(() => {
-        if (!onboardingWindow || onboardingWindow.closed) {
-          onboardingWindow = null;
-          onboardingButton.disabled = false;
-          clearInterval(checker);
-        }
-      }, 500);
-
-      onboardingWindow.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-          onboardingWindow.close();
-          onboardingWindow = null;
-          onboardingButton.disabled = false;
-        }
-      });
+    if (window.electronAPI && window.electronAPI.openOnboarding) {
+      window.electronAPI.openOnboarding();
+    } else {
+      console.error("openOnboarding not available");
     }
   });
 }

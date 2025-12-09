@@ -100,6 +100,63 @@
         callback(null, "BT:" + data);
       };
     },
+
+    // ==================== HINT SYSTEM ====================
+
+    // Ouvre la fenêtre d'onboarding en plein écran
+    openOnboarding: () => {
+      hostAPI.OpenOnboarding();
+    },
+
+    // Définit si le tutoriel a été complété
+    setTutorialCompleted: (completed) => {
+      hostAPI.SetTutorialCompleted(completed);
+    },
+
+    // Définit si on est dans le tutoriel (désactive hint idle)
+    setInTutorial: (inTutorial) => {
+      hostAPI.SetInTutorial(inTutorial);
+    },
+
+    // Active ou désactive les hints
+    setHintsEnabled: (enabled) => {
+      hostAPI.SetHintsEnabled(enabled);
+    },
+
+    // Définit la langue des hints
+    setHintLanguage: (language) => {
+      hostAPI.SetHintLanguage(language);
+    },
+
+    // Affiche le hint "main ouverte"
+    showHint: (hintName) => {
+      hostAPI.ShowHint(hintName);
+    },
+
+    // Affiche le hint "swipe" avec direction ('left' ou 'right')
+    showSwipeHint: (direction) => {
+      hostAPI.ShowSwipeHint(direction || 'right');
+    },
+
+    // Affiche le hint "move cursor"
+    showMoveHint: () => {
+      hostAPI.ShowMoveHint();
+    },
+
+    // Affiche le hint "click"
+    showClickHint: () => {
+      hostAPI.ShowClickHint();
+    },
+
+    // Cache le hint actuellement affiché
+    hideHint: () => {
+      hostAPI.HideHint();
+    },
+
+    // Signale une activité utilisateur (reset le timer idle)
+    reportUserActivity: () => {
+      hostAPI.ReportUserActivity();
+    },
   };
 
   console.log("WebView2 adapter initialized");

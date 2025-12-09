@@ -16,6 +16,7 @@ namespace LighTouch
         private UdpDiscoveryService udpDiscoveryService;
         private MouseKeyboardController mouseKeyboardController;
         private WiFiManager wifiManager;
+        private HintService hintService;
 
         public MainWindow()
         {
@@ -57,13 +58,17 @@ namespace LighTouch
 
                 mouseKeyboardController = new MouseKeyboardController();
                 wifiManager = new WiFiManager();
+                
+                // Initialiser le service de hints (affiche hint "main ouverte" après 10 sec d'idle si tuto pas fait)
+                hintService = new HintService(idleSeconds: 10);
 
                 // Create and expose JavaScript bridge
                 jsBridge = new JavaScriptBridge(
                     tcpClientHandler,  // Passe TcpClientHandler au lieu de TcpServerHandler
                     mouseKeyboardController,
                     wifiManager,
-                    webView
+                    webView,
+                    hintService  // Passer le HintService
                 );
 
                 webView.CoreWebView2.AddHostObjectToScript("electronAPI", jsBridge);
@@ -117,6 +122,9 @@ namespace LighTouch
                 // MIGRATION V2: Se connecte au serveur Python (avec reconnexion auto)
                 // await bluetoothHandler.StartAsync();
                 await tcpClientHandler.StartAsync();
+                
+                // Démarrer le service de hints
+                hintService.Start();
             }
             catch (Exception ex)
             {
@@ -143,6 +151,7 @@ namespace LighTouch
             // MIGRATION: Dispose du client TCP au lieu de Bluetooth
             // MIGRATION V2: Dispose du client TCP au lieu du serveur
             // bluetoothHandler?.Dispose();
+            hintService?.Dispose();
             udpDiscoveryService?.Dispose();
             tcpClientHandler?.Dispose();
             base.OnClosed(e);

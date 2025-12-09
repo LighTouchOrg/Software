@@ -16,12 +16,14 @@ namespace LighTouch.Services
         private readonly MouseKeyboardController _mouseKeyboardController;
         private readonly WiFiManager _wifiManager;
         private readonly WebView2 _webView;
+        private readonly HintService _hintService;
 
         public JavaScriptBridge(
             TcpClientHandler tcpClientHandler,  // Client TCP au lieu de serveur
             MouseKeyboardController mouseKeyboardController,
             WiFiManager wifiManager,
-            WebView2 webView)
+            WebView2 webView,
+            HintService hintService = null)
         {
             // MIGRATION: Utilise TcpClientHandler au lieu de BluetoothHandler
             // _bluetoothHandler = bluetoothHandler;
@@ -29,6 +31,7 @@ namespace LighTouch.Services
             _mouseKeyboardController = mouseKeyboardController;
             _wifiManager = wifiManager;
             _webView = webView;
+            _hintService = hintService;
 
             // Subscribe to TCP messages (même interface que Bluetooth)
             // _bluetoothHandler.MessageReceived += OnBluetoothMessageReceived;
@@ -191,6 +194,128 @@ namespace LighTouch.Services
             {
                 Console.WriteLine($"Error opening URL: {ex.Message}");
             }
+        }
+
+        // ==================== HINT SYSTEM ====================
+
+        /// <summary>
+        /// Ouvre la fenêtre d'onboarding en plein écran
+        /// </summary>
+        public void OpenOnboarding()
+        {
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    var onboardingWindow = new OnboardingWindow(_hintService, _tcpClientHandler, () =>
+                    {
+                        // Callback quand la fenêtre se ferme
+                        Console.WriteLine("[JavaScriptBridge] Onboarding window closed");
+                    });
+                    onboardingWindow.Show();
+                    Console.WriteLine("[JavaScriptBridge] Onboarding window opened");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[JavaScriptBridge] Error opening onboarding: {ex.Message}");
+                }
+            });
+        }
+
+        /// <summary>
+        /// Définit si le tutoriel a été complété (désactive les hints automatiques)
+        /// </summary>
+        public void SetTutorialCompleted(bool completed)
+        {
+            if (_hintService != null)
+            {
+                _hintService.TutorialCompleted = completed;
+                Console.WriteLine($"[JavaScriptBridge] Tutorial completed: {completed}");
+            }
+        }
+
+        /// <summary>
+        /// Définit si on est dans le tutoriel (désactive le hint idle)
+        /// </summary>
+        public void SetInTutorial(bool inTutorial)
+        {
+            if (_hintService != null)
+            {
+                _hintService.InTutorial = inTutorial;
+                Console.WriteLine($"[JavaScriptBridge] In tutorial: {inTutorial}");
+            }
+        }
+
+        /// <summary>
+        /// Active ou désactive le système de hints
+        /// </summary>
+        public void SetHintsEnabled(bool enabled)
+        {
+            if (_hintService != null)
+            {
+                _hintService.HintsEnabled = enabled;
+                Console.WriteLine($"[JavaScriptBridge] Hints enabled: {enabled}");
+            }
+        }
+
+        /// <summary>
+        /// Définit la langue des hints
+        /// </summary>
+        public void SetHintLanguage(string language)
+        {
+            if (_hintService != null)
+            {
+                _hintService.Language = language;
+                Console.WriteLine($"[JavaScriptBridge] Hint language: {language}");
+            }
+        }
+
+        /// <summary>
+        /// Affiche le hint "main ouverte"
+        /// </summary>
+        public void ShowHint(string hintName = null)
+        {
+            _hintService?.ShowOpenHandHint();
+        }
+
+        /// <summary>
+        /// Affiche le hint "swipe" avec direction
+        /// </summary>
+        public void ShowSwipeHint(string direction)
+        {
+            _hintService?.ShowSwipeHint(direction ?? "right");
+        }
+
+        /// <summary>
+        /// Affiche le hint "move cursor"
+        /// </summary>
+        public void ShowMoveHint()
+        {
+            _hintService?.ShowMoveHint();
+        }
+
+        /// <summary>
+        /// Affiche le hint "click"
+        /// </summary>
+        public void ShowClickHint()
+        {
+            _hintService?.ShowClickHint();
+        }
+
+        /// <summary>
+        /// Cache le hint actuellement affiché
+        /// </summary>
+        public void HideHint()
+        {
+            _hintService?.HideCurrentHint();
+        }
+
+        /// <summary>
+        /// Signale une activité utilisateur (réinitialise le timer idle)
+        /// </summary>
+        public void ReportUserActivity()
+        {
+            _hintService?.ReportActivity();
         }
     }
 }

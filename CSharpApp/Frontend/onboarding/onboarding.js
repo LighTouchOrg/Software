@@ -33,6 +33,49 @@ function t(key) {
   return window.translations?.[lang]?.[key] || key;
 }
 
+// Obtient l'API d'onboarding (nouvelle fenêtre WPF)
+async function getOnboardingAPI() {
+  // Attendre que l'API soit disponible
+  if (chrome && chrome.webview && chrome.webview.hostObjects) {
+    return chrome.webview.hostObjects.onboardingAPI;
+  }
+  return null;
+}
+
+// Affiche le hint correspondant à l'étape actuelle
+function showHintForStep(stepId) {
+  // Petit délai pour laisser le temps à l'UI de se mettre à jour
+  setTimeout(async () => {
+    const api = await getOnboardingAPI();
+    if (!api) {
+      console.warn('onboardingAPI not available');
+      return;
+    }
+
+    try {
+      switch (stepId) {
+        case "swipe-right":
+          api.ShowSwipeHint("right");
+          break;
+        case "swipe-left":
+          api.ShowSwipeHint("left");
+          break;
+        case "move-cursor":
+          api.ShowMoveHint();
+          break;
+        case "click-target":
+          api.ShowClickHint();
+          break;
+        case "end":
+          api.HideHint();
+          break;
+      }
+    } catch (e) {
+      console.warn('Error showing hint:', e);
+    }
+  }, 300);
+}
+
 function updateStepText() {
   const step = steps[currentStep];
   stepText.textContent = t(`onboarding_step_${step.id.replace(/-/g, "_")}`);
@@ -51,6 +94,9 @@ function updateStepText() {
     finishBtn.classList.add("hidden");
     drawingCanvas.classList.add("hidden");
   }
+  
+  // Afficher le hint pour cette étape
+  showHintForStep(step.id);
 }
 
 function advanceStep() {
@@ -252,6 +298,46 @@ function resizeCanvas() {
 window.addEventListener('load', resizeCanvas);
 window.addEventListener('resize', resizeCanvas);
 
+// Ferme le tutoriel proprement via l'API WPF
+async function closeTutorial() {
+  console.log("Closing tutorial...");
+  
+  const api = await getOnboardingAPI();
+  if (api) {
+    try {
+      api.CloseOnboarding();
+    } catch (e) {
+      console.warn('Error closing onboarding:', e);
+    }
+  }
+}
+
+// Termine le tutoriel avec succès via l'API WPF
+async function finishTutorial() {
+  console.log("Finishing tutorial...");
+  
+  // Marquer le tutoriel comme complété dans localStorage
+  localStorage.setItem("tutorialCompleted", "true");
+  
+  const api = await getOnboardingAPI();
+  if (api) {
+    try {
+      api.SetTutorialCompleted(true);
+      api.FinishOnboarding();
+    } catch (e) {
+      console.warn('Error finishing onboarding:', e);
+    }
+  }
+}
+
+// Gestion de la touche Escape pour fermer le tutoriel
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    event.preventDefault();
+    closeTutorial();
+  }
+});
+
 window.addEventListener("DOMContentLoaded", () => {
   if (typeof applyTranslations === "function") applyTranslations();
   canvas = document.getElementById("target-canvas");
@@ -260,25 +346,13 @@ window.addEventListener("DOMContentLoaded", () => {
   ctx = canvas.getContext("2d");
   drawingCtx = drawingCanvas.getContext("2d");
   finishBtn = document.getElementById("finish-btn");
+  
+  // La fenêtre WPF est déjà en plein écran, pas besoin de requestFullscreen
+  
   finishBtn.addEventListener("click", () => {
-    console.log("Finish button clicked");
-    try {
-      if (window.opener && !window.opener.closed) {
-        const parentBtn =
-          window.opener.document.getElementById("onboarding-button");
-        if (parentBtn) parentBtn.disabled = false;
-      }
-    } catch (e) {
-      console.warn("Could not access window.opener:", e);
-    }
-
-    window.close();
-
-    // Fallback: if window.close() didn't work > redirect to index
-    setTimeout(() => {
-      window.location.href = "../index.html";
-    }, 300);
+    finishTutorial();
   });
+  
   updateStepText();
 });
 
