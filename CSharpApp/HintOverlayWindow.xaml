@@ -5,11 +5,10 @@
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
-        Topmost="True"
         ShowInTaskbar="False"
-        WindowState="Maximized"
         ResizeMode="NoResize"
-        IsHitTestVisible="False">
+        IsHitTestVisible="False"
+        Focusable="False">
     
     <Window.Resources>
         <!-- Easing functions -->

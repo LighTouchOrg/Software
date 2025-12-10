@@ -7,7 +7,6 @@
         WindowState="Maximized"
         ResizeMode="NoResize"
         Background="Black"
-        Topmost="True"
         KeyDown="Window_KeyDown">
     
     <Grid>

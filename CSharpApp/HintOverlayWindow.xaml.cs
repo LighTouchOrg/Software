@@ -39,7 +39,13 @@ namespace LighTouch
         public HintOverlayWindow()
         {
             InitializeComponent();
-            
+
+            // Mettre la fenêtre en plein écran sans maximiser (pour éviter le conflit avec Focusable="False")
+            Left = 0;
+            Top = 0;
+            Width = SystemParameters.PrimaryScreenWidth;
+            Height = SystemParameters.PrimaryScreenHeight;
+
             // Récupérer les animations
             _showAnimation = (Storyboard)FindResource("ShowHintAnimation");
             _hideAnimation = (Storyboard)FindResource("HideHintAnimation");

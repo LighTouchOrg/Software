@@ -20,9 +20,14 @@ namespace LighTouch.Services
         private bool _hintsEnabled = true;
         private bool _idleHintAlreadyShown = false; // Ne montrer le hint idle qu'une seule fois par session
         private string _currentLanguage = "fr";
-        
+
         // Configuration
         private readonly TimeSpan _idleThreshold;
+
+        /// <summary>
+        /// Fenêtre parente pour les hints du tutoriel (permet de définir le Owner)
+        /// </summary>
+        public Window TutorialWindow { get; set; }
 
         public event EventHandler HintShown;
         public event EventHandler HintDismissed;
@@ -148,10 +153,13 @@ namespace LighTouch.Services
                     _currentHintWindow.SetEmoji(emoji);
                     _currentHintWindow.SetHint(title, description);
                     _currentHintWindow.SetAnimationType(animationType);
-                    
+
+                    // Toujours utiliser Topmost - simple et efficace
+                    _currentHintWindow.Topmost = true;
+
                     _currentHintWindow.HintDismissed += OnHintDismissed;
                     _currentHintWindow.ShowHint();
-                    
+
                     HintShown?.Invoke(this, EventArgs.Empty);
                     Console.WriteLine($"[HintService] Hint affiché: {emoji} {title} (anim: {animationType})");
                 }

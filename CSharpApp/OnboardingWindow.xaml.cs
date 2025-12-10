@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Web.WebView2.Core;
@@ -9,6 +10,12 @@ namespace LighTouch
 {
     public partial class OnboardingWindow : Window
     {
+        [DllImport("user32.dll")]
+        private static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, int dwExtraInfo);
+
+        private const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
+        private const uint MOUSEEVENTF_LEFTUP = 0x0004;
+
         private readonly HintService _hintService;
         private readonly TcpClientHandler _tcpClientHandler;
         private readonly Action _onClosed;
@@ -19,7 +26,7 @@ namespace LighTouch
             _hintService = hintService;
             _tcpClientHandler = tcpClientHandler;
             _onClosed = onClosed;
-            
+
             Loaded += OnboardingWindow_Loaded;
         }
 
@@ -50,6 +57,17 @@ namespace LighTouch
                 webView.CoreWebView2.Settings.AreDevToolsEnabled = true;
                 webView.CoreWebView2.Settings.IsScriptEnabled = true;
                 webView.CoreWebView2.Settings.IsWebMessageEnabled = true;
+
+                // Simuler un clic de souris quand la page est chargée pour forcer le focus
+                webView.CoreWebView2.NavigationCompleted += (s, args) =>
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        // Simuler un clic à la position actuelle de la souris (invisible)
+                        mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+                        mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+                    });
+                };
 
                 // Subscribe to TCP messages pour recevoir les données du périphérique
                 if (_tcpClientHandler != null)
@@ -131,44 +149,44 @@ namespace LighTouch
 
         public void CloseOnboarding()
         {
-            // Se désabonner des messages TCP
+            // Se désabonner des événements
             if (_tcpClientHandler != null)
             {
                 _tcpClientHandler.MessageReceived -= OnTcpMessageReceived;
             }
-            
-            // Cacher les hints
+
+            // Cacher les hints et nettoyer
             _hintService.HideCurrentHint();
             _hintService.InTutorial = false;
-            
+
             // Appeler le callback
             _onClosed?.Invoke();
-            
+
             Close();
         }
 
         public void FinishOnboarding()
         {
-            // Se désabonner des messages TCP
+            // Se désabonner des événements
             if (_tcpClientHandler != null)
             {
                 _tcpClientHandler.MessageReceived -= OnTcpMessageReceived;
             }
-            
-            // Marquer comme complété
+
+            // Marquer comme complété et nettoyer
             _hintService.TutorialCompleted = true;
             _hintService.HideCurrentHint();
             _hintService.InTutorial = false;
-            
+
             // Appeler le callback
             _onClosed?.Invoke();
-            
+
             Close();
         }
 
         protected override void OnClosed(EventArgs e)
         {
-            // S'assurer de se désabonner
+            // S'assurer de se désabonner de tous les événements
             if (_tcpClientHandler != null)
             {
                 _tcpClientHandler.MessageReceived -= OnTcpMessageReceived;
