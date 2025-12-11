@@ -249,12 +249,26 @@ namespace LighTouch.Services
         public void ShowClickHint()
         {
             string title = _currentLanguage == "en" ? "Click" : "Cliquez";
-            string desc = _currentLanguage == "en" 
-                ? "Pinch with your thumb and index finger to click" 
+            string desc = _currentLanguage == "en"
+                ? "Pinch with your thumb and index finger to click"
                 : "Pincez avec le pouce et l'index pour cliquer";
-            
+
             // Emoji 🤏 (pinching hand) représente bien le pouce et l'index
             ShowCustomHint("🤏", title, desc, 5, HintAnimationType.Pinch);
+        }
+
+        /// <summary>
+        /// Affiche le hint "hold click" (pour le tutoriel) - drag and drop
+        /// </summary>
+        public void ShowHoldClickHint()
+        {
+            string title = _currentLanguage == "en" ? "Drag & Drop" : "Glisser-déposer";
+            string desc = _currentLanguage == "en"
+                ? "Pinch and hold to drag, then release to drop"
+                : "Pincez et maintenez pour glisser, puis relâchez pour déposer";
+
+            // Emoji 🤏 (pinching hand) avec animation de swipe pour montrer le mouvement
+            ShowCustomHint("🤏", title, desc, 5, HintAnimationType.SwipeRight);
         }
 
         /// <summary>

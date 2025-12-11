@@ -236,6 +236,14 @@ namespace LighTouch
             });
         }
 
+        public void ShowHoldClickHint()
+        {
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            {
+                _hintService.ShowHoldClickHint();
+            });
+        }
+
         public void HideHint()
         {
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
