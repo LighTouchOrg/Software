@@ -1,108 +1,106 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <title data-i18n="title_setting"></title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self';" />
-  <link rel="stylesheet" href="../style.css" />
-  <script defer src="../renderer.js"></script>
-  <script defer src="multi-lang.js"></script>
-  <script defer src="settings.js"></script>
-  <script src="User_Settings.js"></script>
-</head>
-<body>
-  <div class="background">
-    <div class="grid"></div>
-    <div class="glow"></div>
-    <div class="scanline"></div>
-  </div>
-
-  <div class="logo-container">
-    <img src="../img/lightouch-logo-cropped.png" alt="Logo LighTouch" class="logo" />
-  </div>
-
-  <h1 data-i18n="Setting"></h1>
-
-  <a class="button_setting" href="../index.html" data-i18n="Back"></a>
-
-  <!-- Liseuse vocale -->
-  <div class="setting-row">
-    <span class="setting_name" data-i18n="Reader"></span>
-    <label class="switch">
-      <input data-i18n="Reader" type="checkbox" id="reader-toggle" />
-      <span class="slider round"></span>
-    </label>
-  </div>
-
-  <!-- Taille de texte -->
-  <div class="setting-row">
-    <label for="text-size-slider" class="setting_name" data-i18n="SizeText"></label>
-    <div class="slider-container">
-      <input
-        type="range"
-        min="1"
-        max="3"
-        step="1"
-        value="2"
-        id="text-size-slider"
-        data-i18n="SizeText"
-      />
-      <div class="slider-labels">
-        <span class="slider-label small-t">T</span>
-        <span class="slider-label medium-t">T</span>
-        <span class="slider-label large-t">T</span>
+  <head>
+    <meta charset="UTF-8" />
+    <title data-i18n="title_setting"></title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self';" />
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="./settings.css" />
+    <script defer src="../renderer.js"></script>
+    <script defer src="multi-lang.js"></script>
+    <script defer src="settings.js"></script>
+    <script src="User_Settings.js"></script>
+  </head>
+  <body>
+    <div class="header-section">
+      <div class="logo-container">
+        <img src="../img/LighTouchLogo.svg" alt="Logo LighTouch" class="logo" />
       </div>
+      <h1 data-i18n="Setting"></h1>
     </div>
-  </div>
 
-  <!-- Thème clair / sombre -->
-  <div class="setting-row">
-    <span class="setting_name" data-i18n="Theme"></span>
-    <label class="switch">
-      <input data-i18n="Theme" type="checkbox" id="theme-toggle" checked/>
-      <span class="slider round"></span>
-    </label>
-  </div>
+    <a class="button_setting" href="../index.html" data-i18n="Back"></a>
 
-  <!-- Toggle Mode - Naviguation and Presentation -->
+    <div class="settings-column">
+        <!-- Liseuse vocale -->
+        <div class="setting-row">
+          <span class="setting_name" data-i18n="Reader"></span>
+          <label class="switch">
+            <input data-i18n="Reader" type="checkbox" id="reader-toggle" />
+            <span class="slider round"></span>
+          </label>
+        </div>
 
-  <div class="setting-row">
-    <span class="setting_name" data-i18n="PresMode"></span>
-    <label class="switch">
-      <input data-i18n="PresMode" type="checkbox" id="presentation-toggle"/>
-      <span class="slider round"></span>
-    </label>
-  </div>
+        <!-- Taille de texte -->
+        <div class="setting-row">
+          <label for="text-size-slider" class="setting_name" data-i18n="SizeText"></label>
+          <div class="slider-container">
+            <input
+              type="range"
+              min="1"
+              max="3"
+              step="1"
+              value="2"
+              id="text-size-slider"
+              data-i18n="SizeText"
+            />
+            <div class="slider-labels">
+              <span class="slider-label small-t">T</span>
+              <span class="slider-label medium-t">T</span>
+              <span class="slider-label large-t">T</span>
+            </div>
+          </div>
+        </div>
 
-  <div class="setting-row">
-    <span class="setting_name" data-i18n="NavMode"></span>
-    <label class="switch">
-      <input data-i18n="NavMode" type="checkbox" id="nav-toggle"/>
-      <span class="slider round"></span>
-    </label>
-  </div>
+        <!-- Thème clair / sombre -->
+        <div class="setting-row">
+          <span class="setting_name" data-i18n="Theme"></span>
+          <label class="switch">
+            <input data-i18n="Theme" type="checkbox" id="theme-toggle" checked/>
+            <span class="slider round"></span>
+          </label>
+        </div>
 
-  <!-- Select Langage - french or english -->
+        <!-- Toggle Mode - Naviguation and Presentation -->
 
-  <div class="setting-row">
-    <span class="setting_name" data-i18n="Langage"></span>
+        <div class="setting-row">
+          <span class="setting_name" data-i18n="PresMode"></span>
+          <label class="switch">
+            <input data-i18n="PresMode" type="checkbox" id="presentation-toggle"/>
+            <span class="slider round"></span>
+          </label>
+        </div>
 
-    <select id="lang-selector" name="Langage">
-      <option data-i18n="fr" class="lang" value="fr"></option>
-      <option data-i18n="en" class="lang" value="en"></option>
-    </select>
-  </div>
+        <div class="setting-row">
+          <span class="setting_name" data-i18n="NavMode"></span>
+          <label class="switch">
+            <input data-i18n="NavMode" type="checkbox" id="nav-toggle"/>
+            <span class="slider round"></span>
+          </label>
+        </div>
 
-  <!-- Select Main Hand - left or right -->
-  <div class="setting-row">
-    <span class="setting_name" data-i18n="DominantHand"></span>
-    <select id="hand-selector" name="DominantHand">
-      <option data-i18n="left" class="hand" value="left"></option>
-      <option data-i18n="right" class="hand" value="right"></option>
-    </select>
-  </div>
+        <!-- Select Langage - french or english -->
 
-  <a href="https://lightouchorg.github.io/software/docs.html" target="_blank" class="link bottom-right" data-i18n="Documentation"></a>
+        <div class="setting-row">
+          <span class="setting_name" data-i18n="Langage"></span>
 
-</body>
+          <select id="lang-selector" name="Langage">
+            <option data-i18n="fr" class="lang" value="fr"></option>
+            <option data-i18n="en" class="lang" value="en"></option>
+          </select>
+        </div>
+
+        <!-- Select Main Hand - left or right -->
+        <div class="setting-row">
+          <span class="setting_name" data-i18n="DominantHand"></span>
+          <select id="hand-selector" name="DominantHand">
+            <option data-i18n="left" class="hand" value="left"></option>
+            <option data-i18n="right" class="hand" value="right"></option>
+          </select>
+        </div>
+    </div>
+
+    <a href="https://lightouchorg.github.io/software/docs.html" target="_blank" class="link bottom-right" data-i18n="Documentation"></a>
+
+  </body>
 </html>
