@@ -1,0 +1,59 @@
+#brand-title {
+    font-size: 6rem;
+    color: transparent;
+    font-family: 'League Spartan', sans-serif;
+    -webkit-text-stroke: 2px var(--primary-color);
+    font-weight: 600;
+}
+
+#landing-logo {
+    width: 10rem;
+    height: auto;
+}
+
+#landing-navigation {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.navigation-button {
+    text-decoration: none;
+    padding: 1rem 1rem;
+    text-align: center;
+    font-size: 1rem;
+    border: 2px solid var(--black-purple);
+    background-color: transparent;
+    color: var(--primary-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.navigation-button:hover {
+    background-color: var(--black-purple);
+    color: var(--light-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#connection-status {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    background-color: rgba(48, 29, 85, 0.4);
+    border: 1px solid rgba(48, 29, 85);
+}
+
+#device-status {
+    font-size: 1rem;
+}
+
+body.dark-mode #connection-status {
+    background-color: var(--background-color-dark-2);
+}
+
+body.dark-mode #device-status,
+body.dark-mode #connection-status {
+    color: #c81927;
+}

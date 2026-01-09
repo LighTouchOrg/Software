@@ -34,7 +34,7 @@ let deviceStatusString =
   localStorage.getItem("deviceStatusString") || "device_not_connected";
 let deviceStatusColor = localStorage.getItem("deviceStatusColor")
   ? JSON.parse(localStorage.getItem("deviceStatusColor"))
-  : { light: "#9a3412", dark: "#c81927" };
+  : { light: "#c81927", dark: "#c81927" };
 
 // Save device status variables to localStorage
 function updateDeviceStatus(statusString, color) {
@@ -258,7 +258,7 @@ window.updateConnectionStatus = function(isConnected) {
       console.log("[TCP] ✅ Statut mis à jour: CONNECTÉ (appelé depuis C#)");
     } else {
       deviceStatus.textContent = m.device_not_connected;
-      deviceStatus.style.color = isDark ? "#c81927" : "#9a3412";
+      deviceStatus.style.color = isDark ? "#c81927" : "#c81927";
       console.log("[TCP] ❌ Statut mis à jour: DÉCONNECTÉ (appelé depuis C#)");
     }
   }
@@ -301,7 +301,7 @@ window.addEventListener("load", () => {
   // Afficher "non connecté" par défaut
   if (deviceStatus) {
     deviceStatus.textContent = m.device_not_connected;
-    deviceStatus.style.color = isDark ? "#c81927" : "#9a3412";
+    deviceStatus.style.color = isDark ? "#c81927" : "#c81927";
   }
 
   console.log("[TCP] Page chargée - vérification initiale du statut de connexion");
