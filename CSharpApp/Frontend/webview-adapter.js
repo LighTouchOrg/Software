@@ -108,6 +108,11 @@
       hostAPI.OpenOnboarding();
     },
 
+    // Ouvre la fenêtre de calibration en plein écran
+    openCalibration: () => {
+      hostAPI.OpenCalibration();
+    },
+
     // Définit si le tutoriel a été complété
     setTutorialCompleted: (completed) => {
       hostAPI.SetTutorialCompleted(completed);

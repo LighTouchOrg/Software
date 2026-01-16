@@ -223,6 +223,45 @@ namespace LighTouch.Services
         }
 
         /// <summary>
+        /// Ouvre la fenêtre de calibration en plein écran
+        /// </summary>
+        public void OpenCalibration()
+        {
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    var calibrationWindow = new CalibrationWindow(_tcpClientHandler, (success) =>
+                    {
+                        // Callback quand la fenêtre se ferme - notifie le JS du résultat
+                        Console.WriteLine($"[JavaScriptBridge] Calibration window closed, success: {success}");
+
+                        // Envoyer le résultat au JavaScript
+                        _webView.Dispatcher.InvokeAsync(async () =>
+                        {
+                            try
+                            {
+                                string status = success ? "calibration_done" : "calibration_interrupted";
+                                string script = $"if (window.onCalibrationClosed) {{ window.onCalibrationClosed('{status}'); }}";
+                                await _webView.CoreWebView2.ExecuteScriptAsync(script);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"[JavaScriptBridge] Error notifying JS: {ex.Message}");
+                            }
+                        });
+                    });
+                    calibrationWindow.Show();
+                    Console.WriteLine("[JavaScriptBridge] Calibration window opened");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[JavaScriptBridge] Error opening calibration: {ex.Message}");
+                }
+            });
+        }
+
+        /// <summary>
         /// Définit si le tutoriel a été complété (désactive les hints automatiques)
         /// </summary>
         public void SetTutorialCompleted(bool completed)

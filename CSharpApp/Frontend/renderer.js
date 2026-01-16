@@ -23,7 +23,7 @@ const statusMessages = {
   },
 };
 
-let calibrationWindow = null;
+// Note: La fenêtre de calibration est maintenant une fenêtre WPF (CalibrationWindow)
 let onboardingWindow = null;
 let jsonBuffer = "";
 let lastMove = null;
@@ -130,51 +130,55 @@ function updateEnabledStatus() {
   }
 }
 
-// Lancer la calibration
+// Lancer la calibration - Ouvre une fenêtre WPF plein écran
 if (calibrateButton) {
   calibrateButton.addEventListener("click", () => {
-    if (!calibrationWindow || calibrationWindow.closed) {
+    console.log("[Calibration] Bouton cliqué, disabled:", calibrateButton.disabled);
+
+    // Désactiver immédiatement pour éviter les clics multiples
+    if (calibrateButton.disabled) {
+      console.log("[Calibration] Bouton déjà désactivé, ignoré");
+      return;
+    }
+
+    console.log("[Calibration] electronAPI disponible:", !!window.electronAPI);
+    console.log("[Calibration] openCalibration disponible:", !!(window.electronAPI && window.electronAPI.openCalibration));
+
+    if (window.electronAPI && window.electronAPI.openCalibration) {
       calibrateButton.disabled = true;
-
-      calibrationWindow = window.open(
-        "calibration.html",
-        "_blank",
-        "width=800,height=600,fullscreen=yes"
-      );
-
-      const checker = setInterval(() => {
-        if (!calibrationWindow || calibrationWindow.closed) {
-          calibrationWindow = null;
-          clearInterval(checker);
-        }
-      }, 500);
-
-      window.electronAPI.sendToPython("START_CALIBRATION");
-
-      calibrationWindow.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-          window.electronAPI.sendToPython("STOP_CALIBRATION");
-          calibrationWindow.close();
-          calibrationWindow = null;
-          calibrateButton.disabled = false;
-          if (deviceStatus) {
-            const lang = localStorage.getItem("preferredLang") || "fr";
-            const isDark = document.body.classList.contains("dark-mode");
-            const m = statusMessages[lang] || statusMessages["fr"];
-            deviceStatus.textContent = m.calibration_interrupted;
-            deviceStatus.style.color = isDark ? "navajowhite" : "midnightblue";
-            deviceStatusString = "calibration_interrupted";
-            deviceStatusColor = { light: "midnightblue", dark: "navajowhite" };
-            updateDeviceStatus("calibration_interrupted", {
-              light: "midnightblue",
-              dark: "navajowhite",
-            });
-          }
-        }
-      });
+      console.log("[Calibration] Appel de openCalibration()...");
+      window.electronAPI.openCalibration();
+      console.log("[Calibration] Fenêtre de calibration ouverte");
+    } else {
+      console.error("[Calibration] openCalibration not available - méthodes disponibles:", window.electronAPI ? Object.keys(window.electronAPI) : "electronAPI undefined");
     }
   });
+} else {
+  console.error("[Calibration] calibrateButton non trouvé dans le DOM");
 }
+
+// Callback appelé quand la fenêtre de calibration se ferme
+window.onCalibrationClosed = function (status) {
+  console.log("[Calibration] Fenêtre fermée, status:", status);
+  calibrateButton.disabled = false;
+
+  if (deviceStatus) {
+    const lang = localStorage.getItem("preferredLang") || "fr";
+    const isDark = document.body.classList.contains("dark-mode");
+    const m = statusMessages[lang] || statusMessages["fr"];
+
+    if (status === "calibration_done") {
+      deviceStatus.textContent = m.calibration_done;
+      deviceStatusString = "calibration_done";
+    } else {
+      deviceStatus.textContent = m.calibration_interrupted;
+      deviceStatusString = "calibration_interrupted";
+    }
+    deviceStatus.style.color = isDark ? "navajowhite" : "midnightblue";
+    deviceStatusColor = { light: "midnightblue", dark: "navajowhite" };
+    updateDeviceStatus(deviceStatusString, deviceStatusColor);
+  }
+};
 
 // Lancer l'onboarding - Ouvre une fenêtre WPF plein écran
 if (onboardingButton) {
@@ -378,8 +382,7 @@ window.electronAPI?.onPythonData((event, data) => {
           deviceStatus.style.color = isDark ? "navajowhite" : "midnightblue";
         }
         calibrateButton.disabled = false;
-        calibrationWindow?.close();
-        calibrationWindow = null;
+        // Note: La fenêtre WPF se ferme automatiquement
       }
       lastIndex = regex.lastIndex;
     } catch (e) {
@@ -387,22 +390,6 @@ window.electronAPI?.onPythonData((event, data) => {
     }
   }
   jsonBuffer = jsonBuffer.slice(lastIndex);
-
-  if (data === "CLOSE_CALIBRATION_WINDOW") {
-    calibrationWindow?.close();
-    calibrationWindow = null;
-    calibrateButton.disabled = false;
-    const lang = localStorage.getItem("preferredLang") || "fr";
-    const isDark = document.body.classList.contains("dark-mode");
-    const m = statusMessages[lang] || statusMessages["fr"];
-    deviceStatus.textContent = m.calibration_done;
-    deviceStatus.style.color = isDark ? "navajowhite" : "midnightblue";
-    updateDeviceStatus("calibration_done", {
-      light: "midnightblue",
-      dark: "navajowhite",
-    });
-    jsonBuffer = "";
-  }
 });
 
 document.addEventListener("keydown", (event) => {
@@ -481,8 +468,7 @@ window.processTcpMessage = function(jsonMessage) {
             deviceStatus.style.color = isDark ? "navajowhite" : "midnightblue";
           }
           calibrateButton.disabled = false;
-          calibrationWindow?.close();
-          calibrationWindow = null;
+          // Note: La fenêtre WPF se ferme automatiquement
         }
         lastIndex = regex.lastIndex;
       } catch (e) {
