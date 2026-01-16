@@ -220,6 +220,12 @@ function readMessage(msg) {
   try {
     const parsed = JSON.parse(msg);
     let { category, method, params } = parsed;
+
+    // Ignorer les messages sans category/method (ex: acknowledgments)
+    if (!category || !method) {
+      return;
+    }
+
     method = method.trim().toLowerCase();
 
     console.log("[TCP] readMessage - category:", category, "method:", method, "params:", params);

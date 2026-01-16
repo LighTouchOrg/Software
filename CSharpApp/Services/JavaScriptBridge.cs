@@ -17,13 +17,16 @@ namespace LighTouch.Services
         private readonly WiFiManager _wifiManager;
         private readonly WebView2 _webView;
         private readonly HintService _hintService;
+        private readonly VideoStreamClient _videoStreamClient;
+        private VideoStreamWindow _videoStreamWindow;
 
         public JavaScriptBridge(
             TcpClientHandler tcpClientHandler,  // Client TCP au lieu de serveur
             MouseKeyboardController mouseKeyboardController,
             WiFiManager wifiManager,
             WebView2 webView,
-            HintService hintService = null)
+            HintService hintService = null,
+            VideoStreamClient videoStreamClient = null)
         {
             // MIGRATION: Utilise TcpClientHandler au lieu de BluetoothHandler
             // _bluetoothHandler = bluetoothHandler;
@@ -32,6 +35,7 @@ namespace LighTouch.Services
             _wifiManager = wifiManager;
             _webView = webView;
             _hintService = hintService;
+            _videoStreamClient = videoStreamClient;
 
             // Subscribe to TCP messages (même interface que Bluetooth)
             // _bluetoothHandler.MessageReceived += OnBluetoothMessageReceived;
@@ -355,6 +359,65 @@ namespace LighTouch.Services
         public void ReportUserActivity()
         {
             _hintService?.ReportActivity();
+        }
+
+        // ==================== VIDEO STREAM ====================
+
+        /// <summary>
+        /// Ouvre la fenetre de streaming video
+        /// </summary>
+        public void OpenVideoStream()
+        {
+            if (_videoStreamClient == null)
+            {
+                Console.WriteLine("[JavaScriptBridge] VideoStreamClient not initialized");
+                return;
+            }
+
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    // Si la fenetre existe deja et est ouverte, la mettre au premier plan
+                    if (_videoStreamWindow != null && _videoStreamWindow.IsLoaded)
+                    {
+                        _videoStreamWindow.Activate();
+                        _videoStreamWindow.Focus();
+                        Console.WriteLine("[JavaScriptBridge] Video stream window activated");
+                        return;
+                    }
+
+                    // Creer une nouvelle fenetre
+                    _videoStreamWindow = new VideoStreamWindow(_videoStreamClient);
+                    _videoStreamWindow.Closed += (s, e) =>
+                    {
+                        _videoStreamWindow = null;
+                        Console.WriteLine("[JavaScriptBridge] Video stream window closed");
+                    };
+                    _videoStreamWindow.Show();
+                    Console.WriteLine("[JavaScriptBridge] Video stream window opened");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[JavaScriptBridge] Error opening video stream: {ex.Message}");
+                }
+            });
+        }
+
+        /// <summary>
+        /// Ferme la fenetre de streaming video
+        /// </summary>
+        public void CloseVideoStream()
+        {
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (_videoStreamWindow != null && _videoStreamWindow.IsLoaded)
+                {
+                    _videoStreamWindow.Close();
+                    _videoStreamWindow = null;
+                    Console.WriteLine("[JavaScriptBridge] Video stream window closed");
+                }
+            });
         }
     }
 }

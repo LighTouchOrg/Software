@@ -162,6 +162,18 @@
     reportUserActivity: () => {
       hostAPI.ReportUserActivity();
     },
+
+    // ==================== VIDEO STREAM ====================
+
+    // Ouvre la fenêtre de streaming vidéo
+    openVideoStream: () => {
+      hostAPI.OpenVideoStream();
+    },
+
+    // Ferme la fenêtre de streaming vidéo
+    closeVideoStream: () => {
+      hostAPI.CloseVideoStream();
+    },
   };
 
   console.log("WebView2 adapter initialized");

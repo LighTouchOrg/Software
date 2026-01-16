@@ -17,6 +17,7 @@ namespace LighTouch
         private MouseKeyboardController mouseKeyboardController;
         private WiFiManager wifiManager;
         private HintService hintService;
+        private VideoStreamClient videoStreamClient;
 
         public MainWindow()
         {
@@ -58,9 +59,13 @@ namespace LighTouch
 
                 mouseKeyboardController = new MouseKeyboardController();
                 wifiManager = new WiFiManager();
-                
+
                 // Initialiser le service de hints (affiche hint "main ouverte" après 10 sec d'idle si tuto pas fait)
                 hintService = new HintService(idleSeconds: 10);
+
+                // Initialiser le client de streaming video (port 8890)
+                videoStreamClient = new VideoStreamClient();
+                videoStreamClient.ServerPort = 8890;
 
                 // Create and expose JavaScript bridge
                 jsBridge = new JavaScriptBridge(
@@ -68,7 +73,8 @@ namespace LighTouch
                     mouseKeyboardController,
                     wifiManager,
                     webView,
-                    hintService  // Passer le HintService
+                    hintService,  // Passer le HintService
+                    videoStreamClient  // Passer le VideoStreamClient
                 );
 
                 webView.CoreWebView2.AddHostObjectToScript("electronAPI", jsBridge);
@@ -122,7 +128,10 @@ namespace LighTouch
                 // MIGRATION V2: Se connecte au serveur Python (avec reconnexion auto)
                 // await bluetoothHandler.StartAsync();
                 await tcpClientHandler.StartAsync();
-                
+
+                // Demarrer le client video stream (se connectera quand l'IP sera decouverte)
+                await videoStreamClient.StartAsync();
+
                 // Démarrer le service de hints
                 hintService.Start();
             }
@@ -143,7 +152,11 @@ namespace LighTouch
             tcpClientHandler.ServerHost = e.ServerIp;
             tcpClientHandler.ServerPort = e.ServerPort;
 
+            // Met à jour l'IP du client video stream (port 8890)
+            videoStreamClient.ServerHost = e.ServerIp;
+
             Console.WriteLine($"[MainWindow] Configuration TCP mise à jour: {e.ServerIp}:{e.ServerPort}");
+            Console.WriteLine($"[MainWindow] Configuration VideoStream mise à jour: {e.ServerIp}:8890");
         }
 
         protected override void OnClosed(EventArgs e)
@@ -153,6 +166,7 @@ namespace LighTouch
             // bluetoothHandler?.Dispose();
             hintService?.Dispose();
             udpDiscoveryService?.Dispose();
+            videoStreamClient?.Dispose();
             tcpClientHandler?.Dispose();
             base.OnClosed(e);
         }

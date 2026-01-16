@@ -5,6 +5,7 @@
   <title data-i18n="title_setting"></title>
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self';" />
   <link rel="stylesheet" href="../style.css" />
+  <script src="../webview-adapter.js"></script>
   <script defer src="../renderer.js"></script>
   <script defer src="multi-lang.js"></script>
   <script defer src="settings.js"></script>
@@ -100,6 +101,15 @@
       <option data-i18n="left" class="hand" value="left"></option>
       <option data-i18n="right" class="hand" value="right"></option>
     </select>
+  </div>
+
+  <!-- Video Stream -->
+  <div class="setting-row">
+    <span class="setting_name" data-i18n="VideoStream"></span>
+    <label class="switch">
+      <input data-i18n="VideoStream" type="checkbox" id="video-stream-toggle" />
+      <span class="slider round"></span>
+    </label>
   </div>
 
   <a href="https://lightouchorg.github.io/software/docs.html" target="_blank" class="link bottom-right" data-i18n="Documentation"></a>

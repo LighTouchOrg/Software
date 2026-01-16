@@ -5,6 +5,7 @@ const langSelector = document.getElementById("lang-selector");
 const presToggle = document.getElementById("presentation-toggle");
 const navToggle = document.getElementById("nav-toggle");
 const handSelector = document.getElementById("hand-selector");
+const videoStreamToggle = document.getElementById("video-stream-toggle");
 
 let readerMode = false;
 
@@ -167,6 +168,41 @@ if (handSelector) {
       const msg = new SpeechSynthesisUtterance(text);
       msg.lang = lang === "fr" ? "fr-FR" : "en-US";
       speechSynthesis.speak(msg);
+    }
+  });
+}
+
+// Video Stream toggle handler
+if (videoStreamToggle) {
+  // Restore state from localStorage
+  const videoStreamEnabled = localStorage.getItem("videoStreamEnabled") === "true";
+  videoStreamToggle.checked = videoStreamEnabled;
+
+  videoStreamToggle.addEventListener("change", () => {
+    const enabled = videoStreamToggle.checked;
+    localStorage.setItem("videoStreamEnabled", enabled);
+    console.log("[VideoStream] Toggle changed:", enabled);
+    console.log("[VideoStream] electronAPI:", window.electronAPI);
+
+    if (window.electronAPI) {
+      console.log("[VideoStream] Available methods:", Object.keys(window.electronAPI));
+      if (enabled) {
+        if (window.electronAPI.openVideoStream) {
+          console.log("[VideoStream] Calling openVideoStream()...");
+          window.electronAPI.openVideoStream();
+        } else {
+          console.error("[VideoStream] openVideoStream not available");
+        }
+      } else {
+        if (window.electronAPI.closeVideoStream) {
+          console.log("[VideoStream] Calling closeVideoStream()...");
+          window.electronAPI.closeVideoStream();
+        } else {
+          console.error("[VideoStream] closeVideoStream not available");
+        }
+      }
+    } else {
+      console.error("[VideoStream] electronAPI not available");
     }
   });
 }
