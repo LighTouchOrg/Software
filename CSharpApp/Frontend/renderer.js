@@ -268,7 +268,7 @@ window.updateConnectionStatus = function(isConnected) {
       console.log("[TCP] ✅ Statut mis à jour: CONNECTÉ (appelé depuis C#)");
     } else {
       deviceStatus.textContent = m.device_not_connected;
-      deviceStatus.style.color = isDark ? "#c81927" : "#9a3412";
+      deviceStatus.style.color = isDark ? "#B89FD9" : "rgba(48, 29, 85, 1)";
       console.log("[TCP] ❌ Statut mis à jour: DÉCONNECTÉ (appelé depuis C#)");
     }
   }
@@ -311,7 +311,7 @@ window.addEventListener("load", () => {
   // Afficher "non connecté" par défaut
   if (deviceStatus) {
     deviceStatus.textContent = m.device_not_connected;
-    deviceStatus.style.color = isDark ? "#c81927" : "#9a3412";
+    deviceStatus.style.color = isDark ? "#B89FD9" : "rgba(48, 29, 85, 1)";
   }
 
   console.log("[TCP] Page chargée - vérification initiale du statut de connexion");

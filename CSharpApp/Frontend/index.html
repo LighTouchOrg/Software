@@ -26,13 +26,15 @@
 
   <h1>LighTouch</h1>
 
-  <button id="calibrate-button" class="scan-button" data-i18n="Calibration"></button>
-  <button id="onboarding-button" class="onboarding-button" data-i18n="Onboarding"></button>
+  <div class="button-row-top">
+    <button id="onboarding-button" class="button_setting" data-i18n="Onboarding"></button>
+    <button id="calibrate-button" class="button_setting" data-i18n="Calibration"></button>
+    <a class="button_setting" href="wifi-qr.html">WiFi QR</a>
+  </div>
 
-  <div class="setting_row">
+  <div class="button-row-bottom">
     <a class="button_setting" href="settings/settings.html" data-i18n="Setting"></a>
     <a class="button_setting" href="key_binding/key_binding.html" data-i18n="Keybind"></a>
-    <a class="button_setting" href="wifi-qr.html">WiFi QR</a>
   </div>
 
   <div id="connection-status" class="device-info">
