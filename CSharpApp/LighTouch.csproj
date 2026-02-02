@@ -9,6 +9,7 @@
     <RootNamespace>LighTouch</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <ApplicationIcon>app-icon.ico</ApplicationIcon>
 
     <!-- Configuration pour build standalone -->
     <SelfContained>true</SelfContained>
@@ -27,6 +28,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Icône de l'application -->
+    <Resource Include="app-icon.ico" />
+
     <!-- Toujours copier wwwroot (pour Debug et Release) -->
     <None Update="wwwroot\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

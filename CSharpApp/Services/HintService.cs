@@ -13,9 +13,9 @@ namespace LighTouch.Services
     {
         private readonly DispatcherTimer _idleTimer;
         private HintOverlayWindow _currentHintWindow;
-        
+
         private DateTime _lastActivityTime;
-        private bool _isTutorialCompleted;
+        private bool _isTutorialCompleted = true; // Par défaut, ne pas afficher le hint idle au démarrage
         private bool _isInTutorial; // Si on est actuellement dans le tuto
         private bool _hintsEnabled = true;
         private bool _idleHintAlreadyShown = false; // Ne montrer le hint idle qu'une seule fois par session
@@ -40,7 +40,7 @@ namespace LighTouch.Services
         {
             _idleThreshold = TimeSpan.FromSeconds(idleSeconds);
             _lastActivityTime = DateTime.Now;
-            
+
             // Timer pour détecter l'idle
             _idleTimer = new DispatcherTimer
             {
@@ -140,10 +140,10 @@ namespace LighTouch.Services
         public void ShowCustomHint(string emoji, string title, string description, int durationSeconds = 4, HintAnimationType animationType = HintAnimationType.Pulse)
         {
             if (!_hintsEnabled) return;
-            
+
             // Fermer le hint actuel s'il y en a un
             HideCurrentHint();
-            
+
             Application.Current.Dispatcher.Invoke(() =>
             {
                 try
@@ -176,12 +176,12 @@ namespace LighTouch.Services
         public void ShowOpenHandHint()
         {
             if (_idleHintAlreadyShown) return;
-            
+
             string title = _currentLanguage == "en" ? "Open Hand" : "Main ouverte";
-            string desc = _currentLanguage == "en" 
-                ? "Keep your hand open and move it to control the cursor" 
+            string desc = _currentLanguage == "en"
+                ? "Keep your hand open and move it to control the cursor"
                 : "Gardez la main ouverte et déplacez-la pour contrôler le curseur";
-            
+
             ShowCustomHint("🖐️", title, desc, 4, HintAnimationType.Pulse);
             _idleHintAlreadyShown = true;
         }
@@ -193,39 +193,39 @@ namespace LighTouch.Services
         {
             string title, desc;
             HintAnimationType animType;
-            
+
             switch (direction.ToLower())
             {
                 case "left":
                     title = _currentLanguage == "en" ? "Swipe Left" : "Balayez à gauche";
-                    desc = _currentLanguage == "en" 
-                        ? "Swipe your open hand to the left" 
+                    desc = _currentLanguage == "en"
+                        ? "Swipe your open hand to the left"
                         : "Balayez votre main ouverte vers la gauche";
                     animType = HintAnimationType.SwipeLeft;
                     break;
                 case "up":
                     title = _currentLanguage == "en" ? "Swipe Up" : "Balayez vers le haut";
-                    desc = _currentLanguage == "en" 
-                        ? "Swipe your open hand upward" 
+                    desc = _currentLanguage == "en"
+                        ? "Swipe your open hand upward"
                         : "Balayez votre main ouverte vers le haut";
                     animType = HintAnimationType.SwipeUp;
                     break;
                 case "down":
                     title = _currentLanguage == "en" ? "Swipe Down" : "Balayez vers le bas";
-                    desc = _currentLanguage == "en" 
-                        ? "Swipe your open hand downward" 
+                    desc = _currentLanguage == "en"
+                        ? "Swipe your open hand downward"
                         : "Balayez votre main ouverte vers le bas";
                     animType = HintAnimationType.SwipeDown;
                     break;
                 default: // right
                     title = _currentLanguage == "en" ? "Swipe Right" : "Balayez à droite";
-                    desc = _currentLanguage == "en" 
-                        ? "Swipe your open hand to the right" 
+                    desc = _currentLanguage == "en"
+                        ? "Swipe your open hand to the right"
                         : "Balayez votre main ouverte vers la droite";
                     animType = HintAnimationType.SwipeRight;
                     break;
             }
-            
+
             // Emoji main ouverte 🖐️ pour tous les swipes
             ShowCustomHint("🖐️", title, desc, 5, animType);
         }
@@ -236,10 +236,10 @@ namespace LighTouch.Services
         public void ShowMoveHint()
         {
             string title = _currentLanguage == "en" ? "Move Cursor" : "Déplacez le curseur";
-            string desc = _currentLanguage == "en" 
-                ? "Keep your hand open and move it to the target" 
+            string desc = _currentLanguage == "en"
+                ? "Keep your hand open and move it to the target"
                 : "Gardez la main ouverte et déplacez-la vers la cible";
-            
+
             ShowCustomHint("🖐️", title, desc, 5, HintAnimationType.Pulse);
         }
 
@@ -297,21 +297,21 @@ namespace LighTouch.Services
         {
             // Ne pas afficher si le tutoriel est déjà fait
             if (_isTutorialCompleted) return;
-            
+
             // Ne pas afficher si on est dans le tutoriel
             if (_isInTutorial) return;
-            
+
             // Ne pas afficher si hints désactivés
             if (!_hintsEnabled) return;
-            
+
             // Ne pas afficher si déjà montré cette session
             if (_idleHintAlreadyShown) return;
-            
+
             // Ne pas afficher si un hint est déjà visible
             if (_currentHintWindow != null) return;
-            
+
             var idleTime = DateTime.Now - _lastActivityTime;
-            
+
             if (idleTime >= _idleThreshold)
             {
                 Console.WriteLine($"[HintService] Idle détecté ({idleTime.TotalSeconds:F0}s), affichage hint");
