@@ -17,7 +17,7 @@ LighTouch permet de contrôler votre ordinateur avec des gestes de la main déte
 
 ### Prérequis
 - Windows 10/11
-- .NET 9.0 SDK : https://dotnet.microsoft.com/download
+- .NET 10.0 SDK : https://dotnet.microsoft.com/download
 
 ### Installation et lancement
 
@@ -103,7 +103,7 @@ cd CSharpApp/Build
 build-release.bat
 ```
 
-L'exécutable sera dans : `CSharpApp/bin/Release/net9.0-windows/win-x64/publish/LighTouch.exe`
+L'exécutable sera dans : `CSharpApp/bin/Release/net10.0-windows/win-x64/publish/LighTouch.exe`
 
 ## 🤝 Contribution
 

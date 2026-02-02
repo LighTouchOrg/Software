@@ -49,7 +49,7 @@ echo ========================================
 echo Build completed successfully!
 echo.
 echo Executable location:
-echo bin\Release\net9.0-windows\win-x64\publish\LighTouch.exe
+echo bin\Release\net10.0-windows\win-x64\publish\LighTouch.exe
 echo ========================================
 echo.
 pause

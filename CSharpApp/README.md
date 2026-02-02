@@ -62,7 +62,7 @@ cd Build
 build-release.bat
 ```
 
-L'exécutable sera dans : `bin\Release\net9.0-windows\win-x64\publish\LighTouch.exe`
+L'exécutable sera dans : `bin\Release\net10.0-windows\win-x64\publish\LighTouch.exe`
 
 ### Build manuel
 ```batch
@@ -74,7 +74,7 @@ dotnet run
 ## 🔧 Prérequis
 
 - Windows 10/11
-- .NET 9.0 SDK
+- .NET 10.0 SDK
 - WebView2 Runtime (généralement déjà installé)
 
 ## 🎯 Technologies
@@ -98,7 +98,7 @@ dotnet run
 ## 🐛 Dépannage
 
 ### L'application ne démarre pas
-Vérifiez que .NET 9.0 est installé :
+Vérifiez que .NET 10.0 est installé :
 ```batch
 dotnet --version
 ```

@@ -13,7 +13,7 @@ Cette application C# remplace l'application Electron originale tout en gardant l
 
 ## Prérequis
 
-- .NET 9.0 SDK
+- .NET 10.0 SDK
 - Windows 10/11
 - WebView2 Runtime (généralement déjà installé sur Windows 11)
 
@@ -53,7 +53,7 @@ dotnet build -c Release
 dotnet publish -c Release -r win-x64 --self-contained true
 ```
 
-L'exécutable sera dans `bin\Release\net9.0-windows\win-x64\publish\`
+L'exécutable sera dans `bin\Release\net10.0-windows\win-x64\publish\`
 
 ## Configuration Bluetooth
 
