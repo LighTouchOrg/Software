@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
@@ -30,17 +31,22 @@ namespace LighTouch
         private bool _isClosing = false;
 
         public event EventHandler HintDismissed;
+        
+        /// <summary>
+        /// Événement déclenché quand l'utilisateur appuie sur Échap pendant un hint
+        /// </summary>
+        public event EventHandler EscapePressed;
 
         /// <summary>
         /// Durée d'affichage du hint en secondes avant auto-fermeture
         /// </summary>
-        public int AutoCloseDuration { get; set; } = 4;
+        public int AutoCloseDuration { get; set; } = 2;
 
         public HintOverlayWindow()
         {
             InitializeComponent();
 
-            // Mettre la fenêtre en plein écran sans maximiser (pour éviter le conflit avec Focusable="False")
+            // Mettre la fenêtre en plein écran sans maximiser
             Left = 0;
             Top = 0;
             Width = SystemParameters.PrimaryScreenWidth;
@@ -73,6 +79,38 @@ namespace LighTouch
                     this.Close();
                 }
             };
+
+            // Gérer les clics en dehors du hint pour le fermer
+            this.MouseDown += OnWindowMouseDown;
+            
+            // Gérer la touche Échap
+            this.KeyDown += OnWindowKeyDown;
+        }
+
+        /// <summary>
+        /// Ferme le hint si l'utilisateur clique n'importe où
+        /// </summary>
+        private void OnWindowMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Fermer le hint quand on clique n'importe où
+            HideHint();
+            
+            // Ne pas marquer l'événement comme géré pour que le clic passe à travers
+            e.Handled = false;
+        }
+
+        /// <summary>
+        /// Gère les touches clavier - notamment Échap
+        /// </summary>
+        private void OnWindowKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                // D'abord fermer le hint
+                HideHint();
+                // Puis propager l'événement Échap pour que le tutoriel puisse le gérer
+                EscapePressed?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         /// <summary>

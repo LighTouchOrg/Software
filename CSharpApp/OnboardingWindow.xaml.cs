@@ -28,6 +28,9 @@ namespace LighTouch
             _onClosed = onClosed;
 
             Loaded += OnboardingWindow_Loaded;
+            
+            // S'abonner à l'événement Échap du HintService
+            _hintService.EscapePressed += OnHintEscapePressed;
         }
 
         private async void OnboardingWindow_Loaded(object sender, RoutedEventArgs e)
@@ -147,6 +150,15 @@ namespace LighTouch
             }
         }
 
+        /// <summary>
+        /// Appelé quand l'utilisateur appuie sur Échap pendant qu'un hint est affiché
+        /// </summary>
+        private void OnHintEscapePressed(object sender, EventArgs e)
+        {
+            // Fermer l'onboarding quand Échap est pressé sur un hint
+            Dispatcher.Invoke(() => CloseOnboarding());
+        }
+
         public void CloseOnboarding()
         {
             // Se désabonner des événements
@@ -191,6 +203,7 @@ namespace LighTouch
             {
                 _tcpClientHandler.MessageReceived -= OnTcpMessageReceived;
             }
+            _hintService.EscapePressed -= OnHintEscapePressed;
             _hintService.InTutorial = false;
             base.OnClosed(e);
         }

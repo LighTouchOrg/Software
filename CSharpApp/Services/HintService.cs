@@ -33,6 +33,11 @@ namespace LighTouch.Services
         public event EventHandler HintDismissed;
 
         /// <summary>
+        /// Événement déclenché quand l'utilisateur appuie sur Échap pendant qu'un hint est affiché
+        /// </summary>
+        public event EventHandler EscapePressed;
+
+        /// <summary>
         /// Crée un nouveau service de hints
         /// </summary>
         /// <param name="idleSeconds">Secondes d'inactivité avant d'afficher le hint</param>
@@ -137,7 +142,7 @@ namespace LighTouch.Services
         /// <summary>
         /// Affiche un hint avec emoji, titre et description personnalisés
         /// </summary>
-        public void ShowCustomHint(string emoji, string title, string description, int durationSeconds = 4, HintAnimationType animationType = HintAnimationType.Pulse)
+        public void ShowCustomHint(string emoji, string title, string description, int durationSeconds = 2, HintAnimationType animationType = HintAnimationType.Pulse)
         {
             if (!_hintsEnabled) return;
 
@@ -158,6 +163,10 @@ namespace LighTouch.Services
                     _currentHintWindow.Topmost = true;
 
                     _currentHintWindow.HintDismissed += OnHintDismissed;
+
+                    // Propager l'événement Échap
+                    _currentHintWindow.EscapePressed += OnHintEscapePressed;
+
                     _currentHintWindow.ShowHint();
 
                     HintShown?.Invoke(this, EventArgs.Empty);
@@ -182,7 +191,7 @@ namespace LighTouch.Services
                 ? "Keep your hand open and move it to control the cursor"
                 : "Gardez la main ouverte et déplacez-la pour contrôler le curseur";
 
-            ShowCustomHint("🖐️", title, desc, 4, HintAnimationType.Pulse);
+            ShowCustomHint("🖐️", title, desc, 2, HintAnimationType.Pulse);
             _idleHintAlreadyShown = true;
         }
 
@@ -227,7 +236,7 @@ namespace LighTouch.Services
             }
 
             // Emoji main ouverte 🖐️ pour tous les swipes
-            ShowCustomHint("🖐️", title, desc, 5, animType);
+            ShowCustomHint("🖐️", title, desc, 3, animType);
         }
 
         /// <summary>
@@ -240,7 +249,7 @@ namespace LighTouch.Services
                 ? "Keep your hand open and move it to the target"
                 : "Gardez la main ouverte et déplacez-la vers la cible";
 
-            ShowCustomHint("🖐️", title, desc, 5, HintAnimationType.Pulse);
+            ShowCustomHint("🖐️", title, desc, 3, HintAnimationType.Pulse);
         }
 
         /// <summary>
@@ -254,7 +263,7 @@ namespace LighTouch.Services
                 : "Pincez avec le pouce et l'index pour cliquer";
 
             // Emoji 🤏 (pinching hand) représente bien le pouce et l'index
-            ShowCustomHint("🤏", title, desc, 5, HintAnimationType.Pinch);
+            ShowCustomHint("🤏", title, desc, 3, HintAnimationType.Pinch);
         }
 
         /// <summary>
@@ -268,7 +277,7 @@ namespace LighTouch.Services
                 : "Pincez et maintenez pour glisser, puis relâchez pour déposer";
 
             // Emoji 🤏 (pinching hand) avec animation de swipe pour montrer le mouvement
-            ShowCustomHint("🤏", title, desc, 5, HintAnimationType.SwipeRight);
+            ShowCustomHint("🤏", title, desc, 3, HintAnimationType.SwipeRight);
         }
 
         /// <summary>
@@ -324,6 +333,12 @@ namespace LighTouch.Services
             HintDismissed?.Invoke(this, EventArgs.Empty);
             _currentHintWindow = null;
             _lastActivityTime = DateTime.Now;
+        }
+
+        private void OnHintEscapePressed(object sender, EventArgs e)
+        {
+            // Propager l'événement Échap pour que le tutoriel puisse réagir
+            EscapePressed?.Invoke(this, EventArgs.Empty);
         }
 
         public void Dispose()

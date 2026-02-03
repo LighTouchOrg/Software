@@ -6,6 +6,7 @@ const presToggle = document.getElementById("presentation-toggle");
 const navToggle = document.getElementById("nav-toggle");
 const handSelector = document.getElementById("hand-selector");
 const videoStreamToggle = document.getElementById("video-stream-toggle");
+const hintsToggle = document.getElementById("hints-toggle");
 
 let readerMode = false;
 
@@ -174,13 +175,11 @@ if (handSelector) {
 
 // Video Stream toggle handler
 if (videoStreamToggle) {
-  // Restore state from localStorage
-  const videoStreamEnabled = localStorage.getItem("videoStreamEnabled") === "true";
-  videoStreamToggle.checked = videoStreamEnabled;
+  // Toujours désactivé par défaut (ne pas restaurer l'état)
+  videoStreamToggle.checked = false;
 
   videoStreamToggle.addEventListener("change", () => {
     const enabled = videoStreamToggle.checked;
-    localStorage.setItem("videoStreamEnabled", enabled);
     console.log("[VideoStream] Toggle changed:", enabled);
     console.log("[VideoStream] electronAPI:", window.electronAPI);
 
@@ -206,3 +205,37 @@ if (videoStreamToggle) {
     }
   });
 }
+
+// Hints toggle handler
+if (hintsToggle) {
+  // Restore state from localStorage (default to true/enabled)
+  const hintsEnabled = localStorage.getItem("hintsEnabled") !== "false";
+  hintsToggle.checked = hintsEnabled;
+
+  hintsToggle.addEventListener("change", () => {
+    const enabled = hintsToggle.checked;
+    localStorage.setItem("hintsEnabled", enabled);
+    console.log("[Hints] Toggle changed:", enabled);
+
+    if (window.electronAPI && window.electronAPI.setHintsEnabled) {
+      console.log("[Hints] Calling setHintsEnabled()...");
+      window.electronAPI.setHintsEnabled(enabled);
+    } else {
+      console.error("[Hints] setHintsEnabled not available on electronAPI");
+    }
+  });
+}
+
+// Fermer l'aperçu caméra quand on quitte les settings
+document.addEventListener("DOMContentLoaded", () => {
+  const backButton = document.querySelector('a[href="../index.html"]');
+  if (backButton) {
+    backButton.addEventListener("click", (e) => {
+      // Fermer la fenêtre vidéo si elle est ouverte
+      if (window.electronAPI && window.electronAPI.closeVideoStream) {
+        console.log("[VideoStream] Closing video stream on settings exit...");
+        window.electronAPI.closeVideoStream();
+      }
+    });
+  }
+});

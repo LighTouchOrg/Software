@@ -10,6 +10,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const savedPres = localStorage.getItem("PresentationMode");
   const savedNav = localStorage.getItem("NavigationMode");
   const savedHand = localStorage.getItem("dominantHand");
+  const savedHints = localStorage.getItem("hintsEnabled");
 
   const textSizeSelector = document.getElementById("text-size-slider");
   const toggleThemeSelector = document.getElementById("theme-toggle");
@@ -18,6 +19,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const presToggle = document.getElementById("presentation-toggle");
   const navToggle = document.getElementById("nav-toggle");
   const handSelector = document.getElementById("hand-selector");
+  const hintsToggle = document.getElementById("hints-toggle");
 
   if (savedFontSize) {
     document.body.style.fontSize = savedFontSize;
@@ -52,6 +54,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
   if (handSelector && savedHand) {
     handSelector.value = savedHand;
+  }
+
+  // Hints toggle - default to enabled (true) if not set
+  if (hintsToggle) {
+    hintsToggle.checked = savedHints !== "false";
   }
 
   const presEnabled = savedPres === "true";

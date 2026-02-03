@@ -7,15 +7,15 @@
         Background="Transparent"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
-        IsHitTestVisible="False"
-        Focusable="False">
-    
+        IsHitTestVisible="True"
+        Focusable="True">
+
     <Window.Resources>
         <!-- Easing functions -->
         <QuadraticEase x:Key="EaseOut" EasingMode="EaseOut"/>
         <QuadraticEase x:Key="EaseIn" EasingMode="EaseIn"/>
         <QuadraticEase x:Key="EaseInOut" EasingMode="EaseInOut"/>
-        
+
         <!-- Animation d'apparition (fade in + scale) -->
         <Storyboard x:Key="ShowHintAnimation">
             <DoubleAnimation Storyboard.TargetName="HintContainer"
@@ -31,7 +31,7 @@
                            From="0.8" To="1" Duration="0:0:0.4"
                            EasingFunction="{StaticResource EaseOut}"/>
         </Storyboard>
-        
+
         <!-- Animation de disparition (fade out) -->
         <Storyboard x:Key="HideHintAnimation">
             <DoubleAnimation Storyboard.TargetName="HintContainer"
@@ -39,7 +39,7 @@
                            From="1" To="0" Duration="0:0:0.3"
                            EasingFunction="{StaticResource EaseIn}"/>
         </Storyboard>
-        
+
         <!-- Animation pulsation statique -->
         <Storyboard x:Key="PulseAnimation" RepeatBehavior="Forever">
             <DoubleAnimation Storyboard.TargetName="HandScaleTransform"
@@ -53,7 +53,7 @@
                            AutoReverse="True"
                            EasingFunction="{StaticResource EaseOut}"/>
         </Storyboard>
-        
+
         <!-- Animation swipe vers la droite -->
         <Storyboard x:Key="SwipeRightAnimation" RepeatBehavior="Forever">
             <DoubleAnimation Storyboard.TargetName="HandTranslateTransform"
@@ -70,7 +70,7 @@
                            From="1" To="0" Duration="0:0:0.2"
                            BeginTime="0:0:0.8"/>
         </Storyboard>
-        
+
         <!-- Animation swipe vers la gauche -->
         <Storyboard x:Key="SwipeLeftAnimation" RepeatBehavior="Forever">
             <DoubleAnimation Storyboard.TargetName="HandTranslateTransform"
@@ -87,7 +87,7 @@
                            From="1" To="0" Duration="0:0:0.2"
                            BeginTime="0:0:0.8"/>
         </Storyboard>
-        
+
         <!-- Animation swipe vers le haut -->
         <Storyboard x:Key="SwipeUpAnimation" RepeatBehavior="Forever">
             <DoubleAnimation Storyboard.TargetName="HandTranslateTransform"
@@ -104,7 +104,7 @@
                            From="1" To="0" Duration="0:0:0.2"
                            BeginTime="0:0:0.8"/>
         </Storyboard>
-        
+
         <!-- Animation swipe vers le bas -->
         <Storyboard x:Key="SwipeDownAnimation" RepeatBehavior="Forever">
             <DoubleAnimation Storyboard.TargetName="HandTranslateTransform"
@@ -121,7 +121,7 @@
                            From="1" To="0" Duration="0:0:0.2"
                            BeginTime="0:0:0.8"/>
         </Storyboard>
-        
+
         <!-- Animation pince (clic) -->
         <Storyboard x:Key="PinchAnimation" RepeatBehavior="Forever">
             <DoubleAnimation Storyboard.TargetName="HandScaleTransform"
@@ -136,18 +136,21 @@
                            EasingFunction="{StaticResource EaseInOut}"/>
         </Storyboard>
     </Window.Resources>
-    
+
     <Grid>
+        <!-- Fond cliquable invisible pour fermer le hint quand on clique en dehors -->
+        <Border Background="#01000000" x:Name="ClickableBackground"/>
+
         <!-- Container principal du hint -->
-        <Border x:Name="HintContainer" 
+        <Border x:Name="HintContainer"
                 Opacity="0"
-                HorizontalAlignment="Center" 
+                HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 RenderTransformOrigin="0.5,0.5">
             <Border.RenderTransform>
                 <ScaleTransform x:Name="ScaleTransform" ScaleX="1" ScaleY="1"/>
             </Border.RenderTransform>
-            
+
             <!-- Cadre avec fond semi-transparent -->
             <Border Background="#E6181830"
                     CornerRadius="24"
@@ -157,7 +160,7 @@
                 <Border.Effect>
                     <DropShadowEffect Color="#7c3aed" BlurRadius="30" Opacity="0.4" ShadowDepth="0"/>
                 </Border.Effect>
-                
+
                 <StackPanel HorizontalAlignment="Center" MaxWidth="400">
                     <!-- Emoji main -->
                     <TextBlock x:Name="HandEmoji"
@@ -173,7 +176,7 @@
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    
+
                     <!-- Titre du hint -->
                     <TextBlock x:Name="HintTitle"
                                Text="Main ouverte"
@@ -182,7 +185,7 @@
                                Foreground="White"
                                HorizontalAlignment="Center"
                                Margin="0,0,0,10"/>
-                    
+
                     <!-- Description du hint -->
                     <TextBlock x:Name="HintDescription"
                                Text="Gardez la main ouverte pour déplacer le curseur"
