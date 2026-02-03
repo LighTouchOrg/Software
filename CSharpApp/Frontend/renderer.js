@@ -152,6 +152,7 @@ if (calibrateButton) {
     } else {
       console.error("[Calibration] openCalibration not available - méthodes disponibles:", window.electronAPI ? Object.keys(window.electronAPI) : "electronAPI undefined");
     }
+    calibrateButton.blur();
   });
 } else {
   console.error("[Calibration] calibrateButton non trouvé dans le DOM");
@@ -188,6 +189,7 @@ if (onboardingButton) {
     } else {
       console.error("openOnboarding not available");
     }
+    onboardingButton.blur();
   });
 }
 
