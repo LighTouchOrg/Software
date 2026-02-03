@@ -178,6 +178,16 @@
 
     // Initialiser la détection WiFi au chargement de la page
     window.addEventListener('DOMContentLoaded', () => {
+      // Notifier Python que l'utilisateur entre dans la page WiFi QR
+      try {
+        if (electronAPI) {
+          electronAPI.StartWifiQrMode();
+          console.log('[WiFi QR] Mode started - notified Python');
+        }
+      } catch (error) {
+        console.error('[WiFi QR] Error starting WiFi QR mode:', error);
+      }
+
       // Use setTimeout to let the UI refresh (show spinner) before blocking COM call
       setTimeout(() => {
         try {
@@ -202,6 +212,31 @@
           statusDiv.innerHTML = `❌ ${getT('wifi_error')} ${error.message}<br><small>Vérifiez la console (F12)</small>`;
         }
       }, 100); // Small delay to let UI refresh
+    });
+
+    // Notifier Python quand l'utilisateur quitte la page
+    window.addEventListener('beforeunload', () => {
+      try {
+        if (electronAPI) {
+          electronAPI.StopWifiQrMode();
+          console.log('[WiFi QR] Mode stopped - notified Python');
+        }
+      } catch (error) {
+        console.error('[WiFi QR] Error stopping WiFi QR mode:', error);
+      }
+    });
+
+    // Également intercepter le clic sur le bouton retour
+    document.querySelector('.btn-back').addEventListener('click', (e) => {
+      try {
+        if (electronAPI) {
+          electronAPI.StopWifiQrMode();
+          console.log('[WiFi QR] Mode stopped via back button - notified Python');
+        }
+      } catch (error) {
+        console.error('[WiFi QR] Error stopping WiFi QR mode:', error);
+      }
+      // La navigation se fait normalement via l'onclick du bouton
     });
 
     // Bouton actualiser

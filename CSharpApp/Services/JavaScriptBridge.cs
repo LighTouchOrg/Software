@@ -419,5 +419,49 @@ namespace LighTouch.Services
                 }
             });
         }
+
+        // ==================== WIFI QR ====================
+
+        /// <summary>
+        /// Notifie le Python que l'utilisateur entre dans la page WiFi QR
+        /// </summary>
+        public void StartWifiQrMode()
+        {
+            try
+            {
+                var message = new
+                {
+                    category = "wifi_qr",
+                    method = "start"
+                };
+                _tcpClientHandler.SendMessage(message);
+                Console.WriteLine("[JavaScriptBridge] WiFi QR mode start message sent to Python");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[JavaScriptBridge] Error sending WiFi QR start: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Notifie le Python que l'utilisateur quitte la page WiFi QR
+        /// </summary>
+        public void StopWifiQrMode()
+        {
+            try
+            {
+                var message = new
+                {
+                    category = "wifi_qr",
+                    method = "stop"
+                };
+                _tcpClientHandler.SendMessage(message);
+                Console.WriteLine("[JavaScriptBridge] WiFi QR mode stop message sent to Python");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[JavaScriptBridge] Error sending WiFi QR stop: {ex.Message}");
+            }
+        }
     }
 }
