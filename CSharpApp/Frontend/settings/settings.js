@@ -183,24 +183,15 @@ if (videoStreamToggle) {
     const enabled = videoStreamToggle.checked;
     console.log("[VideoStream] Toggle changed:", enabled);
     
+    // Mettre à jour l'état global
+    localStorage.setItem('videoPreviewEnabled', enabled);
+    
     // Utiliser le module global video-preview.js
     if (window.videoPreview) {
       if (enabled) {
         window.videoPreview.open();
       } else {
         window.videoPreview.close();
-      }
-      // Mettre à jour l'état global
-      localStorage.setItem('videoPreviewEnabled', enabled);
-      
-      // Mettre à jour le bouton flottant s'il existe
-      const toggleBtn = document.getElementById('video-preview-toggle-btn');
-      if (toggleBtn) {
-        if (enabled) {
-          toggleBtn.classList.add('active');
-        } else {
-          toggleBtn.classList.remove('active');
-        }
       }
     } else {
       console.error("[VideoStream] window.videoPreview not available");
