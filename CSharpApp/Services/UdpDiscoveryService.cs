@@ -61,10 +61,14 @@ namespace LighTouch.Services
         {
             try
             {
-                _udpClient = new UdpClient(_listenPort);
+                // Configure UDP client to allow reuse of address and receive broadcasts
+                _udpClient = new UdpClient();
+                _udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                _udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, _listenPort));
                 _udpClient.EnableBroadcast = true;
 
                 Console.WriteLine($"[UdpDiscoveryService] ✓ Écoute active sur le port {_listenPort}");
+                Console.WriteLine($"[UdpDiscoveryService] En attente de broadcasts UDP du Raspberry Pi...");
 
                 var remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
 
