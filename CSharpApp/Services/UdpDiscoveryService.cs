@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -48,10 +49,89 @@ namespace LighTouch.Services
 
             Console.WriteLine($"[UdpDiscoveryService] Démarrage de l'écoute UDP sur le port {_listenPort}...");
 
-            // Démarre le thread en arrière-plan SANS bloquer
+            // Démarre le thread d'écoute en arrière-plan
             Task.Run(() => ListenLoop(_cancellationTokenSource.Token), _cancellationTokenSource.Token);
+            
+            // Démarre aussi l'envoi de requêtes de découverte (pour hotspots qui bloquent broadcast)
+            Task.Run(() => SendDiscoveryRequests(_cancellationTokenSource.Token), _cancellationTokenSource.Token);
 
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Envoie des requêtes de découverte vers les IPs du sous-réseau
+        /// Utile pour les hotspots mobiles qui bloquent les broadcasts
+        /// </summary>
+        private async Task SendDiscoveryRequests(CancellationToken cancellationToken)
+        {
+            await Task.Delay(2000, cancellationToken); // Attend 2s que l'écoute démarre
+            
+            Console.WriteLine("[UdpDiscoveryService] Démarrage de l'envoi de requêtes de découverte (fallback hotspot)...");
+            
+            while (_isRunning && !cancellationToken.IsCancellationRequested)
+            {
+                try
+                {
+                    // Récupère l'IP locale pour déterminer le sous-réseau
+                    string localIp = GetLocalIPAddress();
+                    if (string.IsNullOrEmpty(localIp))
+                    {
+                        await Task.Delay(5000, cancellationToken);
+                        continue;
+                    }
+
+                    string baseIp = string.Join(".", localIp.Split('.').Take(3));
+                    var discoveryRequest = JsonSerializer.Serialize(new { type = "client_discovery", name = "LighTouch-Windows" });
+                    byte[] data = Encoding.UTF8.GetBytes(discoveryRequest);
+
+                    using (var udpClient = new UdpClient())
+                    {
+                        udpClient.EnableBroadcast = true;
+                        
+                        // Envoie vers les IPs communes sur les hotspots (1-10 et 100-110)
+                        int[] targets = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110 };
+                        foreach (int lastOctet in targets)
+                        {
+                            string targetIp = $"{baseIp}.{lastOctet}";
+                            if (targetIp == localIp) continue;
+                            
+                            try
+                            {
+                                // Envoie sur le port 8889 (le même que le Rasp écoute... s'il écoute)
+                                // Mais surtout, ça force le routeur à "ouvrir" la route
+                                udpClient.Send(data, data.Length, new IPEndPoint(IPAddress.Parse(targetIp), _listenPort));
+                            }
+                            catch { }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[UdpDiscoveryService] Erreur envoi découverte: {ex.Message}");
+                }
+
+                await Task.Delay(3000, cancellationToken); // Répète toutes les 3 secondes
+            }
+        }
+
+        /// <summary>
+        /// Récupère l'adresse IP locale
+        /// </summary>
+        private string GetLocalIPAddress()
+        {
+            try
+            {
+                using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
+                {
+                    socket.Connect("8.8.8.8", 65530);
+                    IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
+                    return endPoint?.Address.ToString();
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         /// <summary>
