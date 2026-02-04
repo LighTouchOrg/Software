@@ -134,8 +134,15 @@
    */
   function startVideoStream() {
     console.log('[VideoPreview] Starting video stream via C# backend...');
-    // Le backend C# va commencer à envoyer des frames
-    // Pour l'instant, on simule juste l'interface
+    
+    // Appeler le backend C# pour ouvrir le flux vidéo
+    if (window.electronAPI && window.electronAPI.openVideoStream) {
+      window.electronAPI.openVideoStream();
+      console.log('[VideoPreview] Called electronAPI.openVideoStream()');
+    } else {
+      console.error('[VideoPreview] electronAPI.openVideoStream not available');
+    }
+    
     updateStatus('connected', 'Connecté');
     
     // Masquer le message et afficher l'image
@@ -149,6 +156,15 @@
    */
   function stopVideoStream() {
     console.log('[VideoPreview] Stopping video stream...');
+    
+    // Appeler le backend C# pour fermer le flux vidéo
+    if (window.electronAPI && window.electronAPI.closeVideoStream) {
+      window.electronAPI.closeVideoStream();
+      console.log('[VideoPreview] Called electronAPI.closeVideoStream()');
+    } else {
+      console.error('[VideoPreview] electronAPI.closeVideoStream not available');
+    }
+    
     updateStatus('disconnected', 'Déconnecté');
     
     // Afficher le message et cacher l'image
