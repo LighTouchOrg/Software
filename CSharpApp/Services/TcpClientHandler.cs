@@ -24,9 +24,29 @@ namespace LighTouch.Services
         private readonly object _lock = new object();
 
         // Configuration
-        public string ServerHost { get; set; } = null; // Sera défini par UDP Discovery
+        private string _serverHost = null;
+        public string ServerHost 
+        { 
+            get => _serverHost;
+            set
+            {
+                if (_serverHost != value)
+                {
+                    _serverHost = value;
+                    Console.WriteLine($"[TcpClientHandler] ServerHost mis à jour: {value}");
+                    // Réveille la boucle de connexion immédiatement si on vient de recevoir l'IP
+                    if (!string.IsNullOrEmpty(value) && !_isConnected)
+                    {
+                        _serverDiscoveredEvent?.Set();
+                    }
+                }
+            }
+        }
         public int ServerPort { get; set; } = 8888;
         public int ReconnectDelayMs { get; set; } = 5000; // Délai entre les tentatives de reconnexion
+        
+        // Event pour réveiller la boucle quand le serveur est découvert
+        private System.Threading.ManualResetEventSlim _serverDiscoveredEvent = new System.Threading.ManualResetEventSlim(false);
 
         // Event compatible avec BluetoothHandler
         public event EventHandler<string> MessageReceived;
@@ -95,11 +115,24 @@ namespace LighTouch.Services
                     _isConnected = false;
                 }
 
-                // Si déconnecté, attend avant de réessayer
+                // Si déconnecté, attend avant de réessayer (mais peut être interrompu par la découverte du serveur)
                 if (!_isConnected && _isRunning)
                 {
-                    Console.WriteLine($"[TcpClientHandler] Reconnexion dans {ReconnectDelayMs / 1000}s...");
-                    await Task.Delay(ReconnectDelayMs, cancellationToken);
+                    if (string.IsNullOrEmpty(ServerHost))
+                    {
+                        Console.WriteLine($"[TcpClientHandler] En attente de découverte UDP...");
+                        // Attend indéfiniment jusqu'à ce que le serveur soit découvert
+                        _serverDiscoveredEvent.Wait(cancellationToken);
+                        _serverDiscoveredEvent.Reset();
+                        Console.WriteLine($"[TcpClientHandler] Serveur découvert! Tentative de connexion immédiate...");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"[TcpClientHandler] Reconnexion dans {ReconnectDelayMs / 1000}s...");
+                        // Attend avec possibilité d'interruption si le serveur change
+                        _serverDiscoveredEvent.Wait(ReconnectDelayMs, cancellationToken);
+                        _serverDiscoveredEvent.Reset();
+                    }
                 }
             }
         }
@@ -343,6 +376,7 @@ namespace LighTouch.Services
             Console.WriteLine("[TcpClientHandler] Arrêt du client...");
             _isRunning = false;
             _cancellationTokenSource?.Cancel();
+            _serverDiscoveredEvent?.Set(); // Libère la boucle si elle attend
 
             lock (_lock)
             {
@@ -363,6 +397,7 @@ namespace LighTouch.Services
             _cancellationTokenSource?.Dispose();
             _currentStream?.Dispose();
             _tcpClient?.Dispose();
+            _serverDiscoveredEvent?.Dispose();
         }
     }
 }

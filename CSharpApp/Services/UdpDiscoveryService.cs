@@ -137,8 +137,15 @@ namespace LighTouch.Services
                     return;
                 }
 
-                // Utilise l'IP de l'émetteur si l'IP du message n'est pas fiable
-                string serverIp = string.IsNullOrEmpty(discoveryInfo.Ip) ? senderIp : discoveryInfo.Ip;
+                // TOUJOURS utiliser l'IP de l'émetteur (plus fiable que l'IP dans le message)
+                // Car l'IP dans le message peut être incorrecte si le Rasp a plusieurs interfaces
+                string serverIp = senderIp;
+                
+                // Log si les IPs diffèrent (pour debug)
+                if (!string.IsNullOrEmpty(discoveryInfo.Ip) && discoveryInfo.Ip != senderIp)
+                {
+                    Console.WriteLine($"[UdpDiscoveryService] ⚠️ IP dans message ({discoveryInfo.Ip}) différente de l'émetteur ({senderIp}), utilisation de {senderIp}");
+                }
 
                 Console.WriteLine($"[UdpDiscoveryService] ✓ Serveur découvert: {serverIp}:{discoveryInfo.Port}");
 
