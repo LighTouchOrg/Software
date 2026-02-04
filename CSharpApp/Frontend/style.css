@@ -1002,3 +1002,74 @@ body.dark-mode .spinner {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* ==================== VIDEO PREVIEW TOGGLE ==================== */
+.video-preview-toggle {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.video-preview-toggle:hover {
+  background: var(--primary-color-light);
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.video-preview-toggle.active {
+  background: var(--secondary-color);
+}
+
+.video-preview-toggle.active:hover {
+  background: #FFA726;
+}
+
+body.dark-mode .video-preview-toggle {
+  background: var(--primary-color-dark);
+}
+
+body.dark-mode .video-preview-toggle:hover {
+  background: var(--primary-color-light-dark);
+}
+
+body.dark-mode .video-preview-toggle.active {
+  background: var(--secondary-color-dark);
+}
+
+body.dark-mode .video-preview-toggle.active:hover {
+  background: #FFB347;
+}
+
+.video-preview-icon {
+  font-size: 28px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+/* Animation d'apparition */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.video-preview-toggle {
+  animation: fadeInUp 0.5s ease;
+}
